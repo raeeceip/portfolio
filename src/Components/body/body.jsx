@@ -6,36 +6,51 @@ import About from "./about";
 const Body = () => {
 	const [showPage, setShowPage] = useState(false);
 	return (
-		<div className="">
-			<div className="grid grid-rows-3 grid-cols-3 gap-2">
-				<div className="col-span-2 ">
-					<div className="flex m-20">
-						<h1 className="mr-10">Chiso.</h1>
+		<div className="w-auto">
+			<div className="grid grid-rows-1 grid-cols-3 gap-2 mb-0">
+				<div className="col-span-2 my-10 mx-10 text-left">
+					<div className="flex my-20  text-xl">
+						<h1 className="mr-10">Chibogu Chisomu</h1>
 						<button className="bg-black h-7 w-20 text-white rounded">
-							Follow
+							Contact
 						</button>
 					</div>
-					<div className="mb-0">
-						<h2>Web Developer</h2>
-					</div>
+					<h2 className="text-xl">Web Developer</h2>
 				</div>
-				<div className="col-span-1 rounded-full  mr-0 row-span-2 w-60 lg:row-span-1 ">
+				<div className="col-span-1 my-10 row-span-2 w-60 lg:row-span-1 ">
 					<img
-						className="rounded-full"
+						className=" rounded-full"
 						src="https://github.com/raeeceip.png"
 						alt="Chiso."
 					/>
 				</div>
 				<div className="col-span-2">
-					<div className="project_container_bottom_buttons">
-						<button>Python</button>
-						<button>MySQL</button>
-						<button>React</button>
-						<button>Tailwind</button>
-						<button>Bootstrap</button>
-						<button>JavaScript</button>
-						<button>Heroku</button>
-						<button>CSS</button>
+					<div className="flex w-28">
+						<button className="bg-black px-3 text-white mr-3 rounded">
+							Python
+						</button>
+						<button className="bg-black px-3 text-white mr-3 rounded">
+							MySQL
+						</button>
+						<button className="bg-black px-3 text-white mr-3 rounded">
+							React
+						</button>
+						<button className="bg-black px-3 text-white mr-3 rounded">
+							Tailwind
+						</button>
+						<button className="bg-black px-3 text-white mr-3 rounded">
+							{" "}
+							Bootstrap
+						</button>
+						<button className="bg-black px-3 text-white mr-3 rounded">
+							JavaScript
+						</button>
+						<button className="bg-black px-3 text-white mr-3 rounded">
+							Heroku
+						</button>
+						<button className="bg-black px-3 text-white mr-3 rounded">
+							CSS
+						</button>
 					</div>
 					<div className="project_container_bottom_description">
 						<div className="remote_button_icon">
@@ -62,7 +77,7 @@ const Body = () => {
 					</div>
 				</div>
 			</div>
-			<div className="flexbox">
+			<div className="block mt-0">
 				<div className="project_showcase_navbar">
 					<div>
 						<button onClick={() => setShowPage(false)}>About</button>
