@@ -3,7 +3,7 @@ import "./header.css";
 
 const Header = () => {
 	return (
-		<nav className=" sticky flex w-100 bg-black p-6 text-white justify-between">
+		<nav className="relative flex w-100 bg-black p-6 text-white justify-between">
 			<h1 className="ml-0">Chiso</h1>
 			<ul className="flex justify-evenly mr-0">
 				<li className="mr-5 hover:bg-white ">
