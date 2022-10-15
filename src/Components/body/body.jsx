@@ -6,9 +6,9 @@ import About from "./about";
 const Body = () => {
 	const [showPage, setShowPage] = useState(false);
 	return (
-		<div className="absolute  sm:flex lg:grid place-items-center grid-flow-col w-screen mt-40 md:mt-24  lg:top-2 ">
-			<div className=" text-left justify-center top-60">
-				<h1 className="lg:text-5xl sm:text-3xl m-2 text-white font-bold">
+		<div className="absolute sm:flex lg:grid md:grid place-items-center grid-flow-col w-screen mt-40 lg:top-2 ">
+			<div className=" text-left justify-center mx-5 ">
+				<h1 className="lg:text-5xl sm:text-5xl m-2 text-white font-bold">
 					Hi there, I'm Chibogu Chisom
 				</h1>
 				<p className="text-white m-2 lg:text-xl">
@@ -16,7 +16,9 @@ const Body = () => {
 					deploying and testing various web applications and software. With
 					knowledge of React.js, Django, Tailwind and Bootstrap
 				</p>
-				<p className="text-white m-2 lg:text-xl">Based in Lagos, Nigeria</p>
+				<p className="text-white m-2 lg:text-xl sm:text-xl">
+					Based in Lagos, Nigeria
+				</p>
 				<p className="text-white  lg:text-xl">
 					Available for Contract and Full-Time Jobs
 				</p>
