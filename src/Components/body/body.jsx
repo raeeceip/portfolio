@@ -6,8 +6,8 @@ import About from "./about";
 const Body = () => {
 	const [showPage, setShowPage] = useState(false);
 	return (
-		<div className="absolute sm:flex lg:grid md:grid place-items-center grid-flow-col w-screen mt-40 lg:top-2 ">
-			<div className=" text-left justify-center mx-5 ">
+		<div className="relative sm:flex h-[80vh] lg:grid md:grid place-items-center grid-flow-col w-screen  lg:top-2 top-10 overflow-y-hidden">
+			<div className=" text-left  justify-center mx-5 mt-20  ">
 				<h1 className="lg:text-5xl sm:text-5xl m-2 text-white font-bold">
 					Hi there, I'm Chibogu Chisom
 				</h1>

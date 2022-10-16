@@ -6,8 +6,7 @@
 body {
 	--tw-bg-opacity: 1;
 	background-color: rgb(34 197 94 / var(--tw-bg-opacity));
-	height: 100vh;
-	overflow-y: scroll;
+	overflow-y: hidden;
 	overflow-x: hidden;
 }
 @font-face {
