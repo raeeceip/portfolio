@@ -1,8 +1,6 @@
 import React from "react";
 import { useState } from "react";
 
-import About from "./about";
-
 const Body = () => {
 	const [showPage, setShowPage] = useState(false);
 	return (

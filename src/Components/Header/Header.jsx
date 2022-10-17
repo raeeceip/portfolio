@@ -1,5 +1,8 @@
 import React from "react";
 import "./header.css";
+import { Link } from "react-router-dom";
+
+// add routes for pages
 
 const Header = () => {
 	return (
@@ -7,19 +10,19 @@ const Header = () => {
 			<h1 className="ml-0">Chiso</h1>
 			<ul className="flex justify-evenly mr-0">
 				<li className="mr-5 hover:bg-white ">
-					<a href="#" className="header__nav-link">
+					<Link to="/" className="header__nav-link">
 						Home
-					</a>
+					</Link>
 				</li>
 				<li className="mr-5">
-					<a href="#" className="header__nav-link">
+					<Link to="/projects" className="header__nav-link">
 						About
-					</a>
+					</Link>
 				</li>
 				<li className="mr-0">
-					<a href="#" className="header__nav-link">
+					<Link to="/contact" className="header__nav-link">
 						Contact
-					</a>
+					</Link>
 				</li>
 			</ul>
 		</nav>
