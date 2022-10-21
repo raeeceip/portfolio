@@ -5,15 +5,12 @@ import "./body.css";
 const Body = () => {
 	const [showPage, setShowPage] = useState(false);
 	return (
-		<div className="relative sm:flex h-[80vh] lg:grid md:grid place-items-center grid-flow-col w-screen  lg:top-2 top-10 overflow-y-hidden">
+		<div className="relative sm:flex h-[70vh] lg:grid md:grid place-items-center grid-flow-col w-screen  lg:top-2 top-10 overflow-y-hidden">
 			<div className=" text-left  justify-center mx-5 mt-10  ">
 				<div className="typewriter">
-					<h1 className="typewriter lg:text-5xl sm:text-5xl m-2 text-white font-bold">
-						Chiso,
+					<h1 className="typewriter text-4xl m-2 text-white font-bold">
+						Hello!, I'm Chiso
 					</h1>
-					<h2 className="typewriter lg:text-5xl sm:text-5xl m-2 text-white font-bold">
-						Software Developer
-					</h2>
 				</div>
 
 				<p className="text-white m-2 lg:text-xl">
@@ -22,7 +19,8 @@ const Body = () => {
 				</p>
 				<p className="text-white m-2 lg:text-xl">
 					{" "}
-					With knowledge of React.js, Django, Tailwind and Bootstrap
+					Focused on building interactive experiences for exceptional people and
+					brands on the web
 				</p>
 				<p className="text-white m-2 lg:text-xl sm:text-xl">
 					Based in Lagos, Nigeria

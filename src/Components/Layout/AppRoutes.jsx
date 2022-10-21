@@ -4,13 +4,14 @@ import { AnimatePresence } from "framer-motion";
 import Body from "../Pages/body/body";
 import About from "../Pages/body/about";
 import NotFound from "../NotFound/NotFound";
+import Projects from "../Pages/Projects/Projects";
 
 const AppRoutes = () => {
 	return (
 		<AnimatePresence mode="wait">
 			<Routes>
 				<Route path="/" element={<Body />} />
-				<Route path="/projects" element={<About />} />
+				<Route path="/projects" element={<Projects />} />
 				<Route path="/contact" element={<Body />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>

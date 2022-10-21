@@ -7,11 +7,10 @@
 }
 .typewriter h2 {
 	overflow: hidden !important; /* Ensures the content is not revealed until the animation */
-
 	white-space: nowrap; /* Keeps the content on a single line */
 	/* Gives that scrolling effect as the typing happens */
 	animation: typing 3.5s steps(40, end), blink-caret 0.5s step-end infinite;
-	animation-delay: 1s;
+	animation-delay: 4s;
 }
 
 /* The typing effect */
