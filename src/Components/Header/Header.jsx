@@ -26,7 +26,7 @@ const Header = () => {
 						{" "}
 						<div
 							className="CROSS-ICON absolute top-0 right-0 px-8 py-8"
-							onClick={() => setIsNavOpen(false)} // change isNavOpen state to false to close the menu
+							onClick={() => setIsNavOpen(false)}
 						>
 							<svg
 								className="h-8 w-8 text-gray-600"
@@ -43,13 +43,24 @@ const Header = () => {
 						</div>
 						<ul className="MENU-LINK-MOBILE-OPEN flex flex-col items-center justify-between min-h-[250px]">
 							<li className="border-b border-gray-400 my-8 uppercase">
-								<Link to="/">About</Link>
+								<Link to="/" onClick={() => setIsNavOpen(false)}>
+									Home
+								</Link>
 							</li>
 							<li className="border-b border-gray-400 my-8 uppercase">
-								<Link to="/projects">Portfolio</Link>
+								<Link to="/" onClick={() => setIsNavOpen(false)}>
+									Projects
+								</Link>
 							</li>
 							<li className="border-b border-gray-400 my-8 uppercase">
-								<Link to="/contact">Contact</Link>
+								<Link to="/projects" onClick={() => setIsNavOpen(false)}>
+									Portfolio
+								</Link>
+							</li>
+							<li className="border-b border-gray-400 my-8 uppercase">
+								<Link to="/contact" onClick={() => setIsNavOpen(false)}>
+									Contact
+								</Link>
 							</li>
 						</ul>
 					</div>

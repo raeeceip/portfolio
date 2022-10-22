@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelopeOpen, faBriefcase } from "@fortawesome/free-solid-svg-icons";
 
 const Body = () => {
-	const [showPage, setShowPage] = useState(false);
 	return (
 		<div className="relative sm:flex h-[80vh] lg:grid md:grid  grid-flow-col w-screen  lg:top-2 overflow-y-hidden">
 			<div className=" text-left  justify-center mx-5 mt-10  ">
@@ -32,7 +31,7 @@ const Body = () => {
 					Available for Contract and Full-Time Jobs
 				</p>
 				<div className="flex">
-					<button className="glass bg-grey hover:shadow-[#fff] shadow-md hover:scale-[1.05] ease-in-out duration-500 text-black p-2 rounded-md m-5">
+					<button className="glass bg-grey hover:shadow-[#fff] w-[50%] lg:w-[20%] shadow-md hover:scale-[1.05] ease-in-out duration-500 text-black p-2 rounded-md m-5">
 						<FontAwesomeIcon
 							icon={faEnvelopeOpen}
 							className="text-white mx-3 hover:spin"
