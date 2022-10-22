@@ -6,10 +6,21 @@
 * {
 	font-family: "Satoshi", sans-serif;
 }
+
+.card {
+	height: 150px;
+}
+.form-input {
+	@apply m-2 w-80 flex flex-col;
+}
 body {
 	background-color: darkslategray;
 	overflow-y: hidden;
 	overflow-x: hidden;
+}
+
+.fade-left {
+	animation: fade-left 1s ease-in-out;
 }
 @font-face {
 	font-family: "Satoshi";
@@ -33,5 +44,17 @@ body {
 	body {
 		background-color: #1a202c;
 		color: #fff;
+	}
+}
+@media (prefers-color-scheme: light) {
+	body {
+		background-color: #fff;
+		color: #000;
+	}
+}
+
+@media (min-width: 768px) {
+	.projects {
+		overflow-y: hidden;
 	}
 }

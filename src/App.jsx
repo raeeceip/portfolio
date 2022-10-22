@@ -12,7 +12,7 @@ function App() {
 		<div className="App">
 			<BrowserRouter>
 				<Header />
-				<div>
+				<div className="flex items-center justify-center h-screen ">
 					<AppRoutes />
 				</div>
 				<Footer />
