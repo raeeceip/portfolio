@@ -2,6 +2,8 @@ import React from "react";
 import { useState } from "react";
 import "./body.css";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelopeOpen, faBriefcase } from "@fortawesome/free-solid-svg-icons";
 
 const Body = () => {
 	const [showPage, setShowPage] = useState(false);
@@ -30,11 +32,23 @@ const Body = () => {
 					Available for Contract and Full-Time Jobs
 				</p>
 				<div className="flex">
-					<button className="bg-white text-black p-2 rounded-md m-5">
-						<Link to="/contact">Lets Talk</Link>
+					<button className="glass bg-grey hover:shadow-[#fff] shadow-md hover:scale-[1.05] ease-in-out duration-500 text-black p-2 rounded-md m-5">
+						<FontAwesomeIcon
+							icon={faEnvelopeOpen}
+							className="text-white mx-3 hover:spin"
+						/>
+						<Link to="/contact">
+							<p className="text-white">Lets Talk</p>
+						</Link>
 					</button>
-					<button className="bg-grey hover:shadow-[#fff] shadow-md hover:scale-[1.2] ease-in-out duration-300 text-black p-2 rounded-md m-5">
-						<Link to="/projects">Check out some of my projects</Link>
+					<button className="glass hover:shadow-[#fff] shadow-md hover:scale-[1.05] ease-in-out duration-500 text-black p-2 rounded-md m-5">
+						<Link to="/projects">
+							<FontAwesomeIcon
+								icon={faBriefcase}
+								className="text-white  hover:spin"
+							/>
+							<p className="text-white">Check out some of my projects</p>
+						</Link>
 					</button>
 				</div>
 			</div>

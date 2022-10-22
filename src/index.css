@@ -22,6 +22,15 @@ body {
 .fade-left {
 	animation: fade-left 1s ease-in-out;
 }
+
+.glass {
+	background: rgba(255, 255, 255, 0.06);
+	border-radius: 16px;
+
+	backdrop-filter: blur(13.5px);
+	-webkit-backdrop-filter: blur(13.5px);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+}
 @font-face {
 	font-family: "Satoshi";
 	src: url("public/Satoshi-Regular.otf") format("otf");
