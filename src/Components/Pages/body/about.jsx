@@ -3,8 +3,8 @@ import React from "react";
 const About = () => {
 	return (
 		<div>
-			<div className="">
-				<div className="w-1/2">
+			<div className="relative h-[85vh] flex justify-center mx-5 ">
+				<div className="sm:w-1/2">
 					<h1 className="text-4xl">About</h1>
 					<p className="text-2xl">
 						I am a software developer with a passion for building software that
