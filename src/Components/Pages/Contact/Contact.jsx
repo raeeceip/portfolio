@@ -16,7 +16,7 @@ const ContactForm = () => {
 	return (
 		<form
 			onSubmit={handleSubmit}
-			className="justify-center flex flex-col content-center"
+			className="absolute top-0 justify-center flex flex-col content-center h-[95vh] "
 		>
 			<div className="">
 				<label htmlFor="email" className="flex justify-center text-2xl">
@@ -39,7 +39,7 @@ const ContactForm = () => {
 				/>
 			</div>
 
-			<button type="submit" disabled={state.submitting}>
+			<button type="submit" disabled={state.submitting} className="glass">
 				Submit
 			</button>
 		</form>
