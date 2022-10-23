@@ -1,6 +1,8 @@
 import { React, useState } from "react";
 import "./header.css";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBriefcase, faPerson } from "@fortawesome/free-solid-svg-icons";
 
 // add routes for pages
 
@@ -68,10 +70,17 @@ const Header = () => {
 
 				<ul className="DESKTOP-MENU hidden space-x-8 lg:flex">
 					<li>
-						<Link to="/about">About</Link>
+						<Link to="/about">
+							<FontAwesomeIcon icon={faPerson} /> About
+						</Link>
 					</li>
 					<li>
-						<Link to="/projects">Portfolio</Link>
+						<Link to="/projects">
+							<li>
+								<FontAwesomeIcon icon={faBriefcase} />
+								Portfolio
+							</li>
+						</Link>
 					</li>
 					<li>
 						<Link to="/Contact">Contact</Link>

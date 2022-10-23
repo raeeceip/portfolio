@@ -7,9 +7,6 @@
 	font-family: "Satoshi", sans-serif;
 }
 
-.card {
-	height: 150px;
-}
 .form-input {
 	@apply m-2 w-80 flex flex-col;
 }
@@ -33,6 +30,11 @@ body {
 	backdrop-filter: blur(13.5px);
 	-webkit-backdrop-filter: blur(13.5px);
 	border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.glass-bg {
+	background: rgba(255, 255, 255, 0);
+	backdrop-filter: blur(3px);
+	-webkit-backdrop-filter: blur(3px);
 }
 @font-face {
 	font-family: "Satoshi";

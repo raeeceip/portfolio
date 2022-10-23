@@ -12,13 +12,19 @@
 	animation: typing 3.5s steps(40, end), blink-caret 0.5s step-end infinite;
 	animation-delay: 4s;
 }
-
+.text {
+	overflow: hidden !important;
+	animation: fade-in 3s;
+	animation-delay: 0s;
+}
 /* The typing effect */
 @keyframes typing {
 	from {
+		visibility: hidden;
 		width: 0;
 	}
 	to {
+		visibility: visible;
 		width: 100%;
 	}
 }
@@ -31,5 +37,16 @@
 	}
 	50% {
 		border-color: rgb(252, 131, 3);
+	}
+}
+
+@keyframes fade-in {
+	from {
+		visibility: hidden;
+		opacity: 0;
+	}
+	to {
+		visibility: visible;
+		opacity: 1;
 	}
 }

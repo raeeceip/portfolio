@@ -1,9 +1,21 @@
 import React from "react";
+import {
+	faPython,
+	faReact,
+	faNodeJs,
+	faJava,
+	faHtml5,
+	faCss3,
+	faJs,
+	faGit,
+} from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFlask } from "@fortawesome/free-solid-svg-icons";
 
 const About = () => {
 	return (
 		<div>
-			<div className="relative h-[85vh] flex text-center space-between justify-center mx-10 ">
+			<div className="relative h-[95vh] flex text-center space-between justify-center ">
 				<div className="sm:w-1/2">
 					<h1 className="text-4xl">About</h1>
 					<p className="text-2xl">
@@ -17,22 +29,37 @@ const About = () => {
 						I'm skilled with using the following to create amazing projects
 					</p>
 					<ul className="flex justify-evenly">
-						<li>HTML</li>
-						<li>CSS</li>
-						<li>JavaScript</li>
-						<li>React</li>
-						<li>Node</li>
+						<li>
+							<FontAwesomeIcon icon={faHtml5} />{" "}
+						</li>
+						<li>
+							<FontAwesomeIcon icon={faCss3} />{" "}
+						</li>
+						<li>
+							<FontAwesomeIcon icon={faJs} />{" "}
+						</li>
+						<li>
+							<FontAwesomeIcon icon={faReact} />{" "}
+						</li>
+						<li>
+							<FontAwesomeIcon icon={faNodeJs} />
+						</li>
 						<li>Django</li>
-						<li>Python</li>
-						<li>SQL</li>
-						<li>Git</li>
+						<li>
+							<FontAwesomeIcon icon={faPython} />
+						</li>
+						<li>
+							<FontAwesomeIcon icon={faFlask} />
+						</li>
+						<li>
+							<FontAwesomeIcon icon={faGit} />
+						</li>
 					</ul>
 					<p className="text-2xl">
 						{" "}
 						I'm also familiar with the following tools
 					</p>
 					<ul className="flex justify-evenly">
-						<li>Vercel</li>
 						<li>Express</li>
 						<li>Heroku</li>
 						<li>Netlify</li>
