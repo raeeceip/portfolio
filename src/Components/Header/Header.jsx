@@ -48,8 +48,8 @@ const Header = () => {
 								</Link>
 							</li>
 							<li className="border-b border-gray-400 my-8 uppercase">
-								<Link to="/" onClick={() => setIsNavOpen(false)}>
-									Projects
+								<Link to="/about" onClick={() => setIsNavOpen(false)}>
+									About
 								</Link>
 							</li>
 							<li className="border-b border-gray-400 my-8 uppercase">
