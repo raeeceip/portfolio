@@ -5,8 +5,8 @@ import { faPhone } from "@fortawesome/free-solid-svg-icons";
 
 const Footer = () => {
 	return (
-		<div className="absolute flex w-full top-[89vh]  bottom-0  p-6 text-white justify-evenly">
-			<h1 className="ml-0 text-2xl">Chiso</h1>
+		<div className="absolute flex w-full top-[90vh]  bottom-0 mb-10 p-6 text-white justify-evenly">
+			<h1 className="font-Quentin ml-0 text-2xl">Chiso</h1>
 			<ul className="flex justify-between">
 				<li className="mx-2 text-2xl">
 					<a href="#" className="header__nav-link">

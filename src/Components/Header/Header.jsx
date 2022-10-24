@@ -3,6 +3,7 @@ import "./header.css";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBriefcase, faPerson } from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
 
 // add routes for pages
 
@@ -11,7 +12,7 @@ const Header = () => {
 	return (
 		<div className="flex mx-2 items-center justify-between border-b border-gray-400 py-8">
 			<Link to="/">
-				<h1 className="text-3xl font-bold">Chiso</h1>
+				<h1 className=" text-4xl">Chiso</h1>
 			</Link>
 			<nav>
 				<section className="MOBILE-MENU flex lg:hidden">
@@ -69,11 +70,14 @@ const Header = () => {
 				</section>
 
 				<ul className="DESKTOP-MENU hidden space-x-8 lg:flex">
-					<li>
-						<Link to="/about">
-							<FontAwesomeIcon icon={faPerson} /> About
-						</Link>
-					</li>
+					<motion.div whileHover={{ rotate: 15 }}>
+						<li>
+							<Link to="/about">
+								<FontAwesomeIcon icon={faPerson} /> About
+							</Link>
+						</li>
+					</motion.div>
+
 					<li>
 						<Link to="/projects">
 							<li>

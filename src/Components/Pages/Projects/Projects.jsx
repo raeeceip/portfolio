@@ -1,3 +1,6 @@
+import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import { faChain } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
 const Projects = () => {
@@ -10,7 +13,7 @@ const Projects = () => {
 					deployed on Hosting platforms
 				</p>
 			</div>
-			<div className="absolute sm:flex md:grid grid-cols-2 h-[50vh] sm:h-[60vh] flex-col mx-5 gap-2 overflow-y-scroll ">
+			<div className="absolute sm:flex md:grid grid-cols-3 h-[50vh] sm:h-[60vh] flex-col mx-5 gap-2 overflow-y-scroll sm:overflow-hidden ">
 				<div className="card bg-transparent rounded shadow-lg flex flex-col justify-center text-left items-center m-5">
 					<p className="text-2xl border-b">Btsfy - WIP</p>
 
@@ -20,24 +23,73 @@ const Projects = () => {
 				</div>
 				<div className="card rounded shadow-lg   flex flex-col justify-center text-left items-center m-5">
 					<p className="text-2xl border-b">Comic-world</p>
+					<div clasName="text-right text-sm">
+						<h3>
+							A webapp for searching for and finding heroes and their comic
+							appeareanes
+						</h3>
+						<p>React, Tailwind, Marvel API</p>
+					</div>
+
+					<ul className="">
+						<li>
+							<a href="https://github.com/raeeceip">
+								Github
+								<FontAwesomeIcon icon={faGithub} />
+							</a>
+						</li>
+						<li>
+							<a href="https://github.com/raeeceip">
+								Website
+								<FontAwesomeIcon icon={faChain} />
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div className="card rounded shadow-lg flex flex-col justify-center text-left items-center m-3">
+					<p>Chisom</p>
+					<h3> A web app that splits csv and json files</h3>
+					<p>React, Tailwind, Django</p>
+					<a href="https://btsfy.netlify.app/">View</a>
+				</div>
+				<div className="card rounded shadow-lg   flex flex-col justify-center text-left items-center m-3">
+					<p>Django-Netflix</p>
 					<h3>
-						A React application that allows you to search and any marvel Hero,
-						and their respective comic appearances
+						{" "}
+						A netflix clone built with django, with working upload and
+						authentication backend
 					</h3>
-					<p>React, Tailwind, Marvel API</p>
-					<a href="https://comic-world.vercel.app">View</a>
+					<p>HTML5,Tailwind, Django</p>
+					<ul className="">
+						<li>
+							<a href="https://github.com/raeeceip">
+								Github
+								<FontAwesomeIcon icon={faGithub} />
+							</a>
+						</li>
+						<li>
+							<a href="https://github.com/raeeceip">
+								Website
+								<FontAwesomeIcon icon={faChain} />
+							</a>
+						</li>
+					</ul>
 				</div>
 				<div className="card rounded shadow-lg flex flex-col justify-center text-left items-center m-5">
-					<p>Chisom</p>
-					<h3> A web app that splits csv and json files</h3>
-					<p>React, Tailwind, Django</p>
-					<a href="https://btsfy.netlify.app/">View</a>
-				</div>
-				<div className="card rounded shadow-lg hover:bg-white flex flex-col justify-center text-left items-center m-5">
-					<p>Chisom</p>
-					<h3> A web app that splits csv and json files</h3>
-					<p>React, Tailwind, Django</p>
-					<a href="https://btsfy.netlify.app/">View</a>
+					<p>And More!</p>
+					<h3> Check out my Github Profile for more</h3>
+					<ul className="flex justify-evenly">
+						<li>
+							<a href="https://github.com/raeeceip">
+								<FontAwesomeIcon icon={faGithub} />
+							</a>
+						</li>
+						<li>
+							<a href="https://github.com/raeeceip">
+								<FontAwesomeIcon icon={faLinkedin} />
+							</a>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</div>

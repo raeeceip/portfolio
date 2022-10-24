@@ -6,12 +6,11 @@
 * {
 	font-family: "Satoshi", sans-serif;
 }
-
 .form-input {
 	@apply m-2 w-80 flex flex-col;
 }
 body {
-	background-color: darkslategray;
+	background-color: black;
 	overflow-y: hidden;
 	overflow-x: hidden;
 }
@@ -38,9 +37,15 @@ body {
 }
 @font-face {
 	font-family: "Satoshi";
-	src: url("public/Satoshi-Regular.otf") format("otf");
-	font-weight: 500;
+	src: local("Satoshi"), url("./fonts/Satoshi-Regular.otf") format("opentype");
+	font-weight: normal;
 	font-style: normal;
+}
+@font-face {
+	font-family: "Quentin";
+	src: url("./fonts/Quentin.ttf") format("truetype");
+	font-weight: normal;
+	font-style: italic;
 }
 
 @keyframes fade-left {
@@ -56,7 +61,7 @@ body {
 
 @media (prefers-color-scheme: dark) {
 	body {
-		background-color: #1a202c;
+		background-color: black;
 		color: #fff;
 	}
 }
