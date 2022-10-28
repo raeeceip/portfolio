@@ -11,6 +11,8 @@
 }
 body {
 	background-color: black;
+	color: #fff;
+	height: 100vh;
 	overflow-y: hidden;
 	overflow-x: hidden;
 }
@@ -56,19 +58,6 @@ body {
 	100% {
 		opacity: 1;
 		transform: translateX(0);
-	}
-}
-
-@media (prefers-color-scheme: dark) {
-	body {
-		background-color: black;
-		color: #fff;
-	}
-}
-@media (prefers-color-scheme: light) {
-	body {
-		background-color: #fff;
-		color: #000;
 	}
 }
 

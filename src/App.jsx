@@ -7,10 +7,10 @@ import "./index.css";
 
 function App() {
 	return (
-		<div className="App">
+		<div className="App ">
 			<BrowserRouter>
 				<Header />
-				<div className="flex items-center justify-center h-screen ">
+				<div className="flex items-center  justify-center ">
 					<AppRoutes />
 				</div>
 				<Footer />
