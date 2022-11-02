@@ -24,7 +24,7 @@ const ContactForm = () => {
 	}
 	return (
 		<motion.div
-			className="absolute top-0 justify-center flex flex-col content-center h-[95vh]"
+			className="relative  justify-center flex flex-col content-center h-[80vh]"
 			initial="exit"
 			animate="enter"
 			exit="exit"

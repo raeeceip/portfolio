@@ -11,10 +11,25 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFlask } from "@fortawesome/free-solid-svg-icons";
+import { motion, AnimatePresence } from "framer-motion";
+
+const transition = { duration: 0.9, ease: "easeInOut" };
+
+const Variants = {
+	initial: { opacity: 0 },
+	enter: { opacity: 1, transition },
+	exit: { opacity: 0, transition },
+};
 
 const About = () => {
 	return (
-		<div className="relative  h-[75vh] mx-5 flex text-center space-between justify-center overflow-y-scroll ">
+		<motion.div
+			className="relative  h-[75vh] mx-5 flex text-center space-between justify-center overflow-y-scroll "
+			initial="exit"
+			animate="enter"
+			exit="exit"
+			variants={Variants}
+		>
 			<div className="sm:w-1/2 h-1/2">
 				<h1 className="text-4xl">About</h1>
 				<p className="text-2xl">
@@ -62,7 +77,7 @@ const About = () => {
 					<li>Git</li>
 				</ul>
 			</div>
-		</div>
+		</motion.div>
 	);
 };
 
