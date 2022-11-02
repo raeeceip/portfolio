@@ -8,7 +8,8 @@ module.exports = {
     extend: {
       fontFamily:{
         Satoshi : ['Satoshi', 'sans-serif'],
-        Quentin :[ 'Quentin', 'sans-serif']
+        Quentin :[ 'Quentin', 'sans-serif'],
+        OpenSauce: ['OpenSauce', 'sans-serif']
       }
     },
   },

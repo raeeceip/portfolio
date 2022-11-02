@@ -5,7 +5,7 @@ import { faPhone } from "@fortawesome/free-solid-svg-icons";
 
 const Footer = () => {
 	return (
-		<div className="absolute glass flex w-full top-[92vh] h-fit  bottom-0 p-6 text-white justify-evenly">
+		<div className="absolute flex w-full top-[92vh]  bottom-0  text-white justify-evenly">
 			<h1 className="font-Quentin ml-0 text-2xl">Chiso</h1>
 			<ul className="flex justify-between">
 				<li className="mx-2 text-2xl">

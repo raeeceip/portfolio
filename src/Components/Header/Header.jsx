@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 const Header = () => {
 	const [isNavOpen, setIsNavOpen] = useState(false);
 	return (
-		<div className="flex mx-2 items-center justify-between border-b border-gray-400 py-8">
+		<div className="flex mx-2 items-center justify-between border-b border-gray-400 py-5">
 			<Link to="/">
 				<h1 className="font-Quentin text-4xl">Chiso</h1>
 			</Link>
