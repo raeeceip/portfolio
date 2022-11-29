@@ -80,10 +80,10 @@ const Header = () => {
 
 					<li>
 						<Link to="/projects">
-							<li>
+							<div>
 								<FontAwesomeIcon icon={faBriefcase} />
 								Portfolio
-							</li>
+							</div>
 						</Link>
 					</li>
 					<li>
