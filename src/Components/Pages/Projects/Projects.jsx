@@ -10,15 +10,11 @@ import React from "react";
 
 const Projects = () => {
 	return (
-		<div className="projects   relative  fade-left h-[75vh] top-2 bottom-4 mx-3 overflow-y-scroll  ">
+		<div className="projects   relative  fade-left h-[80vh] top-2 bottom-4 mx-3 overflow-y-scroll  ">
 			<div className="flex glass-bg bg-transparent flex-col justify-center text-center ">
-				<h1 className="text-4xl font-bold">Projects</h1>
-				<p className="text-2xl font-bold mb-5">
-					Below are some of my most recent projects, published on Github and
-					deployed on Hosting platforms
-				</p>
+				<h1 className="text-4xl uppercase font-bold">Projects</h1>
 			</div>
-			<div className="absolute uppercase sm:flex md:grid grid-cols-3 flex-col mx-3 gap-3 ">
+			<div className="uppercase sm:flex md:grid grid-cols-3 flex-col mx-3 gap-3 ">
 				<div className="card bg-transparent rounded shadow-lg inline justify-center text-left items-center m-2">
 					<p className="text-2xl border-b">
 						Btsfy <p className="bg-yellow"> IN PROGRESS</p>
