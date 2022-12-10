@@ -1,29 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./Loader.css";
 const Loader = () => {
+	const [progress, setProgress] = useState(40);
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setProgress((prevProgress) => prevProgress + 2);
+		}, 50);
+		return () => clearInterval(interval);
+	}, []);
+
 	return (
-		<div id="center">
-			<div id="main"></div>
-			<div className="row" id="r-one">
-				<span className="sq" id="sq-1"></span>
-				<span className="sq" id="sq-2"></span>
-				<span className="sq" id="sq-3"></span>
-			</div>
-			<div className="row" id="r-two">
-				<span className="sq" id="sq-4"></span>
-				<span className="sq" id="sq-5"></span>
-				<span className="sq" id="sq-6"></span>
-			</div>
-			<div className="row" id="r-three">
-				<span className="sq" id="sq-7"></span>
-				<span className="sq" id="sq-8"></span>
-				<span className="sq" id="sq-9"></span>
-			</div>
-			<div className="row" id="r-four">
-				<span className="sq" id="sq-10"></span>
-				<span className="sq" id="sq-11"></span>
-				<span className="sq" id="sq-12"></span>
-			</div>
+		<div className="loading-component">
+			<div className="loading-bar" style={{ width: `${progress}%` }}></div>
+			<div className="loading-count">{progress}%</div>
 		</div>
 	);
 };

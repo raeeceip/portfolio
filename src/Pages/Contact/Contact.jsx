@@ -24,7 +24,7 @@ const ContactForm = () => {
 	}
 	return (
 		<motion.div
-			className="relative  justify-center flex flex-col content-center h-[80vh]"
+			className="relative mt-5 flex flex-col content-center justify-center "
 			initial="exit"
 			animate="enter"
 			exit="exit"
@@ -52,7 +52,11 @@ const ContactForm = () => {
 					/>
 				</div>
 
-				<button type="submit" disabled={state.submitting} className="glass">
+				<button
+					type="submit"
+					disabled={state.submitting}
+					className="w-full text-center rounded-md py-2 px-4  hover:bg-gray-900 text-white font-bold shadow-md ease-in-out duration-500"
+				>
 					Submit
 				</button>
 			</form>

@@ -3,28 +3,44 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { faPhone } from "@fortawesome/free-solid-svg-icons";
 
-const Footer = () => {
+const Footer = ({ githubLink, linkedinLink }) => {
 	return (
-		<div className="absolute flex w-full top-[92vh]  bottom-0  text-white justify-evenly">
-			<h1 className="font-Quentin ml-0 text-2xl">Chiso</h1>
-			<ul className="flex justify-between">
+		<footer className="absolute w-full top-92vh bottom-0 text-white justify-evenly">
+			<h1 className="font-Quentin ml-0 text-2xl text-center">Chiso™</h1>
+			<nav style={{ listStyle: "none" }} className="flex justify-between">
 				<li className="mx-2 text-2xl">
-					<a href="#" className="header__nav-link">
-						<FontAwesomeIcon icon={faPhone} className="text-white" />
+					<a href="#" className="header__nav-link" aria-label="Phone">
+						<FontAwesomeIcon
+							icon={faPhone}
+							className="text-white"
+							alt="Phone icon"
+						/>
 					</a>
 				</li>
 				<li className="mx-2 text-2xl">
-					<a href="https://github.com/raeeceip" className="header__nav-link">
-						<FontAwesomeIcon icon={faGithub} />
+					<a
+						href={githubLink}
+						className="header__nav-link"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="GitHub"
+					>
+						<FontAwesomeIcon icon={faGithub} alt="GitHub icon" />
 					</a>
 				</li>
 				<li className="mx-2 text-2xl">
-					<a href="#" className="header__nav-link">
-						<FontAwesomeIcon icon={faLinkedin} />
+					<a
+						href={linkedinLink}
+						className="header__nav-link"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="LinkedIn"
+					>
+						<FontAwesomeIcon icon={faLinkedin} alt="LinkedIn icon" />
 					</a>
 				</li>
-			</ul>
-		</div>
+			</nav>
+		</footer>
 	);
 };
 

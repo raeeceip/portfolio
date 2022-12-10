@@ -39,22 +39,22 @@ body {
 }
 @font-face {
 	font-family: "Satoshi";
-	src: local("Satoshi"), url("./fonts/Satoshi-Regular.otf") format("opentype");
+	src: local("Satoshi"),
+		url("./assets/fonts/Satoshi-Regular.otf") format("opentype");
 	font-weight: normal;
 	font-style: normal;
 }
 @font-face {
 	font-family: "Quentin";
-	src: url("./fonts/Quentin.ttf") format("truetype");
+	src: url("./assets/fonts/Quentin.ttf") format("truetype");
 	font-weight: normal;
 	font-style: italic;
 }
 @font-face {
 	font-family: "OpenSauce";
-	src: url("./fonts/Open-Sauce-Two.otf") format("opentype");
+	src: url("./assets/fonts/Open-Sauce-Two.otf") format("opentype");
 	font-weight: bold;
 	font-style: normal;
-	text-transform: uppercase;
 }
 
 @keyframes fade-left {

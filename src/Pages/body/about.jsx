@@ -8,6 +8,7 @@ import {
 	faCss3,
 	faJs,
 	faGit,
+	faDocker,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFlask } from "@fortawesome/free-solid-svg-icons";
@@ -24,7 +25,7 @@ const Variants = {
 const About = () => {
 	return (
 		<motion.div
-			className="relative  h-[75vh] mx-5 flex text-center space-between justify-center overflow-y-scroll "
+			className="relative mt-5 mx-5 flex text-center space-between justify-center overflow-y-scroll "
 			initial="exit"
 			animate="enter"
 			exit="exit"
@@ -38,7 +39,7 @@ const About = () => {
 					fast learner. I love to learn new things and I am always open to
 					learning new technologies.
 				</p>
-				<h2 className="border-b text-2xl text-center"> Skills </h2>
+				<h2 className="mt-5 border-b text-2xl text-center"> Skills </h2>
 				<p className="text-2xl">
 					I'm skilled with using the following to create amazing projects
 				</p>
@@ -67,6 +68,9 @@ const About = () => {
 					</li>
 					<li>
 						<FontAwesomeIcon icon={faGit} />
+					</li>
+					<li>
+						<FontAwesomeIcon icon={faDocker} />
 					</li>
 				</ul>
 				<p className="text-2xl"> I'm also familiar with the following tools</p>
