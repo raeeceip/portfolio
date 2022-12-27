@@ -4,6 +4,7 @@ import Header from "./Components/Header/Header";
 import Footer from "./Components/Footer/Footer";
 import AppRoutes from "./Layout/AppRoutes";
 import Loader from "./Components/Loader/Loader";
+import VivusLoader from "./Components/Loader/VivusLoader";
 import { Helmet } from "react-helmet";
 import "./index.css";
 
