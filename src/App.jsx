@@ -10,7 +10,7 @@ import "./index.css";
 
 function App({ title, desc }) {
 	if (!title) title = "Chiso";
-	if (!desc) desc = "Chiso - Softwar Developer";
+	if (!desc) desc = "Chiso - Software Developer";
 	let keywords =
 		"Chiso, Chibogu, Software Developer, PHP, Javascript, Python, Azure, Docker";
 	const [loading, setLoading] = useState(true);
@@ -19,8 +19,6 @@ function App({ title, desc }) {
 	}, []);
 
 	return (
-		/* add loading screen */
-
 		<div className="App">
 			<Helmet>
 				<title>{title}</title>

@@ -20,7 +20,7 @@ const Projects = () => {
 		return <Loader />;
 	} else {
 		return (
-			<div className="projsects relative w-full lg:grid-flow-row h-[90vh] top-2 bottom-4 mx-3 overflow-y-scroll ">
+			<div className=" lg:grid-flow-row h-[80vh] top-2 bottom-4 mx-3 overflow-y-scroll ">
 				<div className="flex glass-bg bg-transparent flex-col justify-center text-center ">
 					<h1 className="text-4xl uppercase font-bold">Projects</h1>
 				</div>

@@ -13,7 +13,7 @@ const ProjectCard = ({ project }) => {
 			: "status-development";
 
 	return (
-		<div className="flex flex-col bg-neutral-900 bg-opacity-30 p-4  transition-all rounded">
+		<div className="flex flex-col bg-neutral-900 bg-opacity-30 p-4   transition-all rounded">
 			<h2 className="text-3xl font-semibold">{project.name}</h2>
 			<p className="text-sm leading-relaxed opacity-50 mt-2">
 				{project.description}

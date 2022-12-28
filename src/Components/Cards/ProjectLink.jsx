@@ -7,7 +7,7 @@ const ProjectLink = ({ project }) => {
 		<div className="flex flex-row gap-2">
 			{project.in_progress ? (
 				<a
-					href={url}
+					href={project.url}
 					target="_blank"
 					rel="noreferrer"
 					className="flex flex-row gap-2 items-center text-sm text-neutral-500 hover:text-neutral-300 transition-all"

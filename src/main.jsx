@@ -4,6 +4,6 @@ import App from "./App";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>
-		<App />
+		<App title={"Chiso"} desc={"Chiso- Software Developer"} />
 	</React.StrictMode>
 );
