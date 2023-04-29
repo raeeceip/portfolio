@@ -1,6 +1,8 @@
+
 import React from "react";
 import "./Cards.css";
 import ProjectLink from "./ProjectLink";
+
 
 const ProjectCard = ({ project }) => {
 	const statusClass =
@@ -11,6 +13,7 @@ const ProjectCard = ({ project }) => {
 			: project.status === "archived"
 			? "status-archived"
 			: "status-development";
+
 
 	return (
 		<div className="flex flex-col bg-neutral-900 bg-opacity-30 p-4   transition-all rounded">

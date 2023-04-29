@@ -15,7 +15,7 @@ function App({ title, desc }) {
 		"Chiso, Chibogu, Software Developer, PHP, Javascript, Python, Azure, Docker";
 	const [loading, setLoading] = useState(true);
 	useEffect(() => {
-		setTimeout(() => setLoading(false), 5000);
+		setTimeout(() => setLoading(false), 6000);
 	}, []);
 
 	return (

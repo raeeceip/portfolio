@@ -1,6 +1,6 @@
 .loading-component {
 	width: 98vw;
-	height: 50px;
+	height: 98px;
 	background-color: #000000;
 	font-family: "Pixel", sans-serif;
 	display: flex;
@@ -18,7 +18,7 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	transition: width 0.5s ease-in-out;
+	transition: width 0.1s ease-in-out;
 }
 
 .loading-count {
