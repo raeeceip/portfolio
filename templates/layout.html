@@ -1,4 +1,3 @@
-{{define "layout"}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chibogu Chisom's Portfolio</title>
     <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="/static/js/main.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
 </head>
 <body>
@@ -16,11 +16,10 @@
         <a href="/blog">Blog</a>
     </nav>
     <div id="content">
-        {{.Content}}
+        {{.}}
     </div>
     <div id="sse-updates" hx-sse="connect:/sse">
         Connecting to server...
     </div>
 </body>
 </html>
-{{end}}
