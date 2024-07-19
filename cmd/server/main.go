@@ -15,6 +15,7 @@ func main() {
 	mux.HandleFunc("/", handlers.HomeHandler)
 	mux.HandleFunc("/about", handlers.AboutHandler)
 	mux.HandleFunc("/projects", handlers.ProjectsHandler)
+	mux.HandleFunc("/blog/", handlers.BlogHandler)
 	mux.HandleFunc("/sse", handlers.SSEHandler)
 
 	log.Println("Server starting on :8080")
