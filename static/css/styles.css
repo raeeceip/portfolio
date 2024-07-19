@@ -1,0 +1,30 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background-color: #333;
+    padding: 1rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+}
+
+#content {
+    padding: 2rem;
+}
+
+#sse-updates {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background-color: #f4f4f4;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+}
