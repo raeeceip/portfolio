@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chibogu Chisom's Portfolio</title>
+    <title>Chiso's Des</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -12,10 +12,10 @@
     <link rel="stylesheet" type="text/css" href="static/css/styles.css">
 </head>
 
-<body class="bg-gray-400 text-gray-900 font-mono" x-data="{ mobileMenuOpen: false }">
-    <nav class="bg-gray-800 text-white p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="/" class="text-xl font-bold">Chiso's Portfolio</a>
+<body class="bg-gray-500 text-gray-900 font-mono" x-data="{ mobileMenuOpen: false }">
+    <nav class="bg-gray-500 text-white p-4 text-center">
+        <a href="/" class="text-xl font-bold">Chiso's Desk</a>
+        <div class="container mx-auto flex justify-evenly items-center">
             <div class="hidden md:flex space-x-4">
                 <a href="/" class="hover:bg-gray-700 px-3 py-2 rounded">Home</a>
                 <a href="/about" class="hover:bg-gray-700 px-3 py-2 rounded">About</a>
@@ -40,9 +40,7 @@
     <div id="content" class="container mx-auto px-4 py-8 markdown-body fade-in">
         {{.Content}}
     </div>
-    <div id="sse-updates" hx-sse="connect:/sse" class="fixed bottom-0 right-0 bg-gray-200 p-2 text-sm">
-        Connecting to server...
-    </div>
+
     <script src="static/js/main.js"></script>
 </body>
 

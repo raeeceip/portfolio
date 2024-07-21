@@ -1,4 +1,4 @@
-# Hi there! I'm Chiso
+# Hi there!
 
 I'm a Software Engineer with experience with Golang, Java and Javascript
 
