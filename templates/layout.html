@@ -1,25 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chibogu Chisom's Portfolio</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <script src="/static/js/main.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Markdown-like styles */
+        .markdown-body h1,
+        .markdown-body h2,
+        .markdown-body h3,
+        .markdown-body h4,
+        .markdown-body h5,
+        .markdown-body h6 {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.3em;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        .markdown-body h1 {
+            font-size: 2em;
+        }
+
+        .markdown-body h2 {
+            font-size: 1.5em;
+        }
+
+        .markdown-body h3 {
+            font-size: 1.25em;
+        }
+
+        .markdown-body pre {
+            background-color: #f6f8fa;
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        .markdown-body code {
+            background-color: #f6f8fa;
+            border-radius: 3px;
+            padding: 0.2em 0.4em;
+            font-size: 85%;
+        }
+
+        .markdown-body blockquote {
+            border-left: 0.25em solid #d1d5db;
+            padding-left: 1em;
+            color: #6b7280;
+        }
+
+        .markdown-body ul,
+        .markdown-body ol {
+            padding-left: 2em;
+        }
+
+        .markdown-body li {
+            margin-bottom: 0.25em;
+        }
+
+        .markdown-body hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #e5e7eb;
+            border: 0;
+        }
+    </style>
 </head>
-<body>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/projects">Projects</a>
-        <a href="/blog">Blog</a>
+
+<body class="bg-gray-400 text-gray-900 font-mono" x-data="{ mobileMenuOpen: false }">
+    <nav class="bg-gray-800 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-xl font-bold">Chiso's Portfolio</a>
+            <div class="hidden md:flex space-x-4">
+                <a href="/" class="hover:bg-gray-700 px-3 py-2 rounded">Home</a>
+                <a href="/about" class="hover:bg-gray-700 px-3 py-2 rounded">About</a>
+                <a href="/projects" class="hover:bg-gray-700 px-3 py-2 rounded">Projects</a>
+                <a href="/blog" class="hover:bg-gray-700 px-3 py-2 rounded">Blog</a>
+            </div>
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+        </div>
     </nav>
-    <div id="content">
-        {{.}}
+    <div x-show="mobileMenuOpen" x-cloak class="md:hidden bg-gray-800 text-white">
+        <a href="/" class="block px-4 py-2 hover:bg-gray-700">Home</a>
+        <a href="/about" class="block px-4 py-2 hover:bg-gray-700">About</a>
+        <a href="/projects" class="block px-4 py-2 hover:bg-gray-700">Projects</a>
+        <a href="/blog" class="block px-4 py-2 hover:bg-gray-700">Blog</a>
     </div>
-    <div id="sse-updates" hx-sse="connect:/sse">
+    <div id="content" class="container mx-auto px-4 py-8 markdown-body fade-in">
+        {{.Content}}
+    </div>
+    <div id="sse-updates" hx-sse="connect:/sse" class="fixed bottom-0 right-0 bg-gray-200 p-2 text-sm">
         Connecting to server...
     </div>
+    <script>
+        document.addEventListener('click', function (e) {
+            if (e.target.tagName === 'A' && e.target.href.startsWith(window.location.origin)) {
+                e.preventDefault();
+                document.getElementById('content').classList.remove('fade-in');
+                setTimeout(() => {
+                    fetch(e.target.href)
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const content = doc.getElementById('content').innerHTML;
+                            document.getElementById('content').innerHTML = content;
+                            document.getElementById('content').classList.add('fade-in');
+                            history.pushState(null, '', e.target.href);
+                        });
+                }, 250);
+            }
+        });
+    </script>
 </body>
+
 </html>

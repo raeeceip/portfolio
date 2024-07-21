@@ -9,19 +9,35 @@ import (
 	"strings"
 
 	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/gorilla/mux"
 )
 
-var templates = template.Must(template.ParseGlob("templates/*.html"))
-
 func renderMarkdown(w http.ResponseWriter, content string) {
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs
-	parser := parser.NewWithExtensions(extensions)
-	md := []byte(content)
-	html := markdown.ToHTML(md, parser, nil)
+	p := parser.NewWithExtensions(extensions)
+	doc := p.Parse([]byte(content))
 
-	templates.ExecuteTemplate(w, "layout.html", template.HTML(html))
+	htmlFlags := html.CommonFlags | html.HrefTargetBlank
+	opts := html.RendererOptions{Flags: htmlFlags}
+	renderer := html.NewRenderer(opts)
+
+	htmlContent := markdown.Render(doc, renderer)
+
+	tmpl, err := template.ParseFiles("templates/layout.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		Content template.HTML
+	}{
+		Content: template.HTML(htmlContent),
+	}
+
+	tmpl.Execute(w, data)
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -53,9 +69,9 @@ func ProjectsHandler(w http.ResponseWriter, r *http.Request) {
 
 func BlogHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	blogPath := vars["path"]
+	path := vars["path"]
 
-	if blogPath == "" || blogPath == "/" {
+	if path == "" {
 		// List available blog posts
 		files, err := os.ReadDir("content/blog")
 		if err != nil {
@@ -73,7 +89,7 @@ func BlogHandler(w http.ResponseWriter, r *http.Request) {
 		renderMarkdown(w, content.String())
 	} else {
 		// Render specific blog post
-		content, err := os.ReadFile(fmt.Sprintf("content/blog/%s.md", blogPath))
+		content, err := os.ReadFile(fmt.Sprintf("content/blog/%s.md", path))
 		if err != nil {
 			http.Error(w, "Blog post not found", http.StatusNotFound)
 			return
@@ -81,6 +97,7 @@ func BlogHandler(w http.ResponseWriter, r *http.Request) {
 		renderMarkdown(w, string(content))
 	}
 }
+
 func SSEHandler(w http.ResponseWriter, r *http.Request) {
 	// Implement SSE logic here
 }

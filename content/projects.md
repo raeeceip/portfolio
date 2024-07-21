@@ -1,41 +1,62 @@
 # Projects
 
-<div class="project-grid">
+Here's a list of some of my recent projects:
 
-<div class="project-card">
-<h2>Eventful</h2>
-<p>A comprehensive event management system designed to streamline the organization and hosting of virtual and in-person events.</p>
-<p class="technologies">Technologies: Golang, Gin, Docker, Git</p>
-</div>
+## Eventful
 
-<div class="project-card">
-<h2>Cargo Tracker</h2>
-<p>A remodel of a Java EE application capable of tracking and monitoring cargo ships along a destination.</p>
-<p class="technologies">Technologies: Docker, Java, Jakarta EE</p>
-</div>
+A comprehensive event management system designed to streamline the organization and hosting of virtual and in-person events.
 
-<div class="project-card">
-<h2>Wordpress Plugin</h2>
-<p>A Wordpress plugin capable of connecting with and migrating store data to an external website.</p>
-<p class="technologies">Technologies: PHP, Symfony</p>
-</div>
+**Technologies:** `Golang`, `Gin`, `Docker`, `Git`
 
-<div class="project-card">
-<h2>Discord Bot: Preeti</h2>
-<p>A discord bot built using Python and the Discord API, capable of maintaining simple conversations and channel interactions.</p>
-<p class="technologies">Technologies: Python, Discord.py</p>
-</div>
+---
 
-<div class="project-card">
-<h2>Gramsleuth</h2>
-<p>An OSINT tool for automated social media interactions.</p>
-<p class="technologies">Technologies: Python, Selenium</p>
-</div>
+## Cargo Tracker
 
-<div class="project-card">
-<h2>Btsfy</h2>
-<p>A web app designed to split large CSV files into smaller, more manageable file sizes.</p>
-<p class="technologies">Technologies: Django</p>
-</div>
+A remodel of a Java EE application capable of tracking and monitoring cargo ships along a destination.
 
-</div>
+**Technologies:** `Docker`, `Java`, `Jakarta EE`
+
+---
+
+## Wordpress Plugin
+
+A Wordpress plugin capable of connecting with and migrating store data to an external website.
+
+**Technologies:** `PHP`, `Symfony`
+
+---
+
+## Discord Bot: Preeti
+
+A discord bot built using Python and the Discord API, capable of maintaining simple conversations and channel interactions.
+
+**Technologies:** `Python`, `Discord.py`
+
+---
+
+## Gramsleuth
+
+An OSINT tool for automated social media interactions.
+
+**Technologies:** `Python`, `Selenium`
+
+---
+
+## Btsfy
+
+A web app designed to split large CSV files into smaller, more manageable file sizes.
+
+**Technologies:** `Django`
+
+---
+
+> These projects showcase my skills in various programming languages and frameworks. Each one presented unique challenges that helped me grow as a developer.
+
+Here's a sample code snippet from one of my projects:
+
+```python
+def process_data(data):
+    # Some complex data processing
+    result = [item for item in data if item['value'] > threshold]
+    return result
+```
