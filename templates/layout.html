@@ -4,44 +4,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chiso's Des</title>
+    <title>Chiso's Desk</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
     <link rel="stylesheet" type="text/css" href="static/css/styles.css">
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .markdown-body h1,
+        .markdown-body h2,
+        .markdown-body h3,
+        .markdown-body h4,
+        .markdown-body h5,
+        .markdown-body h6 {
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        .markdown-body.projects h1,
+        .markdown-body.projects h2,
+        .markdown-body.projects h3,
+        .markdown-body.projects h4,
+        .markdown-body.projects h5,
+        .markdown-body.projects h6 {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.3em;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-500 text-gray-900 font-mono" x-data="{ mobileMenuOpen: false }">
+<body class="bg-gray-500 text-white font-mono">
     <nav class="bg-gray-500 text-white p-4 text-center">
         <a href="/" class="text-xl font-bold">Chiso's Desk</a>
         <div class="container mx-auto flex justify-evenly items-center">
-            <div class="hidden md:flex space-x-4">
+            <div class="flex space-x-4">
                 <a href="/" class="hover:bg-gray-700 px-3 py-2 rounded">Home</a>
                 <a href="/about" class="hover:bg-gray-700 px-3 py-2 rounded">About</a>
                 <a href="/projects" class="hover:bg-gray-700 px-3 py-2 rounded">Projects</a>
                 <a href="/blog" class="hover:bg-gray-700 px-3 py-2 rounded">Blog</a>
             </div>
-            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
-                    </path>
-                </svg>
-            </button>
         </div>
     </nav>
-    <div x-show="mobileMenuOpen" x-cloak class="md:hidden bg-gray-800 text-white">
-        <a href="/" class="block px-4 py-2 hover:bg-gray-700">Home</a>
-        <a href="/about" class="block px-4 py-2 hover:bg-gray-700">About</a>
-        <a href="/projects" class="block px-4 py-2 hover:bg-gray-700">Projects</a>
-        <a href="/blog" class="block px-4 py-2 hover:bg-gray-700">Blog</a>
-    </div>
     <div id="content" class="container mx-auto px-4 py-8 markdown-body fade-in">
         {{.Content}}
     </div>
-
     <script src="static/js/main.js"></script>
+    <script>
+        document.addEventListener('click', function (e) {
+            if (e.target.tagName === 'A' && e.target.href.startsWith(window.location.origin)) {
+                e.preventDefault();
+                document.getElementById('content').classList.remove('fade-in');
+                setTimeout(() => {
+                    fetch(e.target.href)
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const content = doc.getElementById('content').innerHTML;
+                            document.getElementById('content').innerHTML = content;
+                            document.getElementById('content').classList.add('fade-in');
+                            if (e.target.href.includes('/projects')) {
+                                document.getElementById('content').classList.add('projects');
+                            } else {
+                                document.getElementById('content').classList.remove('projects');
+                            }
+                            history.pushState(null, '', e.target.href);
+                        });
+                }, 250);
+            }
+        });
+    </script>
 </body>
 
 </html>
