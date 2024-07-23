@@ -25,6 +25,9 @@ func renderMarkdown(w http.ResponseWriter, content string) {
 
 	htmlContent := markdown.Render(doc, renderer)
 
+	// Preserve markdown syntax for headers and list items
+	preservedContent := preserveMarkdownSyntax(string(htmlContent))
+
 	tmpl, err := template.ParseFiles("templates/layout.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -34,12 +37,25 @@ func renderMarkdown(w http.ResponseWriter, content string) {
 	data := struct {
 		Content template.HTML
 	}{
-		Content: template.HTML(htmlContent),
+		Content: template.HTML(preservedContent),
 	}
 
 	tmpl.Execute(w, data)
 }
 
+func preserveMarkdownSyntax(content string) string {
+	// Preserve headers
+	for i := 6; i >= 1; i-- {
+		search := fmt.Sprintf("<h%d>", i)
+		replace := fmt.Sprintf("<h%d>%s ", i, strings.Repeat("#", i))
+		content = strings.ReplaceAll(content, search, replace)
+	}
+
+	// Preserve list items
+	content = strings.ReplaceAll(content, "<li>", "<li>- ")
+
+	return content
+}
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	content, err := os.ReadFile("content/home.md")
 	if err != nil {
@@ -79,7 +95,7 @@ func BlogHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var content strings.Builder
-		content.WriteString("# Blog Posts\n\n")
+		content.WriteString("# Latest:\n\n")
 		for _, file := range files {
 			if filepath.Ext(file.Name()) == ".md" {
 				name := strings.TrimSuffix(file.Name(), ".md")

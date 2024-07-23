@@ -8,84 +8,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
     <link rel="stylesheet" type="text/css" href="static/css/styles.css">
-    <style>
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-            }
-
-            100% {
-                opacity: 1;
-            }
-        }
-
-        .markdown-body h1,
-        .markdown-body h2,
-        .markdown-body h3,
-        .markdown-body h4,
-        .markdown-body h5,
-        .markdown-body h6 {
-            margin-top: 1.5em;
-            margin-bottom: 1em;
-        }
-
-        .markdown-body.projects h1,
-        .markdown-body.projects h2,
-        .markdown-body.projects h3,
-        .markdown-body.projects h4,
-        .markdown-body.projects h5,
-        .markdown-body.projects h6 {
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 0.3em;
-        }
-    </style>
 </head>
 
-<body class="bg-gray-500 text-white font-mono">
-    <nav class="bg-gray-500 text-white p-4 text-center">
-        <a href="/" class="text-xl font-bold">Chiso's Desk</a>
-        <div class="container mx-auto flex justify-evenly items-center">
-            <div class="flex space-x-4">
+<body class="bg-gray-900 text-white font-mono">
+    <div class="container mx-auto px-4 py-8">
+        <div class="terminal-header bg-gray-800 p-4 rounded-t-lg">
+            <span class="text-red-500">●</span>
+            <span class="text-yellow-500 ml-2">●</span>
+            <span class="text-green-500 ml-2">●</span>
+            <span class="ml-4">$ Chiso's Desk</span>
+        </div>
+        <nav class="bg-gray-800 text-white p-4">
+            <div class="container mx-auto flex justify-evenly items-center">
                 <a href="/" class="hover:bg-gray-700 px-3 py-2 rounded">Home</a>
                 <a href="/about" class="hover:bg-gray-700 px-3 py-2 rounded">About</a>
                 <a href="/projects" class="hover:bg-gray-700 px-3 py-2 rounded">Projects</a>
                 <a href="/blog" class="hover:bg-gray-700 px-3 py-2 rounded">Blog</a>
             </div>
+        </nav>
+        <div id="content" class="bg-gray-800 p-6 rounded-b-lg markdown-body fade-in">
+            {{.Content}}
         </div>
-    </nav>
-    <div id="content" class="container mx-auto px-4 py-8 markdown-body fade-in">
-        {{.Content}}
     </div>
     <script src="static/js/main.js"></script>
-    <script>
-        document.addEventListener('click', function (e) {
-            if (e.target.tagName === 'A' && e.target.href.startsWith(window.location.origin)) {
-                e.preventDefault();
-                document.getElementById('content').classList.remove('fade-in');
-                setTimeout(() => {
-                    fetch(e.target.href)
-                        .then(response => response.text())
-                        .then(html => {
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            const content = doc.getElementById('content').innerHTML;
-                            document.getElementById('content').innerHTML = content;
-                            document.getElementById('content').classList.add('fade-in');
-                            if (e.target.href.includes('/projects')) {
-                                document.getElementById('content').classList.add('projects');
-                            } else {
-                                document.getElementById('content').classList.remove('projects');
-                            }
-                            history.pushState(null, '', e.target.href);
-                        });
-                }, 250);
-            }
-        });
-    </script>
 </body>
 
 </html>

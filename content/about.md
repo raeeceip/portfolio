@@ -1,18 +1,18 @@
-# About Me
+> About Me
 
 I'm Chibogu Chisom, a Software Engineer with a passion for building scalable and efficient systems.
 
-## Skills
+> Skills
 
 - Programming Languages: Golang, Ruby, Javascript, Java,
 - Developer Operations: Jenkins, Github, Git, SVN, Circle CI, GCP, AWS
 - Backend Development: API Development, Microservices, Flask, FastAPI, Express
 
-## Education
+> Education
 
 - Bachelor of Computer Science, Carleton University (2021)
 
-## Professional Experience
+> Professional Experience
 
 - Fullscript: Development Experience Intern (05/2024 - present)
 - Hack The Hill: Vice President - Development (09/2023 - present)

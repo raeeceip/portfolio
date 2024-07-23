@@ -50,13 +50,3 @@ A web app designed to split large CSV files into smaller, more manageable file s
 
 ---
 
-> These projects showcase my skills in various programming languages and frameworks. Each one presented unique challenges that helped me grow as a developer.
-
-Here's a sample code snippet from one of my projects:
-
-```python
-def process_data(data):
-    # Some complex data processing
-    result = [item for item in data if item['value'] > threshold]
-    return result
-```
