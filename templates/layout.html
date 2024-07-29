@@ -7,18 +7,20 @@
     <title>Chiso's Desk</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
-    <link rel="stylesheet" type="text/css" href="static/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
 </head>
 
 <body class="bg-gray-900 text-white font-mono">
     <div class="container mx-auto px-4 py-8">
-        <div class="terminal-header bg-gray-800 p-4 rounded-t-lg">
-            <span class="text-red-500">●</span>
-            <span class="text-yellow-500 ml-2">●</span>
-            <span class="text-green-500 ml-2">●</span>
-            <span class="ml-4">$ Chiso's Desk</span>
-        </div>
-        <nav class="bg-gray-800 text-white p-4">
+        <pre class="text-center text-xs mb-4">
+ ______     __  __     __     ______     ______    
+/\  ___\   /\ \_\ \   /\ \   /\  ___\   /\  __ \   
+\ \ \____  \ \  __ \  \ \ \  \ \___  \  \ \ \/\ \  
+ \ \_____\  \ \_\ \_\  \ \_\  \/\_____\  \ \_____\ 
+  \/_____/   \/_/\/_/   \/_/   \/_____/   \/_____/ 
+        </pre>
+        <nav class="bg-gray-800 text-white p-4 rounded-lg">
             <div class="container mx-auto flex justify-evenly items-center">
                 <a href="/" class="hover:bg-gray-700 px-3 py-2 rounded">Home</a>
                 <a href="/about" class="hover:bg-gray-700 px-3 py-2 rounded">About</a>
@@ -26,11 +28,11 @@
                 <a href="/blog" class="hover:bg-gray-700 px-3 py-2 rounded">Blog</a>
             </div>
         </nav>
-        <div id="content" class="bg-gray-800 p-6 rounded-b-lg markdown-body fade-in">
+        <div id="content" class="markdown-body fade-in bg-gray-800 p-6 rounded-lg mt-4">
             {{.Content}}
         </div>
     </div>
-    <script src="static/js/main.js"></script>
+    <script src="/static/js/main.js"></script>
 </body>
 
 </html>

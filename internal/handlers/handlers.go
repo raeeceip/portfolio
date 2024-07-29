@@ -3,18 +3,18 @@ package handlers
 import (
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/gorilla/mux"
+	"github.com/labstack/echo/v4"
 )
 
-func renderMarkdown(w http.ResponseWriter, content string) {
+func renderMarkdown(c echo.Context, content string) error {
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs
 	p := parser.NewWithExtensions(extensions)
 	doc := p.Parse([]byte(content))
@@ -25,74 +25,43 @@ func renderMarkdown(w http.ResponseWriter, content string) {
 
 	htmlContent := markdown.Render(doc, renderer)
 
-	// Preserve markdown syntax for headers and list items
-	preservedContent := preserveMarkdownSyntax(string(htmlContent))
+	return c.Render(http.StatusOK, "layout.html", map[string]interface{}{
+		"Content": template.HTML(htmlContent),
+	})
+}
 
-	tmpl, err := template.ParseFiles("templates/layout.html")
+func HomeHandler(c echo.Context) error {
+	content, err := ioutil.ReadFile("content/home.md")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return c.String(http.StatusInternalServerError, "Error reading home file")
 	}
-
-	data := struct {
-		Content template.HTML
-	}{
-		Content: template.HTML(preservedContent),
-	}
-
-	tmpl.Execute(w, data)
+	return renderMarkdown(c, string(content))
 }
 
-func preserveMarkdownSyntax(content string) string {
-	// Preserve headers
-	for i := 6; i >= 1; i-- {
-		search := fmt.Sprintf("<h%d>", i)
-		replace := fmt.Sprintf("<h%d>%s ", i, strings.Repeat("#", i))
-		content = strings.ReplaceAll(content, search, replace)
-	}
-
-	// Preserve list items
-	content = strings.ReplaceAll(content, "<li>", "<li>- ")
-
-	return content
-}
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	content, err := os.ReadFile("content/home.md")
+func AboutHandler(c echo.Context) error {
+	content, err := ioutil.ReadFile("content/about.md")
 	if err != nil {
-		http.Error(w, "Error reading home file", http.StatusInternalServerError)
-		return
+		return c.String(http.StatusInternalServerError, "Error reading about file")
 	}
-	renderMarkdown(w, string(content))
+	return renderMarkdown(c, string(content))
 }
 
-func AboutHandler(w http.ResponseWriter, r *http.Request) {
-	content, err := os.ReadFile("content/about.md")
+func ProjectsHandler(c echo.Context) error {
+	content, err := ioutil.ReadFile("content/projects.md")
 	if err != nil {
-		http.Error(w, "Error reading about file", http.StatusInternalServerError)
-		return
+		return c.String(http.StatusInternalServerError, "Error reading projects file")
 	}
-	renderMarkdown(w, string(content))
+	return renderMarkdown(c, string(content))
 }
 
-func ProjectsHandler(w http.ResponseWriter, r *http.Request) {
-	content, err := os.ReadFile("content/projects.md")
-	if err != nil {
-		http.Error(w, "Error reading projects file", http.StatusInternalServerError)
-		return
-	}
-	renderMarkdown(w, string(content))
-}
-
-func BlogHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	path := vars["path"]
+func BlogHandler(c echo.Context) error {
+	path := c.Param("path")
 
 	if path == "" {
 		// List available blog posts
-		files, err := os.ReadDir("content/blog")
+		files, err := ioutil.ReadDir("content/blog")
 		if err != nil {
-			http.Error(w, "Error reading blog directory", http.StatusInternalServerError)
-			return
+			return c.String(http.StatusInternalServerError, "Error reading blog directory")
 		}
 		var content strings.Builder
 		content.WriteString("# Latest:\n\n")
@@ -102,18 +71,13 @@ func BlogHandler(w http.ResponseWriter, r *http.Request) {
 				content.WriteString(fmt.Sprintf("- [%s](/blog/%s)\n", name, name))
 			}
 		}
-		renderMarkdown(w, content.String())
+		return renderMarkdown(c, content.String())
 	} else {
 		// Render specific blog post
-		content, err := os.ReadFile(fmt.Sprintf("content/blog/%s.md", path))
+		content, err := ioutil.ReadFile(fmt.Sprintf("content/blog/%s.md", path))
 		if err != nil {
-			http.Error(w, "Blog post not found", http.StatusNotFound)
-			return
+			return c.String(http.StatusNotFound, "Blog post not found")
 		}
-		renderMarkdown(w, string(content))
+		return renderMarkdown(c, string(content))
 	}
-}
-
-func SSEHandler(w http.ResponseWriter, r *http.Request) {
-	// Implement SSE logic here
 }
