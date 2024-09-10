@@ -1,0 +1,99 @@
+[
+	{
+		"name": "R3vr",
+		"description": "A web based ",
+		"website_url": null,
+		"github_url": "https://github.com/aosasona/php-router",
+		"image": "phprouter.png",
+		"status": "active",
+		"tags": [
+			"php"
+		]
+	},
+	{
+		"name": "Warehaus",
+		"description": "A full-stack web application for sales tracking, inventory health visualization, and performance metrics.",
+		"website_url": null,
+		"github_url": null,
+		"image": "warehaus.png",
+		"status": "active",
+		"tags": [
+			"typescript",
+			"nodejs",
+			"aws",
+			"react",
+			"d3js",
+			"docker",
+			"nginx"
+		]
+	},
+	{
+		"name": "Cargo Tracker",
+		"description": "A remodeled Java EE application for tracking and monitoring cargo ships, optimized for Docker and higher JDK versions.",
+		"website_url": null,
+		"github_url": "https://github.com/raeeceip/cargo-tracker",
+		"image": "cargo-tracker.png",
+		"status": "wip",
+		"tags": [
+			"java",
+			"jakarta-ee",
+			"docker"
+		]
+	},
+	{
+		"name": "Personal Web Server Management",
+		"description": "A collection of tools and scripts for managing personal servers and deploying applications efficiently.",
+		"website_url": null,
+		"github_url": null,
+		"image": "server-management.png",
+		"status": "active",
+		"tags": [
+			"github-actions",
+			"shell-scripting",
+			"ci-cd",
+			"azure-devops",
+			"jenkins"
+		]
+	},
+	{
+		"name": "Eventful",
+		"description": "A comprehensive event management system for streamlining virtual and in-person event organization.",
+		"website_url": null,
+		"github_url": null,
+		"image": "eventful.png",
+		"status": "wip",
+		"tags": [
+			"golang",
+			"gin",
+			"docker",
+			"mysql",
+			"gorm"
+		]
+	},
+	{
+		"name": "Gramsleuth",
+		"description": "An OSINT tool for automated social media interactions using Python and Selenium.",
+		"website_url": null,
+		"github_url": "https://github.com/raeeceip/gramsleuth",
+		"image": "gramsleuth.png",
+		"status": "active",
+		"tags": [
+			"python",
+			"selenium",
+			"osint"
+		]
+	},
+	{
+		"name": "Naza",
+		"description": "A react native tool to help me learn my native language",
+		"website_url": null,
+		"github_url": "https://github.com/raeeceip/Naza",
+		"image": "gramsleuth.png",
+		"status": "active",
+		"tags": [
+			"python",
+			"selenium",
+			"osint"
+		]
+	}
+]

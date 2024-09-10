@@ -1,0 +1,24 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+type Project = CollectionEntry<"projects">["data"][number];
+
+export interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const url = (!!project.website_url ? project.website_url : project.github_url) ?? "";
+---
+
+<style>
+  a,
+  [data-icon] {
+    display: inline-block;
+  }
+</style>
+
+<div class="space-y-1">
+  <a href={url} class="text-primary-text-light dark:text-primary-text-dark text-lg font-medium no-underline">{project.name}</a>
+  <p class="text-sm text-primary-text-light/60 dark:text-primary-text-dark/60 leading-7 tracking-normal">{project.description}</p>
+</div>

@@ -1,0 +1,58 @@
+---
+import Layout from "@layouts/Layout.astro";
+import SiteHeader from "@components/layout/SiteHeader.astro";
+import ProjectPreviewListItem from "@components/items/ProjectPreviewListItem.astro";
+
+import { getCollection } from "astro:content";
+import H1 from "@components/mdx/H1.astro";
+import MinimalArticleListItem from "@components/items/MinimalArticleListItem.astro";
+
+const MAX_LATEST = 6;
+
+const posts = await getCollection("blog", ({ data }) => {
+  return import.meta.env.PROD ? data.draft !== true : true;
+});
+
+const publishedPosts = posts?.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())?.slice(0, MAX_LATEST);
+
+const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATEST);
+---
+
+<Layout title="chiso">
+  <main class="container">
+    <SiteHeader />
+
+    <section id="about-me">
+      <!-- prettier-ignore -->
+      <p>
+        Hello, my name is Chiso. I am a software developer based out of Ottawa, Canada. I like building cool stuff and figuring out many things, and I have many <a href="/tools">tools</a> I like to use to do so. I <a href="/blog">write</a> here from time to time and I also stream infrequently on <a href="https://twitch.tv/truly_ao">Youtube</a>.
+      </p>
+    </section>
+
+    <section class="mt-6" id="articles">
+      <H1>Latest posts</H1>
+
+      <div class="mt-5 space-y-5">
+        {publishedPosts.map((post) => <MinimalArticleListItem post={post} />)}
+      </div>
+
+      <div class="flex w-full justify-end mt-10">
+        <a href="/blog" class="text-sm">View all articles &rarr;</a>
+      </div>
+    </section>
+
+    <hr class="my-12" />
+
+    <section id="projects">
+      <H1>Featured projects</H1>
+
+      <div class="mt-5 space-y-5">
+        {projects.map((project) => <ProjectPreviewListItem project={project} />)}
+      </div>
+
+      <div class="flex w-full justify-end mt-10">
+        <a href="/projects" class="text-sm">View all projects &rarr;</a>
+      </div>
+    </section>
+  </main>
+</Layout>

@@ -1,0 +1,21 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+// TODO: update all this
+export interface Props {
+  isPreview?: boolean;
+  post: CollectionEntry<"blog">;
+}
+
+const {
+  post: { data, slug },
+} = Astro.props;
+---
+
+<div class="flex gap-2.5">
+  <time datetime={data.date.toISOString()} class="text-secondary-outline">
+    {new Date(data.date).toLocaleDateString("en-GB")}
+  </time>
+
+  <a href={"/posts/" + slug} class="post-title">{data.title}</a>
+</div>
