@@ -1,22 +1,20 @@
-# fly.toml app configuration file generated for chiso on 2024-02-21T22:44:17Z
+# fly.toml app configuration file generated for chiso on 2024-09-10T10:07:48-07:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = 'chiso'
-primary_region = 'lhr'
+primary_region = 'yyz'
 
 [build]
 
 [http_service]
-internal_port = 80
-force_https = true
-auto_stop_machines = true
-auto_start_machines = true
-min_machines_running = 0
-processes = ['app']
+  internal_port = 80
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
 
 [[vm]]
-memory = '256mb'
-cpu_kind = 'shared'
-cpus = 1
+  size = 'shared-cpu-1x'
