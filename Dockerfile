@@ -17,7 +17,7 @@ COPY public public
 
 RUN pnpm build
 
-FROM ghcr.io/aosasona/chimney:latest
+FROM ghcr.io/raeeceip/chimney:latest
 
 COPY --from=build /app/dist /var/www/html
 
