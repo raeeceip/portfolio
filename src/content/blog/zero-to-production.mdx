@@ -1,12 +1,21 @@
 ---
 title: Zero To Production
 date: 2024-09-10
-description: An argument about arguments...
+description: Getting Projects to Production...
 keywords: programming, coding, clean code, rant
 tags: ["rant", "programming"]
 draft: false
 ---
 
-I chose the entirety of this week tog et 5 appls from my repository to production, and I will document the progress here : the following are the apps
+I chose the entirety of this week to get 5 appls from my repository to production, and I will document the progress here : the following are the apps
 - R3vr, a go tool for viewing and interacting with websites via the terminal
 - Warehaus, an inventory management tool built with Next.js, AWS amplify, github actions,AWS RDS, APi gateways and vercel. 
+- Otto, an automatic load balancer built with go and qo5, that uses config files to distrubute server load across various ports 
+- My new portfolio websote at https://chiso.dev, built with astro,fly.io and the ghcr
+- Data-Buddy, my implementation of the maestro feature in the oicr desktop application, indexing large csv files and displaying them at a smaller scale using typescript and wails. 
+
+### How am i doing this?
+I will focus on the design for each deplpyment, and choices i made for each one. 
+- for the first one I started off by deciding with our notes I wanted it to be a package or I wanted it to actually be a CLI tool since I wanted retriever to SAI so I decided that the best way to have that would be to make it a package that you could install or just grab from the container registry so I chose to add a pipeline to push it to the get up container, registry, and release it as a package and in GitHub
+- for the second one warehouse I used a variety of AWS products from AWS amplifier to AWSEC to instances to AWS RDS postgres server to the API gateway also use the pockets to upload the images and finish it up so it could look nicer and don't describe this in another Blog post
+- third deployment for auto was done by githuh pages and my hetzner instance  
