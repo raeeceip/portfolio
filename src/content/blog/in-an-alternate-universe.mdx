@@ -1,24 +1,137 @@
 ---
-title:  In An alternate universe...
-date: 2024-08-10 
-description: In an alternate universe, I did it right.
-keywords: programming, Web services, Gin, API's, golang
-tags: [programming, deployment, production, Go, Next.js, TypeScript, GitHub Actions]
+title: "In An Alternate Universe: Reimagining a Web API Project"
+date: 2024-08-10
+description: "Reflecting on a transformative internship experience and envisioning an innovative approach to web service design."
+keywords: programming, Web services, Gin, API, golang, microservices
+tags: [programming, deployment, production, Go, microservices, DevOps, cloud-native]
 draft: false
 ---
 
-## In an alternate universe; I was hired as an intern, on a team of highly skilled developers from across different parts of computer science, from senior devops engineers to phd holding physicists who have contributed to amazing open source projects, and some who have gone throught the same struggles as I have, and made it out the other end and are living their lives. I had an endless source of knowledge, wisdom and resources and even though I used that to the best of my abilities, I still felt like it was never enough.
-## In an alternate universe, I was asked to build a project; a web API capable of authenthicating users ad generating certain necessities for them based on their access level. In another universe I did not complete this project, because I was taking too much time absorbing knowledge I should have also concurrently implementing in the design. In another universe I would not want this to be a simple web api  , I would rather It be a web service, and interact with a cli tool via a standard set of instructions and prerequisites, and generate necessary tokens for them. 
-> #Heres How:
+## A Transformative Internship Experience
 
-## Design:
-- The design I was given to implement was fairly simple, it included a Gin api, an okta login auth system and a redis cache, and a rudimentary system to interact with a cli tool to generate credetials for the user. It had been made simple enough, but its true complexity lay in how i would interact with the many tools it needed to generate things for, and how it would interact with the cli tool itself, which was cloud based. They had amazing infrastructuree however, from the dev setup to the deployment pipelines , to the log design to the application itself; a statement to the rigidity of monolithic applicatons. 
->  so what would you have done different?
-- I would redesign it as a web service, I would design the service to have the following structure;
-> [1] We had access to a verbose cloud system for interacting with, loggin d a monitoring user data, down to the build pipelines. for some reason we still ended up writing mocks for things like redis , , when we were aiming to interact with a cli tool that kept records in a personal cloud based redis database, and spent a significant time implementting the solution for that, along with its excruiating tests, which I shall mention later. 
-> [2] As a web service, we could structure the way we saved the data more clearly, by allowing parts of it to be modigied with reeal user access.We could have chunks of data only accessible through the  Service proxy, and then decide based on that how a user can access what and where. A simple service with a well written nginx proxy wuld suffice to get the first parts of the cli tool working with the service, so we could see a request from the clit tol proxied through the service to the actual api wee are interacting with, eithe kubernetes or opsgenie or gitlab or github tokens. We could do this concurrently, and even set up goroutines for the cli tool torefresh itself when necessary. 
-> [3] we would need to test differently; the curent setup tests the handlers of an api, with some well meaning unit tests, but services could test controllers, and determine how the cli tool itself evenwrites tests to interact with it. Access based control, the actula aim of the project could be tested with each pipeline run, and each cli tool test update. 
-> [4] easier deploys; we would have less to consider when relieving the cli tool of its current sdk burden of tools, we could slowly change them. by rewriting them to use the service as an accsss control layer, it would be easier to  maintain and separate the difference between the two
+In an alternate universe, I had the incredible opportunity to intern with a team of exceptional developers. This diverse group included senior DevOps engineers, PhD-holding physicists who've contributed to groundbreaking open-source projects, and seasoned professionals who've navigated the same challenges I face now. Their wealth of knowledge, wisdom, and resources was awe-inspiring, pushing me to constantly expand my skills and understanding.
 
-## Heres how i would do that :
-> In an alternate universe, i developed a "genie" it granted you access based on company leve, and can be upadted by hoasing and givincg acccess to company tools.
+## The Challenge: Reimagining a Web API
+
+During my internship, I was tasked with building a web API for user authentication and access-level-based credential generation. While the original design was solid, I saw an opportunity to elevate it into something more powerful and flexible: a comprehensive web service that could seamlessly interact with CLI tools and generate necessary tokens based on sophisticated access controls.
+
+## Embracing a Cloud-Native, Microservices Approach
+
+Reflecting on the project, I realized we could leverage our robust cloud infrastructure more effectively. Instead of a monolithic API, we could create a scalable, cloud-native web service. Here's how we could reimagine the project:
+
+### 1. Harnessing Cloud Resources
+
+Our company provides an impressive cloud ecosystem for logging, monitoring, and deployment. To fully utilize this, we could:
+
+- Replace mock Redis instances with cloud-based Redis databases, improving reliability and scalability.
+- Implement distributed tracing using tools like Jaeger or Zipkin for better observability.
+
+```go
+import (
+    "github.com/go-redis/redis/v8"
+    "go.opentelemetry.io/otel"
+)
+
+func setupRedis() *redis.Client {
+    return redis.NewClient(&redis.Options{
+        Addr: os.Getenv("REDIS_ADDR"),
+    })
+}
+
+func setupTracing() {
+    tp := initTracerProvider()
+    otel.SetTracerProvider(tp)
+}
+```
+
+### 2. Microservices Architecture
+
+By adopting a microservices architecture, we can create more modular, maintainable components:
+
+- Implement an API Gateway using NGINX or Traefik to route requests and handle authentication.
+- Develop separate microservices for user management, token generation, and CLI tool interaction.
+
+Here's a simple example of how our API Gateway could route requests:
+
+```nginx
+http {
+    upstream user-service {
+        server user-service:8080;
+    }
+    upstream token-service {
+        server token-service:8081;
+    }
+
+    server {
+        listen 80;
+        
+        location /api/users {
+            proxy_pass http://user-service;
+        }
+        
+        location /api/tokens {
+            proxy_pass http://token-service;
+        }
+    }
+}
+```
+
+### 3. Enhanced Testing Strategy
+
+Our new architecture allows for more comprehensive testing:
+
+- Implement integration tests that cover the entire request flow through our microservices.
+- Use contract testing to ensure compatibility between our services and the CLI tool.
+
+```go
+func TestTokenGeneration(t *testing.T) {
+    ctx := context.Background()
+    user := createTestUser(ctx)
+    token, err := generateToken(ctx, user)
+    assert.NoError(t, err)
+    assert.NotEmpty(t, token)
+    
+    // Verify token with CLI tool
+    cliResult := runCLIToolWithToken(token)
+    assert.True(t, cliResult.Success)
+}
+```
+
+### 4. Streamlined Deployments
+
+With our new microservices architecture, we can implement more flexible and reliable deployments:
+
+- Use Kubernetes for orchestration, allowing easy scaling and management of our services.
+- Implement a CI/CD pipeline using tools like GitLab CI or GitHub Actions for automated testing and deployment.
+
+Here's a sample Kubernetes deployment for one of our microservices:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: token-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: token-service
+  template:
+    metadata:
+      labels:
+        app: token-service
+    spec:
+      containers:
+      - name: token-service
+        image: our-registry/token-service:latest
+        ports:
+        - containerPort: 8081
+```
+
+## Conclusion: The Birth of "Genie"
+
+In this alternate universe, driven by the inspiration from my talented colleagues and the company's amazing infrastructure, I've developed "Genie" – a powerful, cloud-native web service that grants access based on sophisticated company-level permissions. Genie can be easily updated to provide access to various company tools, offering a flexible and secure solution for credential management.
+
+This reimagined approach not only solves the original problem more elegantly but also sets the stage for future scalability and feature additions. It's a testament to the power of continuous learning, innovative thinking, and leveraging cutting-edge technologies.
+
+As I reflect on this alternate reality, I'm filled with determination to bring these ideas into my current projects, always striving to build something better, more efficient, and more aligned with modern best practices in software development.
