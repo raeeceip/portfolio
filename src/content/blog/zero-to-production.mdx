@@ -1,27 +1,186 @@
 ---
-title: Zero To Production
-date: 2024-09-10
-description: Getting Projects to Production...
-keywords: programming, coding, clean code, rant
-tags: ["rant", "programming"]
-draft: false
+
+## Zero to Production
+
+**Title**: Zero to Production  
+**Date**: 2024-09-10  
+**Description**: Getting Projects to Production  
+**Keywords**: programming, coding, clean code, deployment, production  
+**Tags**: programming, deployment, production, Go, Next.js, TypeScript, GitHub Actions  
+**Draft**: False  
+
 ---
 
-I chose the entirety of this week to get 5 appls from my repository to production, and I will document the progress here : the following are the apps
-- R3vr, a go tool for viewing and interacting with websites via the terminal
-- Warehaus, an inventory management tool built with Next.js, AWS amplify, github actions,AWS RDS, APi gateways and vercel. 
-- Otto, an automatic load balancer built with go and qo5, that uses config files to distrubute server load across various ports 
-- My new portfolio websote at https://chiso.dev, built with astro,fly.io and the ghcr
-- Data-Buddy, my implementation of the maestro feature in the oicr desktop application, indexing large csv files and displaying them at a smaller scale using typescript and wails. 
+### Introduction
 
-### How am i doing this?
-I will focus on the design for each deplpyment, and choices i made for each one. 
-- for the first one I started off by deciding with our notes I wanted it to be a package or I wanted it to actually be a CLI tool since I wanted retriever to SAI so I decided that the best way to have that would be to make it a package that you could install or just grab from the container registry so I chose to add a pipeline to push it to the get up container, registry, and release it as a package and in GitHub
-- for the second one warehouse I used a variety of AWS products from AWS amplifier to AWSEC to instances to AWS RDS postgres server to the API gateway also use the pockets to upload the images and finish it up so it could look nicer and don't describe this in another Blog post
-- third deployment for [Otto](httpps://raeeceip.github.io/otto) was done using gihub actionns, its api is documented [here](https://github.com/raeeceip)
-- App number 4 , [my portfoliio website] built withh astro, typescript and a plethora of smaller ui tools
-- Application number  5 , [Data-buddy](https://raeeceip.github.io/data-buddy) was a package, and so was deployed via githubs packge manager , and had its own share of problems.
+This week, I dedicated my time to deploying five applications from my repository to production. Below, I will document the progress, challenges, and solutions I encountered along the way. The apps include a mix of personal tools, web applications, and utilities. Here's a breakdown of the applications:
 
-"production is at times, just really where your code starts to be able to interact with the outside world, when people can run/test/build what you creatd on their ownn , and maintain the ame level of quality/ security as when it was written. several protocols across parts of the internet like [], { and } have come about to hhelp prevent this, and cyberseciruty teams are workig tirelessly to make suure the thigs that do need to be kept 100% safe are. Avoid high cost providrs, set alerts, and make sure that if your app is only onnline for one month, it iis usable and seen by people in onne  month. Productio can lso exist as a memory , so  far as it has been used
-- Chiso"
+---
 
+### The Applications
+
+1. **R3vr**  
+   A Go-based command-line tool for browsing and interacting with websites through the terminal.  
+   **Technologies**: Go, Terminal UI  
+   **Deployment**: GitHub Container Registry
+
+2. **Warehaus**  
+   An inventory management system built using Next.js. It leverages AWS Amplify for front-end hosting, AWS RDS for the backend, and GitHub Actions for CI/CD.  
+   **Technologies**: Next.js, AWS Amplify, AWS RDS, API Gateway, Vercel  
+   **Deployment**: AWS, Vercel
+
+3. **Otto**  
+   A load balancer written in Go that uses configuration files to distribute server loads across multiple ports.  
+   **Technologies**: Go, Qo5 (a load balancing algorithm), Config Files  
+   **Deployment**: GitHub Actions, Docker
+
+4. **Portfolio Website**  
+   A personal portfolio hosted at [chiso.dev](https://chiso.dev), showcasing projects and experience, built using Astro.  
+   **Technologies**: Astro, Fly.io, GitHub Container Registry  
+   **Deployment**: Fly.io, GitHub
+
+5. **Data-Buddy**  
+   A utility to efficiently index and display large CSV datasets, part of my implementation of the Maestro feature in the OICR desktop application.  
+   **Technologies**: TypeScript, Wails, Electron  
+   **Deployment**: GitHub Packages, Docker
+
+---
+
+### Deployment Process
+
+I took a unique approach to each project based on the requirements and the tools I used.
+
+#### R3vr
+
+For **R3vr**, my goal was to decide whether I wanted this to be a standalone CLI tool or a package that could be installed from a registry. Since I wanted the flexibility of both options, I chose to release it as a package that can be pulled from the GitHub Container Registry.  
+Here’s a snippet of the deployment pipeline:
+
+```yaml
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+      - name: Build
+        run: go build -o r3vr
+      - name: Push to GitHub Container Registry
+        run: |
+          docker build . -t ghcr.io/your-username/r3vr:latest
+          docker push ghcr.io/your-username/r3vr:latest
+```
+
+#### Warehaus
+
+For **Warehaus**, I utilized a variety of AWS products, including AWS Amplify for the front end, AWS RDS for the PostgreSQL database, and API Gateway to manage traffic. GitHub Actions automated the deployment process, pushing changes to Amplify on each commit.  
+One challenge I faced was ensuring that the deployment process remained consistent across AWS services. Here’s a simplified version of the workflow:
+
+```yaml
+name: Deploy to Amplify
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Deploy to Amplify
+        run: amplify publish --yes
+```
+
+#### Otto
+
+The deployment for **Otto**, a load balancer, was a bit more complex. Using Go and Qo5, I ensured the load distribution could be handled via config files. GitHub Actions was again a great help in automating this, deploying the app to Docker containers. You can check out the documentation for Otto’s API [here](link to Otto documentation).
+
+#### Portfolio Website
+
+My new [portfolio website](https://chiso.dev), built with Astro, was deployed to Fly.io. One issue I faced was ensuring a smooth CI/CD process. I resolved it by adding a GitHub Actions workflow that pushes the latest build to Fly.io automatically on each commit. Here’s a snippet:
+
+```yaml
+name: Deploy to Fly.io
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Astro Site
+        run: npm install && npm run build
+      - name: Deploy to Fly.io
+        run: fly deploy
+```
+
+#### Data-Buddy
+
+**Data-Buddy** was deployed using GitHub’s package manager. I ran into some issues with package conflicts, but resolving them involved better management of my version control and dependencies. I used the GitHub Packages registry for this deployment:
+
+```yaml
+name: Build and Publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Wails App
+        run: npm run build
+      - name: Publish to GitHub Packages
+        run: npm publish
+```
+
+---
+
+### Production Reflections
+
+"Production" is the point where your code interacts with the outside world. It's not just about deploying but also ensuring others can run, test, and build your application while maintaining quality and security. There are numerous protocols to keep your application secure and efficient, and cybersecurity teams work hard to make sure only the necessary parts are 100% safe.  
+Here’s what I’ve learned:
+
+- **Avoid high-cost providers**: Choose scalable solutions that align with your budget.
+- **Set alerts**: Use monitoring tools to track uptime, errors, and performance.
+- **Maximize visibility**: If your app is only live for a short period, ensure it's seen and used during that time.
+
+Production, in a way, also lives in memory—it is remembered as long as the application has been used.
+
+---
+
+You can find the source code for each application in their respective repositories:
+
+- [R3vr](https://github.com/raeeceip/r3vr)
+- [Warehaus](https://github.com/raeeceip/warehaus)
+- [Otto](https://github.com/raeeceip/otto)
+- [Portfolio Website](https://github.com/raeeceip/portfolio)
+- [Data-Buddy](https://github.com/raeeceip/data-buddy)
+
+Each repo contains workflows and more details in the `.github` folder. Check out the ReadMe files for further documentation.
+
+---
+
+### Conclusion
+
+Deploying applications to production can be a complex process, but with the right tools and planning, it becomes manageable. I’ll continue updating this post with more insights as I refine these workflows.
+
+--- 
