@@ -1,0 +1,24 @@
+---
+title:  In An alternate universe...
+date: 2024-08-10 
+description: In an alternate universe, I did it right.
+keywords: programming, Web services, Gin, API's, golang
+tags: programming, deployment, production, Go, Next.js, TypeScript, GitHub Actions
+draft: false
+---
+
+## In an alternate universe; I was hired as an intern, on a team of highly skilled developers from across different parts of computer science, from senior devops engineers to phd holding physicists who have contributed to amazing open source projects, and some who have gone throught the same struggles as I have, and made it out the other end and are living their lives. I had an endless source of knowledge, wisdom and resources and even though I used that to the best of my abilities, I still felt like it was never enough.
+## In an alternate universe, I was asked to build a project; a web API capable of authenthicating users ad generating certain necessities for them based on their access level. In another universe I did not complete this project, because I was taking too much time absorbing knowledge I should have also concurrently implementing in the design. In another universe I would not want this to be a simple web api  , I would rather It be a web service, and interact with a cli tool via a standard set of instructions and prerequisites, and generate necessary tokens for them. 
+> #Heres How:
+
+## Design:
+- The design I was given to implement was fairly simple, it included a Gin api, an okta login auth system and a redis cache, and a rudimentary system to interact with a cli tool to generate credetials for the user. It had been made simple enough, but its true complexity lay in how i would interact with the many tools it needed to generate things for, and how it would interact with the cli tool itself, which was cloud based. They had amazing infrastructuree however, from the dev setup to the deployment pipelines , to the log design to the application itself; a statement to the rigidity of monolithic applicatons. 
+>  so what would you have done different?
+- I would redesign it as a web service, I would design the service to have the following structure;
+> [1] We had access to a verbose cloud system for interacting with, loggin d a monitoring user data, down to the build pipelines. for some reason we still ended up writing mocks for things like redis , , when we were aiming to interact with a cli tool that kept records in a personal cloud based redis database, and spent a significant time implementting the solution for that, along with its excruiating tests, which I shall mention later. 
+> [2] As a web service, we could structure the way we saved the data more clearly, by allowing parts of it to be modigied with reeal user access.We could have chunks of data only accessible through the  Service proxy, and then decide based on that how a user can access what and where. A simple service with a well written nginx proxy wuld suffice to get the first parts of the cli tool working with the service, so we could see a request from the clit tol proxied through the service to the actual api wee are interacting with, eithe kubernetes or opsgenie or gitlab or github tokens. We could do this concurrently, and even set up goroutines for the cli tool torefresh itself when necessary. 
+> [3] we would need to test differently; the curent setup tests the handlers of an api, with some well meaning unit tests, but services could test controllers, and determine how the cli tool itself evenwrites tests to interact with it. Access based control, the actula aim of the project could be tested with each pipeline run, and each cli tool test update. 
+> [4] easier deploys; we would have less to consider when relieving the cli tool of its current sdk burden of tools, we could slowly change them. by rewriting them to use the service as an accsss control layer, it would be easier to  maintain and separate the difference between the two
+
+## Heres how i would do that :
+> In an alternate universe, i developed a "genie" it granted you access based on company leve, and can be upadted by hoasing and givincg acccess to company tools.
