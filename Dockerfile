@@ -6,7 +6,7 @@ COPY package.json pnpm-lock.yaml ./
 
 COPY *.{mjs,cjs,json} ./
 
-RUN npm install -g pnpm@8.15.1 && pnpm install --frozen-lockfile
+RUN npm install -g pnpm@8.15.1 && pnpm install --force
 
 COPY astro.config.mjs tsconfig.json tailwind.config.cjs ./
 
@@ -25,4 +25,5 @@ COPY chimney.toml /etc/chimney/chimney.toml
 EXPOSE 80
 
 CMD ["run"]
+
 
