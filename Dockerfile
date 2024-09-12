@@ -17,7 +17,7 @@ COPY public public
 
 RUN pnpm build
 
-FROM ghcr.io/raeeceip/portfolio:master
+FROM ghcr.io/raeeceip/portfolio
 
 COPY --from=build /app/dist /var/www/html
 
