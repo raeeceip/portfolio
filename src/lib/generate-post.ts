@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as readline from 'readline';
 
 interface BlogPostMetadata {
   title: string;
@@ -43,7 +44,7 @@ image: "${metadata.imagePath}"
 }
 
 function saveBlogTemplate(template: string, fileName: string): void {
-  const filePath = path.join(__dirname, 'content', 'blog', `${fileName}.mdx`);
+  const filePath = path.join(process.cwd(), 'content', 'blog', `${fileName}.mdx`);
   
   fs.writeFile(filePath, template, (err) => {
     if (err) {
@@ -58,21 +59,36 @@ function slugify(title: string): string {
   return title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 }
 
-// Command-line usage
-if (require.main === module) {
-  const args = process.argv.slice(2);
-  if (args.length >= 5) {
+async function promptUser(rl: readline.Interface, question: string): Promise<string> {
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      resolve(answer.trim());
+    });
+  });
+}
+
+async function main() {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  try {
     const metadata: BlogPostMetadata = {
-      title: args[0],
-      description: args[1],
-      keywords: args[2].split(','),
-      tags: args[3].split(','),
-      imagePath: args[4]
+      title: await promptUser(rl, "Enter the blog post title: "),
+      description: await promptUser(rl, "Enter a brief description: "),
+      keywords: (await promptUser(rl, "Enter keywords (comma-separated): ")).split(',').map(k => k.trim()),
+      tags: (await promptUser(rl, "Enter tags (comma-separated): ")).split(',').map(t => t.trim()),
+      imagePath: await promptUser(rl, "Enter the image path: ")
     };
+
     const blogTemplate = generateBlogTemplate(metadata);
     saveBlogTemplate(blogTemplate, slugify(metadata.title));
-  } else {
-    console.log("Usage: ts-node blog-template-generator.ts <title> <description> <keywords> <tags> <imagePath>");
-    console.log("Example: ts-node blog-template-generator.ts \"My New Post\" \"A great post about coding\" \"javascript,nodejs\" \"coding,tutorial\" \"/images/coding.png\"");
+  } catch (error) {
+    console.error("An error occurred:", error);
+  } finally {
+    rl.close();
   }
 }
+
+main();
