@@ -1,0 +1,102 @@
+---
+title: "Next.js SSR: The Hidden Costs of Vercel-Centric Design"
+date: 2024-09-12
+description: No you aren't being gaslit, it is kinda bad...
+keywords: nextjs, ssr, vercel, node.js, web development, performance optimization
+tags: ["nextjs", "ssr", "web development", "performance"]
+draft: false
+image : "/images/next-ssr.jpg"
+---
+
+# The Next.js SSR Conundrum
+
+Next.js has become a popular choice for React-based web applications, particularly due to its server-side rendering (SSR) capabilities. However, when deploying Next.js applications with SSR outside of Vercel's ecosystem, developers often encounter unexpected challenges. Let's dive into why this happens and explore some mitigation strategies.
+
+## The Root of the Problem
+
+Node.js, the runtime that powers Next.js on the server, is fundamentally designed with a single-threaded event loop. This architecture excels at handling numerous lightweight, asynchronous operations - think of a typical Express.js server fielding multiple quick requests.
+
+Next.js, however, leverages this runtime in a way that can be problematic:
+
+1. **Large TSX File Generation**: Next.js generates substantial TSX files server-side for each request.
+2. **Vercel-Optimized Approach**: This approach is fine-tuned for Vercel's infrastructure, which is specifically designed to handle these workloads efficiently.
+3. **Generic Server Struggles**: On a typical server setup, repeatedly generating these large TSX files can become computationally expensive.
+
+The result? As your pages grow more complex, your server's performance can degrade significantly.
+
+## Performance Impact Analysis
+
+To illustrate the performance difference, let's consider a hypothetical comparison of response times for pages with increasing complexity:
+
+- For a page with low complexity (score: 10), Vercel might respond in 50ms, while a generic server takes 60ms.
+- As complexity increases to medium (score: 30), Vercel's response time grows to 70ms, but the generic server jumps to 110ms.
+- At high complexity (score: 50), Vercel manages 90ms, while the generic server lags significantly at 200ms.
+
+This comparison shows that as page complexity increases, the performance gap between Vercel's optimized infrastructure and a generic server widens considerably. The generic server's performance degrades much more rapidly, potentially leading to poor user experience for complex applications.
+
+## Mitigation Strategies
+
+While these issues stem from Next.js's design choices, there are ways to mitigate the impact:
+
+1. **Incremental Static Regeneration (ISR)**: Utilize ISR for pages that don't need real-time data. This reduces the SSR load.
+
+   ```jsx
+   export async function getStaticProps() {
+     // ...fetch data
+     return {
+       props: { /* ... */ },
+       revalidate: 60, // Regenerate page every 60 seconds
+     }
+   }
+   ```
+
+2. **API Route Caching**: Implement caching for API routes to reduce computation on each request.
+
+   ```jsx
+   import { withApiCache } from 'next-api-cache'
+   
+   async function handler(req, res) {
+     // ...your logic here
+   }
+   
+   export default withApiCache(handler, { ttl: 60 })
+   ```
+
+3. **Server-Side Caching**: Implement server-side caching solutions like Redis to store rendered content.
+
+4. **Code Splitting**: Aggressively split your code to reduce the size of server-side rendered content.
+
+   ```jsx
+   import dynamic from 'next/dynamic'
+   
+   const HeavyComponent = dynamic(() => import('../components/HeavyComponent'))
+   ```
+
+5. **Optimize Data Fetching**: Use efficient data fetching patterns to reduce server load.
+
+   ```jsx
+   import useSWR from 'swr'
+   
+   function Profile() {
+     const { data, error } = useSWR('/api/user', fetcher)
+     // ...
+   }
+   ```
+
+## The Broader Issue
+
+While these strategies can help, they're essentially workarounds for a fundamental design choice in Next.js. The fact that developers need to implement these optimizations highlights a broader issue: Next.js's approach is optimized for Vercel's infrastructure, potentially at the cost of performance on other platforms.
+
+This Vercel-centric design raises questions about the long-term implications for developers who need or prefer to use alternative hosting solutions. It also underscores the importance of considering deployment flexibility when choosing a framework for your project.
+
+## Conclusion
+
+Next.js remains a powerful tool for building React applications, but its SSR implementation presents challenges when deployed outside of Vercel. By understanding these limitations and implementing appropriate optimizations, developers can still leverage Next.js effectively across various hosting environments.
+
+However, it's crucial to consider whether the additional complexity and potential performance trade-offs align with your project's needs. As the web development landscape evolves, we may see more framework options that offer SSR capabilities without tying developers to specific hosting platforms.
+
+What's your experience with Next.js SSR on non-Vercel platforms? Have you found other effective strategies for optimizing performance? Share your thoughts and experiences in the comments below!
+
+---
+
+For more insights on web development and performance optimization, follow me on [Twitter](https://twitter.com/_Chisomu) or check out my other articles on this blog.
