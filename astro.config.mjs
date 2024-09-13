@@ -15,7 +15,4 @@ export default defineConfig({
     syntaxHighlight: "prism",
     rehypePlugins: [[externalize, { domain: "chiso.dev" }]],
   },
-  redirects: {
-    "/live": { status: 302, destination: "https://twitch.tv/truly_ao" },
-  },
 });
