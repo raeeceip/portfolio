@@ -8,7 +8,7 @@ COPY *.{mjs,cjs,json} ./
 
 RUN npm install -g pnpm@8.15.1 && pnpm install --force
 
-COPY astro.config.mjs tsconfig.json tailwind.config.cjs ./
+COPY astro.config.js tsconfig.json tailwind.config.cjs ./
 
 COPY src src
 
