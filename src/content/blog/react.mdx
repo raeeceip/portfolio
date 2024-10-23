@@ -1,0 +1,134 @@
+---
+title: "It's Not Your Fault You Don't Know React"
+date: 2024-10-23
+keywords: react, programming
+tags: ["stack", "tools", "programming language"]
+description: "Breaking down why React seems harder than it needs to be, and how it connects to programming basics you already know"
+draft: false
+---
+
+# It's Not Your Fault You Don't Know React
+
+Modern web development can feel like trying to build a house while everyone insists you use their favorite brand of power tools - without first teaching you about foundations, walls, or basic architecture. The React ecosystem, in particular, has become a maze of abstractions that often obscure what's really happening on your computer.
+
+## The Abstraction Problem
+
+React's abstractions aren't inherently bad - they're designed to make our lives easier. But when we learn React without understanding what it's abstracting away, we end up with knowledge gaps that haunt us later. Let's break down some common pain points:
+
+### Hooks: They're Just Closures and Caching
+
+Remember learning about closures in your first programming course? That's essentially what `useState` and `useEffect` are. When you write:
+
+```javascript
+const [count, setCount] = useState(0);
+```
+
+You're really just creating a closure that:
+
+1. Maintains a reference to a value
+2. Provides a controlled way to update that value
+3. Triggers a refresh when the value changes
+
+It's similar to this pure JavaScript concept:
+
+```javascript
+function createState(initialValue) {
+  let value = initialValue;
+  return [
+    () => value,
+    (newValue) => {
+      value = newValue;
+      // Imagine this triggers a refresh
+    },
+  ];
+}
+```
+
+### useEffect: It's Just a Lifecycle Manager
+
+Remember event listeners and cleanup functions? `useEffect` is just managing when things should happen in your component's lifecycle. It's not magic - it's basically:
+
+```javascript
+// Conceptually similar to:
+class Component {
+  constructor() {
+    this.setupSomething();
+  }
+
+  componentWillUnmount() {
+    this.cleanupSomething();
+  }
+}
+```
+
+## The Server-Client Disconnect
+
+One of the biggest sources of confusion is how little we talk about the client-server relationship. React tutorials often focus entirely on client-side state management without explaining:
+
+1. What data actually lives on your server
+2. When and why we make API calls
+3. How data flows from server to client and back
+
+This is why developers end up with components that:
+
+- Store data that should live on the server
+- Make redundant API calls
+- Implement complex state management for data that could be server-side rendered
+
+## The Boilerplate Trap
+
+The proliferation of React boilerplates and starter templates is a symptom of this knowledge gap. They promise to solve our problems with:
+
+- Pre-configured build systems
+- State management solutions
+- Routing setups
+- API integrations
+
+But they often:
+
+1. Include unnecessary dependencies
+2. Implement overly complex patterns
+3. Hide important implementation details
+4. Make simple tasks harder to understand
+
+## Core Concepts You Already Know
+
+Here's the good news: if you understand these fundamental programming concepts, you already understand React's core principles:
+
+1. **Functions and Scope**
+
+   - Components are just functions
+   - Props are just function parameters
+   - Hooks use closure scope
+
+2. **Caching and Memoization**
+
+   - `useMemo` is just caching a computed value
+   - `useCallback` is just caching a function reference
+   - React's virtual DOM is just a cache of UI state
+
+3. **Event-Driven Programming**
+
+   - React's render cycle is just an event system
+   - Component updates are just event handlers
+   - Props are just event payloads
+
+4. **State Machines**
+   - Component lifecycle is a state machine
+   - Route changes are state transitions
+   - Form handling is state management
+
+## Moving Forward
+
+Instead of reaching for complex solutions, start with:
+
+1. Understanding the client-server relationship
+2. Learning basic JavaScript patterns
+3. Building simple components from scratch
+4. Adding complexity only when needed
+
+Remember: React is just a tool for building user interfaces. The fundamentals of programming haven't changed - they're just wearing new clothes.
+
+Your confusion isn't a reflection of your abilities. It's a reflection of how we teach React: focusing on solutions before understanding problems, and reaching for complexity before mastering simplicity.
+
+Understanding React doesn't require learning a new way to program. It requires connecting what you already know about programming to a new context. Start there, and the rest will follow.
