@@ -1,0 +1,103 @@
+
+
+---
+title: "Breaking Rails: When Small Changes Have Big Impacts"
+author: "Chiso"
+date: "2024-11-03"
+description: "Exploring how minor modifications to Rails conventions can lead to unexpected but powerful architectural shifts, through the lens of an Astro integration experiment."
+tags: ["Rails", "Astro", "Web Development", "Architecture"]
+draft: true 
+---
+
+# Breaking Rails: When Small Changes Have Big Impacts
+
+Rails is often praised for its "convention over configuration" philosophy, but what happens when we intentionally break those conventions? Recently, while building a study space finder application, I discovered how a small change to Rails' view handling could cascade into a completely different architectural pattern.
+
+## The Experiment: Astro as a View Layer
+
+The project started with a simple idea: replace Rails' traditional ERB templates with Astro's component-based view layer. Astro's partial hydration and excellent performance characteristics made it an attractive choice for our frontend needs. However, this meant breaking one of Rails' core conventions - its tightly coupled view system.
+
+## The Small Change That Changed Everything
+
+The initial implementation seemed straightforward. We created an Astro concern in Rails:
+
+```ruby
+module Astro
+  extend ActiveSupport::Concern
+
+  included do
+    around_action :handle_astro_response
+  end
+
+  private
+
+  def handle_astro_response
+    request.format = :json if request.headers['X-Requested-With'] == 'XMLHttpRequest'
+    yield
+    if response.body.blank? && request.format.json?
+      props = instance_variables.select { |v| 
+        !v.to_s.start_with?('@_') && 
+        v.to_s != '@rendered_format' && 
+        v.to_s != '@marked_for_same_origin_verification' 
+      }
+      props_hash = props.map { |v| [v.to_s[1..-1], instance_variable_get(v)] }.to_h
+      response.headers['X-Astro-View'] = "#{controller_name}/#{action_name}"
+      render json: props_hash
+    end
+  end
+end
+```
+
+This seemingly innocent change had far-reaching implications. Instead of rendering views directly, our Rails controllers began returning JSON responses with an `X-Astro-View` header, effectively transforming our monolithic Rails application into something closer to an API server.
+
+## The Unexpected Architecture
+
+What started as a simple view layer replacement evolved into an entirely different architectural pattern:
+
+1. **Rails as an API**: Controllers naturally evolved to focus purely on data preparation and business logic.
+2. **Decoupled Frontend**: Astro became more than just a view layer - it became a full frontend application.
+3. **Clean Separation**: The boundary between frontend and backend became more distinct and maintainable.
+
+Here's how a typical request now flows through our system:
+
+1. Request hits Astro server (port 4321)
+2. Astro's [...app].ts forwards request to Rails (port 3000)
+3. Rails controller processes request and returns JSON with view path
+4. Astro renders the appropriate template with the provided data
+
+## The Benefits We Didn't See Coming
+
+This architectural shift brought several unexpected advantages:
+
+1. **Better Type Safety**: With Rails returning structured JSON, we could implement proper TypeScript interfaces for our data.
+2. **Improved Testing**: Backend tests became focused on data structure and business logic, while frontend tests handled presentation.
+3. **Enhanced Performance**: Astro's partial hydration meant we could optimize client-side JavaScript usage.
+4. **Easier Frontend Iterations**: The decoupled architecture made it simpler to experiment with frontend changes.
+
+## The Cost of Breaking Convention
+
+However, breaking Rails conventions wasn't without its challenges:
+
+1. **Setup Complexity**: Managing two servers in development required additional configuration.
+2. **Learning Curve**: Team members needed to understand both Rails and Astro patterns.
+3. **Documentation**: Standard Rails documentation became less relevant as we diverged from conventions.
+
+## Lessons Learned
+
+This experiment taught us several valuable lessons about breaking framework conventions:
+
+1. **Small Changes, Big Impact**: Even minor modifications to framework conventions can lead to significant architectural shifts.
+2. **Embrace the Consequences**: Sometimes the unexpected results of breaking conventions can lead to better solutions.
+3. **Keep an Open Mind**: What starts as a simple view layer replacement might evolve into a more robust architecture.
+
+## Conclusion
+
+Breaking Rails conventions isn't always bad - sometimes it's exactly what your project needs. Our small experiment with Astro led to a more maintainable and performant application architecture. While it's important to understand and respect framework conventions, don't be afraid to break them when there's a clear benefit.
+
+The next time you're considering breaking a framework convention, remember that small changes can cascade into significant improvements. Just be prepared for the journey to take you somewhere unexpected.
+
+## Resources
+
+- [Astro Documentation](https://docs.astro.build)
+- [Rails API Documentation](https://api.rubyonrails.org)
+- [Full Project Example](https://github.com/yourusername/rails-astro-example)
