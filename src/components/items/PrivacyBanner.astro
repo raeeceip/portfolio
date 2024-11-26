@@ -1,5 +1,8 @@
 ---
 // PrivacyBanner.astro
+interface Props {
+  class?: string;
+}
 
 const script = `
   const banner = document.getElementById('privacy-banner');
@@ -29,7 +32,6 @@ const script = `
       <a href="/privacy" class="underline hover:text-gray-900">
         Privacy Policy
       </a>
-      .
     </p>
     <div class="flex items-center gap-4">
       <button
@@ -40,25 +42,22 @@ const script = `
       </button>
       <button
         id="close-privacy"
-        class="text-gray-500 hover:text-gray-700 transition-colors p-2"
+        class="text-gray-500 hover:text-gray-700 transition-colors p-2 rounded-md"
         aria-label="Close"
       >
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="20" 
-          height="20" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          stroke-width="2" 
-          stroke-linecap="round" 
-          stroke-linejoin="round"
+        <span class="sr-only">Close</span>
+        <!-- Heroicon x-mark -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
           class="w-5 h-5"
+          aria-hidden="true"
         >
-          <path d="M18 6L6 18"></path>
-          <path d="M6 6l12 12"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
-        Close
       </button>
     </div>
   </div>
