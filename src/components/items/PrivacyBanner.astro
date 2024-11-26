@@ -1,0 +1,67 @@
+---
+// PrivacyBanner.astro
+
+const script = `
+  const banner = document.getElementById('privacy-banner');
+  const acceptButton = document.getElementById('accept-privacy');
+  const closeButton = document.getElementById('close-privacy');
+
+  // Check if user has already accepted
+  if (!localStorage.getItem('privacy-consent')) {
+    banner.classList.remove('hidden');
+  }
+
+  acceptButton?.addEventListener('click', () => {
+    localStorage.setItem('privacy-consent', 'true');
+    banner.classList.add('hidden');
+  });
+
+  closeButton?.addEventListener('click', () => {
+    banner.classList.add('hidden');
+  });
+`;
+---
+
+<div id="privacy-banner" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg hidden">
+  <div class="container mx-auto max-w-4xl flex items-center justify-between gap-4">
+    <p class="text-sm text-gray-600">
+      We use cookies and similar technologies to help personalize content, analyze traffic, and provide a better experience. By clicking "Accept," you consent to our use of cookies. Read our
+      <a href="/privacy" class="underline hover:text-gray-900">
+        Privacy Policy
+      </a>
+      .
+    </p>
+    <div class="flex items-center gap-4">
+      <button
+        id="accept-privacy"
+        class="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800 transition-colors"
+      >
+        Accept
+      </button>
+      <button
+        id="close-privacy"
+        class="text-gray-500 hover:text-gray-700 transition-colors p-2"
+        aria-label="Close"
+      >
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="20" 
+          height="20" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"
+          class="w-5 h-5"
+        >
+          <path d="M18 6L6 18"></path>
+          <path d="M6 6l12 12"></path>
+        </svg>
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<script set:html={script} />
