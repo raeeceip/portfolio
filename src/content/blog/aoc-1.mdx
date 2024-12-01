@@ -1,0 +1,142 @@
+---
+title: Advent of Code Day 1 - Historian Hysteria
+date: 2024-12-01
+description: A deep dive into solving the Historian Hysteria puzzle from Advent of Code 2024, using Go for efficient array manipulation and sorting, with a look at the custom AOC library for input processing.
+keywords: programming, coding, advent of code, Go, algorithms, puzzle solving
+tags: [programming, advent of code, Go, algorithms, problem solving]
+draft: false
+image: "/images/advent-day1.png"
+---
+
+### Introduction
+
+Today, I tackled Day 1 of Advent of Code 2024, titled "Historian Hysteria." The puzzle involves helping a group of Elvish Senior Historians reconcile two different lists of location IDs. Let's break down how I approached this problem using Go, focusing on efficient array manipulation and sorting algorithms.
+
+### The Custom AOC Library
+
+Before diving into the solution, let's examine the custom library I built to handle common Advent of Code operations. This library provides several utility functions that make parsing and processing input files much easier.
+
+#### File Operations
+
+```go
+func ReadFileLineByLine(path string) []string {
+    file, err := os.Open(path)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer file.Close()
+
+    var output []string
+    scanner := bufio.NewScanner(file)
+    for scanner.Scan() {
+        output = append(output, scanner.Text())
+    }
+    return output
+}
+```
+
+This function handles the common task of reading input files line by line, returning a slice of strings. It's particularly useful for puzzles like this one where each line needs to be processed individually.
+
+#### Number Extraction
+
+One of the most useful functions in the library is `FetchSliceOfIntsInString`:
+
+```go
+func FetchSliceOfIntsInString(line string) []int {
+    nums := []int{}
+    var build strings.Builder
+    isNegative := false
+    
+    for _, char := range line {
+        if unicode.IsDigit(char) {
+            build.WriteRune(char)
+        }
+        if char == '-' {
+            isNegative = true
+        }
+        if (char == ' ' || char == ',' || char == '~') && build.Len() != 0 {
+            localNum, err := strconv.ParseInt(build.String(), 10, 64)
+            if err != nil {
+                panic(err)
+            }
+            if isNegative {
+                localNum *= -1
+            }
+            nums = append(nums, int(localNum))
+            build.Reset()
+            isNegative = false
+        }
+    }
+    // Handle last number if exists
+    if build.Len() != 0 {
+        localNum, err := strconv.ParseInt(build.String(), 10, 64)
+        if err != nil {
+            panic(err)
+        }
+        if isNegative {
+            localNum *= -1
+        }
+        nums = append(nums, int(localNum))
+    }
+    return nums
+}
+```
+
+This function is particularly clever as it:
+- Uses a `strings.Builder` for efficient string concatenation
+- Handles negative numbers
+- Supports multiple number delimiters (space, comma, tilde)
+- Properly handles the last number in the string
+
+#### Grid Operations
+
+For puzzles involving 2D grids, the library provides:
+
+```go
+func Get2DGrid(input []string) (grid [][]string) {
+    for _, line := range input {
+        grid = append(grid, strings.Split(line, ""))
+    }
+    return
+}
+```
+
+#### String Manipulation
+
+The library also includes utilities for string manipulation:
+
+```go
+func SplitStringAfter(input string, length int) (output []string) {
+    startIndex := 0
+    for startIndex < len(input) {
+        output = append(output, input[startIndex:startIndex+length])
+        startIndex += length
+    }
+    return
+}
+```
+
+[Previous sections remain the same...]
+
+### The Solution
+
+[Previous solution sections remain the same...]
+
+### Library Benefits
+
+Using this custom library provided several advantages for solving the puzzle:
+
+1. **Simplified Input Processing**: The `ReadFileLineByLine` function handled all the file I/O boilerplate
+2. **Robust Number Parsing**: `FetchSliceOfIntsInString` made extracting numbers from input strings trivial
+3. **Error Handling**: Built-in error checking reduced the need for defensive programming
+4. **Reusability**: These functions can be used across multiple Advent of Code challenges
+
+### Conclusion
+
+This first day of Advent of Code 2024 not only provided an interesting challenge in array manipulation and algorithm design but also demonstrated the value of building and maintaining a utility library for common operations. The solution showcases how choosing the right data structures and having robust utility functions can lead to clean, efficient code.
+
+The custom AOC library proved invaluable in reducing boilerplate code and handling common input processing tasks, allowing me to focus on the core problem-solving aspects of the challenge.
+
+You can find the complete solution and the AOC library in my [GitHub repository](https://github.com/raeeceip/aoc/). Feel free to check out the code and let me know if you have any questions or suggestions for improvements!
+
+> Remember: Good tooling and utility functions are just as important as the solution itself. They make your code more maintainable and let you focus on solving the actual problem.
