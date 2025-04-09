@@ -288,19 +288,21 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
     <SiteHeader />
     
     <!-- Hero Section -->
-    <section id="hero" class="container px-4 md:px-0 mt-12 mb-20">
+    <section id="hero" class=" handwritten container px-4 md:px-0 mt-12 mb-20">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
         <div class="md:col-span-7">
           <div class="relative">
             <div class="absolute -top-10 -left-3 w-8 h-32 border-r-2 border-b-2 border-t-2 border-primary-600 rounded-tr-md rounded-br-md"></div>
             
             <h2 class="text-4xl md:text-5xl font-bold leading-tight mb-8 font-header">
-              <div class="handwritten text-2xl text-primary-700 dark:text-primary-400 mb-2 ml-4">Chiso's Special:</div>
-              Sometimes  <span class="text-primary-600 dark:text-primary-400">I</span> pay <span class="text-primary-600 dark:text-primary-400">attention</span>
+              Hi,
+              <br />
+              
+              I'm  <span class="text-primary-600 dark:text-primary-400">Chiso,</span> a software developer based in <span class="text-primary-600 dark:text-primary-400"> Ottawa, Canada.</span>
             </h2>
-            
+          
             <p class="text-lg text-secondary-600 dark:text-secondary-300 leading-relaxed mb-8 ml-4 border-l-4 border-secondary-200 dark:border-secondary-700 pl-4">
-              I'm Chiso, a software developer based in Ottawa, Canada. I find my self building cool stuff sometimes, and I would like to share that with the world
+                I find my self building cool stuff sometimes, and I would like to share that with the world
             </p>
             
             <div class="flex flex-wrap gap-4 ml-4">
@@ -324,7 +326,7 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
               <span>My Recipe for Success:</span>
             </h3>
             
-            <ul class="space-y-5 mt-6">
+            <ul class=" space-y-5 mt-6">
               <li class="flex items-start gap-3">
                 <Icon name="tabler:code" class="text-accent-600 dark:text-accent-400 mt-1" />
                 <span class="leading-tight">Full-Stack Development</span>
@@ -356,8 +358,8 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
       <div class="special-banner">
         <div class="fork-knife">🍴</div>
         <h3>Let's cook up something amazing together</h3>
-        <p class="text-lg opacity-90 mb-6 max-w-2xl">Open to collaboration and new opportunities. Get in touch to discuss your project needs.</p>
-        <a href="mailto:chiboguchisomu@gmail.com" class="inline-block bg-primary-600 text-white dark:bg-primary-700 font-semibold py-2 px-6 rounded hover:bg-primary-700 dark:hover:bg-primary-600 transition-all transform hover:-rotate-1">Contact me</a>
+        <p class=" handwritten text-lg opacity-90 mb-6 max-w-2xl">Open to collaboration and new opportunities. Get in touch to discuss your project needs.</p>
+        <a href="mailto:chiboguchisomu@gmail.com" class="inline-block bg-primary-600 text-white dark:bg-primary-700 handwritten py-2 px-6 rounded hover:bg-primary-700 dark:hover:bg-primary-600 transition-all transform hover:-rotate-1">Contact me</a>
       </div>
     </div>
 
@@ -377,7 +379,7 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
                   {new Date(post.data.date).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})}
                 </div>
               </div>
-              <h3 class="text-xl font-semibold text-primary-text-light dark:text-primary-text-dark mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors font-header">{post.data.title}</h3>
+              <h3 class="text-xl handwritten text-primary-text-light dark:text-primary-text-dark mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors font-header">{post.data.title}</h3>
               
               <div class="h-px w-full bg-secondary-200 dark:bg-secondary-700 my-3"></div>
               
@@ -414,7 +416,7 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
                 <div class="w-10 h-10 bg-primary-100 dark:bg-primary-800/30 rounded flex items-center justify-center text-primary-600 dark:text-primary-400 group-hover:bg-primary-200 dark:group-hover:bg-primary-700/30 transition-colors rotate-3">
                   <Icon name="tabler:chef-hat" class="text-lg" />
                 </div>
-                <h3 class="text-xl font-semibold group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors font-header">{project.name}</h3>
+                <h3 class="text-xl handwritten group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors font-header">{project.name}</h3>
               </div>
               
               <div class="handwritten text-primary-700/70 dark:text-primary-400/70 text-sm mb-2">Ingredients:</div>
