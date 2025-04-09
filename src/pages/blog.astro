@@ -7,11 +7,31 @@ import Layout from "../layouts/Layout.astro";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 
+// Pagination configuration
+const POSTS_PER_PAGE = 5; // Number of posts per page
+const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
+
 const posts = await getCollection("blog", ({ data }) => {
   return import.meta.env.PROD ? data.draft !== true : true;
 });
 
+// Sort posts by date (newest first)
 let publishedPosts = posts?.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Calculate total pages
+const totalPosts = publishedPosts.length;
+const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
+
+// Make sure current page is within valid range
+const validatedPage = Math.max(1, Math.min(currentPage, totalPages));
+
+// Get posts for current page
+const paginatedPosts = publishedPosts.slice(
+  (validatedPage - 1) * POSTS_PER_PAGE, 
+  validatedPage * POSTS_PER_PAGE
+);
+
+// Group all posts by year for the sidebar
 let postsByYear: Record<string, Array<CollectionEntry<"blog">>> = {};
 for (const post of publishedPosts) {
   const year = post.data.date.getFullYear().toString();
@@ -21,6 +41,11 @@ for (const post of publishedPosts) {
   postsByYear[year].push(post);
 }
 const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a));
+
+// Function to create pagination URL
+function getPaginationUrl(pageNum: number) {
+  return pageNum === 1 ? '/blog' : `/blog?page=${pageNum}`;
+}
 ---
 
 <style>
@@ -125,8 +150,34 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
   .year-nav {
     border-left: 2px solid theme("colors.primary.200");
     padding-left: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
     
     @apply dark:border-primary-800;
+    
+    /* Style scrollbar for webkit browsers */
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(81, 115, 63, 0.05);
+      border-radius: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(81, 115, 63, 0.2);
+      border-radius: 4px;
+    }
+    
+    .dark &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .dark &::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
   }
   
   .year-link {
@@ -187,35 +238,20 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
     }
   }
   
-  .year-section-title {
-    font-family: var(--handwriting-font);
-    font-size: 1.5rem;
-    color: theme("colors.primary.700");
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid theme("colors.primary.200");
-    display: inline-block;
-    
-    @apply dark:text-primary-400 dark:border-primary-800;
-    
-    /* Add a paperclip */
+  .title-section {
     position: relative;
+    margin-bottom: 2rem;
+  }
+  
+  .recipe-title {
+    font-family: var(--header-font-family);
+    font-weight: 700;
+    font-size: 2rem;
+    color: theme("colors.primary.700");
+    position: relative;
+    z-index: 2;
     
-    &::before {
-      content: '';
-      position: absolute;
-      top: -15px;
-      left: 1rem;
-      width: 25px;
-      height: 12px;
-      border: 2px solid theme("colors.accent.500");
-      border-bottom: none;
-      border-radius: 25px 25px 0 0;
-      transform: rotate(5deg);
-      opacity: 0.6;
-      
-      @apply dark:border-accent-600 dark:opacity-40;
-    }
+    @apply dark:text-primary-300;
   }
   
   /* Recipe stain decorations */
@@ -257,6 +293,103 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
     transform: rotate(-6deg) scale(0.8, 1);
   }
   
+  /* Pagination styles */
+  .pagination-container {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .pagination-paper {
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.25rem;
+    box-shadow: 2px 2px 5px rgba(81, 115, 63, 0.1);
+    position: relative;
+    z-index: 1;
+    border: 1px solid theme("colors.secondary.300");
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    @apply dark:bg-secondary-900/20 dark:border-secondary-700 dark:shadow-none;
+  }
+  
+  .pagination-info {
+    font-family: var(--handwriting-font);
+    color: theme("colors.primary.700");
+    
+    @apply dark:text-primary-300;
+  }
+  
+  .pagination-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1rem;
+  }
+  
+  .page-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid theme("colors.primary.300");
+    color: theme("colors.primary.600");
+    transition: all 0.2s ease;
+    
+    @apply dark:bg-primary-900/10 dark:border-primary-700 dark:text-primary-400;
+    
+    &:hover {
+      background-color: theme("colors.primary.100");
+      transform: translateY(-2px);
+      
+      @apply dark:bg-primary-800/30;
+    }
+    
+    &.active {
+      background-color: theme("colors.primary.600");
+      border-color: theme("colors.primary.700");
+      color: white;
+      
+      @apply dark:bg-primary-500 dark:border-primary-600;
+    }
+    
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      
+      &:hover {
+        transform: none;
+        background-color: rgba(255, 255, 255, 0.5);
+        
+        @apply dark:bg-primary-900/10;
+      }
+    }
+  }
+  
+  .pagination-paper::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background-image: 
+      linear-gradient(45deg, transparent 33.333%, var(--notebook-paper-color) 33.333%, var(--notebook-paper-color) 66.667%, transparent 66.667%),
+      linear-gradient(-45deg, transparent 33.333%, var(--notebook-paper-color) 33.333%, var(--notebook-paper-color) 66.667%, transparent 66.667%);
+    background-size: 14px 10px;
+    background-position: 0 -4px;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.05));
+    z-index: -1;
+  }
+  
   /* Mobile adjustments */
   @media (max-width: 768px) {
     .sidebar-nav {
@@ -266,12 +399,24 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
       margin-bottom: 1.5rem;
     }
     
-    .year-section-title {
-      font-size: 1.3rem;
-    }
-    
     .stain-1, .stain-2 {
       display: none;
+    }
+    
+    .pagination-paper {
+      padding: 0.5rem 1rem;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 90%;
+    }
+    
+    .pagination-nav {
+      margin-left: 0;
+    }
+    
+    .page-btn {
+      width: 2rem;
+      height: 2rem;
     }
   }
 </style>
@@ -293,8 +438,8 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
             <ul class="year-nav">
               {years.map((year) => (
                 <li>
-                  <a href={`#year-${year}`} class="year-link">
-                    {year} Entries
+                  <a href={`/blog?year=${year}`} class="year-link">
+                    {year} Entries ({postsByYear[year].length})
                   </a>
                 </li>
               ))}
@@ -317,28 +462,61 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
         </aside>
         
         <div class="md:flex-1 order-2 md:order-2">
-          <h2 class="recipe-title text-3xl font-bold mb-6">My Recipe Journal</h2>
+          <div class="title-section">
+            <h2 class="recipe-title">My Recipe Journal</h2>
+            
+            <!-- prettier-ignore -->
+            <p class="mt-4 mb-2 leading-relaxed font-handwriting text-lg text-primary-700 dark:text-primary-300">
+              I write about things that interest me - from coding techniques to software architecture and design patterns. Feel free to explore by year or subscribe for fresh content!
+            </p>
+            
+            <!-- Current page indicator -->
+            <p class="text-sm font-handwriting text-primary-600 dark:text-primary-400">
+              Page {validatedPage} of {totalPages} ({totalPosts} recipes total)
+            </p>
+          </div>
           
-          <!-- prettier-ignore -->
-          <p class="mb-8 leading-relaxed font-handwriting text-lg">
-            I write about things that interest me - from coding techniques to software architecture and design patterns. Some recipes may not be tech-related, but I hope you find them appetizing regardless. Feel free to explore by year or subscribe for fresh content!
-          </p>
+          <!-- Current page posts -->
+          <ul class="space-y-6 mt-8">
+            {paginatedPosts.map((post, index) => (
+              <li class={index % 4 === 1 ? "transform rotate-0.5deg" : index % 4 === 3 ? "transform -rotate-0.5deg" : ""}>
+                <ArticleListItem post={post} />
+              </li>
+            ))}
+          </ul>
           
-          <div class="mt-10 space-y-16">
-            {
-              years.map((year) => (
-                <section id={`year-${year}`} class="recipe-section">
-                  <h3 class="year-section-title">{year} Entries</h3>
-                  <ul class="space-y-6 mt-8">
-                    {postsByYear[year].map((post, index) => (
-                      <li class={index % 4 === 1 ? "transform rotate-0.5deg" : index % 4 === 3 ? "transform -rotate-0.5deg" : ""}>
-                        <ArticleListItem post={post} />
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              ))
-            }
+          <!-- Pagination controls -->
+          <div class="pagination-container">
+            <div class="pagination-paper">
+              <div class="pagination-info">
+                Page {validatedPage} of {totalPages}
+              </div>
+              
+              <div class="pagination-nav">
+                <!-- First page button -->
+                <a href={getPaginationUrl(1)} class={`page-btn ${validatedPage === 1 ? 'disabled' : ''}`} aria-label="First page" title="First page">
+                  <Icon name="tabler:chevrons-left" />
+                </a>
+                
+                <!-- Previous page button -->
+                <a href={getPaginationUrl(validatedPage - 1)} class={`page-btn ${validatedPage === 1 ? 'disabled' : ''}`} aria-label="Previous page" title="Previous page">
+                  <Icon name="tabler:chevron-left" />
+                </a>
+                
+                <!-- Page indicator -->
+                <span class="page-btn active">{validatedPage}</span>
+                
+                <!-- Next page button -->
+                <a href={getPaginationUrl(validatedPage + 1)} class={`page-btn ${validatedPage === totalPages ? 'disabled' : ''}`} aria-label="Next page" title="Next page">
+                  <Icon name="tabler:chevron-right" />
+                </a>
+                
+                <!-- Last page button -->
+                <a href={getPaginationUrl(totalPages)} class={`page-btn ${validatedPage === totalPages ? 'disabled' : ''}`} aria-label="Last page" title="Last page">
+                  <Icon name="tabler:chevrons-right" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { Icon } from "astro-icon/components";
 ---
 
 <style>
-  .cookbook-intro {
+  .compact-header {
     position: relative;
     overflow: hidden;
     border: 1px solid rgba(81, 115, 63, 0.3);
@@ -12,123 +12,65 @@ import { Icon } from "astro-icon/components";
       0 0 0 1px rgba(81, 115, 63, 0.05);
     border-radius: 0.5rem;
     transition: transform 0.3s ease;
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+    
+    /* Notebook paper lines */
+    background-image: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 27px,
+        var(--notebook-line-color) 27px,
+        var(--notebook-line-color) 28px
+      );
+    background-size: 100% 28px;
   }
   
-  .dark .cookbook-intro {
+  .dark .compact-header {
     border-color: rgba(81, 115, 63, 0.4);
     box-shadow: 
       0 5px 15px rgba(0, 0, 0, 0.2),
       0 0 0 1px rgba(81, 115, 63, 0.1);
   }
   
-  .cookbook-intro:hover {
-    transform: translateY(-5px);
+  .compact-header:hover {
+    transform: translateY(-3px);
   }
   
-  /* Notebook tape for an authentic look */
-  .notebook-tape {
+  /* Paper clip effect */
+  .header-paper-clip {
     position: absolute;
-    width: 10rem;
-    height: 2rem;
-    background-color: rgba(255, 255, 255, 0.6);
-    transform: rotate(-45deg);
-    opacity: 0.5;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    z-index: 10;
+    top: -15px;
+    right: 20%;
+    width: 30px;
+    height: 60px;
+    border: 2px solid rgba(160, 160, 160, 0.6);
+    border-radius: 5px 5px 0 0;
+    border-bottom: none;
+    transform: rotate(5deg);
+    opacity: 0.8;
+    z-index: 3;
   }
   
-  .top-tape {
-    top: -0.5rem;
-    right: -2rem;
+  .dark .header-paper-clip {
+    border-color: rgba(180, 180, 180, 0.4);
   }
   
-  .bottom-tape {
-    bottom: -0.5rem;
-    left: -2rem;
-  }
-  
-  .dark .notebook-tape {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-  
-  /* Measurement markings - cookbook styling */
-  .measurement-marks {
-    position: absolute;
-    top: 1.5rem;
-    right: 2rem;
-    height: 80%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 1.5rem;
-  }
-  
-  .mark {
-    width: 100%;
-    height: 1px;
-    background-color: rgba(81, 115, 63, 0.3);
-    position: relative;
-  }
-  
-  .mark span {
-    position: absolute;
-    right: -1.5rem;
-    top: -0.6rem;
-    font-family: var(--handwriting-font);
-    font-size: 0.8rem;
-    color: rgba(81, 115, 63, 0.6);
-  }
-  
-  .dark .mark {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-  
-  .dark .mark span {
-    color: rgba(255, 255, 255, 0.4);
-  }
-  
-  /* Coffee stain for authenticity */
-  .coffee-stain {
-    position: absolute;
-    bottom: 2rem;
-    right: 4rem;
-    width: 4rem;
-    height: 4rem;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(165, 42, 42, 0.05) 0%,
-      rgba(165, 42, 42, 0.07) 50%,
-      rgba(165, 42, 42, 0) 70%
-    );
-    border-radius: 50%;
-    transform: rotate(15deg) scale(1.2, 1);
-    opacity: 0.7;
-    z-index: 1;
-  }
-  
-  .dark .coffee-stain {
-    background: radial-gradient(
-      ellipse at center,
-      rgba(165, 42, 42, 0.1) 0%,
-      rgba(165, 42, 42, 0.13) 50%,
-      rgba(165, 42, 42, 0) 70%
-    );
-  }
-  
-  /* Cookbook header styling */
-  .cookbook-header {
+  /* Main content layout */
+  .header-content {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 1rem;
     position: relative;
+    z-index: 2;
   }
   
-  .cookbook-logo {
+  /* Logo styling */
+  .header-logo {
     background-color: var(--primary-color);
     color: white;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 3rem;
+    height: 3rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -136,211 +78,232 @@ import { Icon } from "astro-icon/components";
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.15);
     border: 2px dashed rgba(255, 255, 255, 0.3);
     position: relative;
-    z-index: 2;
     transition: transform 0.3s ease;
+    flex-shrink: 0;
   }
   
-  .cookbook-logo:hover {
+  .header-logo:hover {
     transform: rotate(10deg);
   }
   
-  .cookbook-icon {
-    width: 2rem;
-    height: 2rem;
+  .logo-icon {
+    width: 1.75rem;
+    height: 1.75rem;
   }
   
-  .profile-heading {
-    position: relative;
-    display: inline-block;
+  /* Main header area */
+  .header-main {
+    flex: 1;
   }
   
-  .profile-heading::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    width: 60%;
-    height: 2px;
-    background-color: var(--primary-color);
+  .header-title {
+    font-family: var(--header-font-family);
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin: 0;
+    line-height: 1.1;
   }
   
-  .cookbook-subtitle {
-    display: block;
-    font-size: 1.25rem;
+  .header-subtitle {
     font-family: var(--handwriting-font);
+    font-size: 1rem;
     color: theme("colors.primary.600");
     margin-top: 0.25rem;
     transform: rotate(-1deg);
+    display: inline-block;
+    
+    @apply dark:text-primary-400;
   }
   
-  .dark .cookbook-subtitle {
-    color: theme("colors.primary.400");
-  }
-  
-  .profile-quote {
+  /* Quote section */
+  .header-quote {
     font-family: var(--header-font-family);
     font-style: italic;
-    color: #444;
-    background-color: var(--quote-bg);
-    padding: 1.5rem;
+    font-size: 1rem;
+    color: theme("colors.secondary.700");
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 0.75rem 1rem 0.75rem 1.5rem;
     border-left: 3px solid var(--primary-color);
-    margin: 2rem 0;
+    margin-top: 0.75rem;
     position: relative;
     border-radius: 0 0.5rem 0.5rem 0;
+    max-width: 600px;
+    
+    @apply dark:text-secondary-300 dark:bg-secondary-900/20;
   }
   
-  .profile-quote::before {
+  .header-quote::before {
     content: '"';
-    font-size: 4rem;
+    font-size: 2.5rem;
     position: absolute;
-    top: -0.5rem;
-    left: 0.5rem;
+    top: -0.75rem;
+    left: 0.25rem;
     opacity: 0.1;
     font-family: var(--header-font-family);
   }
   
-  .social-icons a {
-    transition: transform 0.3s ease, color 0.3s ease;
-    margin-right: 1rem;
-    display: inline-block;
+  /* Social icons */
+  .social-links {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
   }
   
-  .social-icons a:hover {
+  .social-link {
+    color: theme("colors.primary.700");
+    transition: transform 0.3s ease, color 0.3s ease;
+    display: inline-flex;
+    padding: 0.4rem;
+    border-radius: 50%;
+    background-color: rgba(81, 115, 63, 0.1);
+    
+    @apply dark:text-primary-400 dark:bg-primary-900/30;
+  }
+  
+  .social-link:hover {
     transform: translateY(-3px);
-    color: var(--primary-color) !important;
+    color: var(--primary-color);
+    background-color: rgba(81, 115, 63, 0.15);
+    
+    @apply dark:bg-primary-900/40;
+  }
+  
+  .social-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  /* Coffee stain decoration */
+  .header-stain {
+    position: absolute;
+    width: 80px;
+    height: 60px;
+    bottom: 20px;
+    right: 15%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(139, 69, 19, 0.04) 0%,
+      rgba(139, 69, 19, 0.06) 30%,
+      rgba(139, 69, 19, 0.02) 70%,
+      transparent 90%
+    );
+    border-radius: 50%;
+    transform: rotate(15deg);
+    opacity: 0.7;
+    z-index: 1;
+    pointer-events: none;
   }
   
   /* Mobile responsiveness */
-  @media (max-width: 768px) {
-    .cookbook-intro {
-      padding: 1.5rem !important;
+  @media (max-width: 640px) {
+    .compact-header {
+      padding: 1rem;
     }
     
-    .cookbook-header {
+    .header-content {
       flex-direction: column;
       align-items: flex-start;
+      gap: 0.75rem;
+    }
+    
+    .header-logo {
+      width: 2.5rem;
+      height: 2.5rem;
+      margin: 0 auto 0.5rem;
+    }
+    
+    .logo-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+    
+    .header-main {
       text-align: center;
       width: 100%;
     }
     
-    .profile-heading {
-      font-size: 2rem !important;
-      margin-bottom: 1rem !important;
-      text-align: center;
+    .header-title {
+      font-size: 1.5rem;
+    }
+    
+    .header-subtitle {
+      font-size: 0.9rem;
+    }
+    
+    .header-quote {
+      font-size: 0.9rem;
+      padding: 0.6rem 0.75rem 0.6rem 1.25rem;
+      margin: 0.5rem auto 0;
+    }
+    
+    .social-links {
+      justify-content: center;
       width: 100%;
     }
     
-    .cookbook-logo {
-      margin: 0 auto 1rem;
+    .header-stain {
+      width: 50px;
+      height: 40px;
+      bottom: 10px;
+      right: 10%;
     }
     
-    .cookbook-subtitle {
-      font-size: 1.1rem;
-      text-align: center;
-      width: 100%;
-    }
-    
-    .coffee-stain, 
-    .notebook-tape,
-    .measurement-marks {
-      display: none; /* Hide decorative elements on mobile for cleaner look */
-    }
-    
-    .profile-quote {
-      padding: 1rem;
-      margin: 1rem 0;
-      font-size: 1rem !important;
+    .header-paper-clip {
+      width: 20px;
+      height: 40px;
     }
   }
 </style>
 
-<div class="notebook-page cookbook-intro py-8 px-6 md:px-10 mt-6">
-  <div class="flex flex-col items-start">
-    <div class="w-full">
-      <div class="cookbook-header">
-        <div class="cookbook-logo">
-          <Icon name="tabler:chef-hat" class="cookbook-icon" />
-        </div>
-        <h1 class="profile-heading text-4xl lg:text-5xl font-bold mb-6 font-header">
-          <span class="writing-effect">
-            <span class="writing-letter">c</span>
-            <span class="writing-letter">h</span>
-            <span class="writing-letter">i</span>
-            <span class="writing-letter">s</span>
-            <span class="writing-letter">o</span>
-            <span class="writing-letter">.</span>
-          </span>
-          <span class="cookbook-subtitle">Software Recipe Book</span>
-        </h1>
+<div class="compact-header">
+  <div class="header-paper-clip"></div>
+  <div class="header-stain"></div>
+  
+  <div class="header-content">
+    <a href="/" class="header-logo">
+      <Icon name="tabler:chef-hat" class="logo-icon" />
+    </a>
+    
+    <div class="header-main">
+      <h1 class="header-title">
+        <span class="writing-effect">
+          <span class="writing-letter">c</span>
+          <span class="writing-letter">h</span>
+          <span class="writing-letter">i</span>
+          <span class="writing-letter">s</span>
+          <span class="writing-letter">o</span>
+          <span class="writing-letter">.</span>
+        </span>
+        <span class="header-subtitle">Software Recipe Book</span>
+      </h1>
+      
+      <div class="header-quote">
+        "Good code is like effective communication – clear, purposeful, and built with careful attention to detail."
       </div>
       
-      <div class="flex flex-col md:flex-row items-start gap-8">
-        <div class="w-full md:w-1/2">
-          <div class="profile-quote text-lg relative ml-4">
-            "Good code is like effective communication – clear, purposeful, and built with careful attention to detail."
-     
-            <div class="absolute -left-4 top-0 bottom-0 w-1 bg-primary-500 dark:bg-primary-600 opacity-80">
-              
-            </div>
-          </div>
-        </div>
-        <div class="w-full md:w-1/2">
-          <p class="text-lg leading-relaxed mb-6 ml-2 border-l-4 border-primary-400 dark:border-primary-600 pl-4 font-handwriting">
-            Software Developer | Nigerian | Cook.
-          </p>
-          
-          <div class="social-icons flex mt-2 mb-4">
-            <a href="https://github.com/raeeceip" title="GitHub" target="_blank" class="text-2xl text-primary-700 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-all hover:-translate-y-1">
-              <Icon name="tabler:brand-github" />
-            </a>
-    
-            <a href="https://x.com/chiso" title="Twitter" target="_blank" class="text-2xl text-primary-700 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-all hover:-translate-y-1">
-              <Icon name="tabler:brand-twitter" />
-            </a>
-    
-            <a href="/rss.xml" title="RSS Feed" class="text-2xl text-primary-700 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-all hover:-translate-y-1">
-              <Icon name="tabler:rss" />
-            </a>
-    
-            <a href="/feed.json" title="JSONFeed" class="text-2xl text-primary-700 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-all hover:-translate-y-1">
-              <Icon name="tabler:json" />
-            </a>
-          </div>
-          
-          <a href="mailto:chiboguchisomu@gmail.com" class="text-base inline-block no-underline text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors font-handwriting">
-            chiboguchisomu@gmail.com
-          </a>
-        </div>
+      <div class="social-links">
+        <a href="https://github.com/raeeceip" title="GitHub" target="_blank" class="social-link">
+          <Icon name="tabler:brand-github" class="social-icon" />
+        </a>
+        
+        <a href="https://x.com/chiso" title="Twitter" target="_blank" class="social-link">
+          <Icon name="tabler:brand-twitter" class="social-icon" />
+        </a>
+        
+        <a href="/rss.xml" title="RSS Feed" class="social-link">
+          <Icon name="tabler:rss" class="social-icon" />
+        </a>
+        
+        <a href="/feed.json" title="JSONFeed" class="social-link">
+          <Icon name="tabler:json" class="social-icon" />
+        </a>
+        
+        <a href="mailto:chiboguchisomu@gmail.com" title="Email" class="social-link">
+          <Icon name="tabler:mail" class="social-icon" />
+        </a>
       </div>
     </div>
   </div>
-  
-  <!-- Decorative elements -->
-  <div class="absolute top-4 right-4 w-16 h-16 rounded-full border-2 border-primary-600/10 rotate-12"></div>
-  
-  <!-- Cookbook decorative elements -->
-  <div class="notebook-tape top-tape"></div>
-  <div class="notebook-tape bottom-tape"></div>
-  
-  <!-- Measurement markings -->
-  <div class="measurement-marks">
-    <div class="mark"><span>1</span></div>
-    <div class="mark"><span>2</span></div>
-    <div class="mark"><span>3</span></div>
-    <div class="mark"><span>4</span></div>
-  </div>
-  
-  <!-- Coffee stain -->
-  <div class="coffee-stain"></div>
 </div>
-
-<style>
-  /* Special utility classes */
-  .font-handwriting {
-    font-family: var(--handwriting-font);
-  }
-  
-  .font-header {
-    font-family: var(--header-font-family);
-  }
-</style>
