@@ -10,6 +10,8 @@ import { Icon } from "astro-icon/components";
     box-shadow: 
       0 5px 15px rgba(81, 115, 63, 0.1),
       0 0 0 1px rgba(81, 115, 63, 0.05);
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease;
   }
   
   .dark .cookbook-intro {
@@ -17,6 +19,10 @@ import { Icon } from "astro-icon/components";
     box-shadow: 
       0 5px 15px rgba(0, 0, 0, 0.2),
       0 0 0 1px rgba(81, 115, 63, 0.1);
+  }
+  
+  .cookbook-intro:hover {
+    transform: translateY(-5px);
   }
   
   /* Notebook tape for an authentic look */
@@ -45,7 +51,7 @@ import { Icon } from "astro-icon/components";
     background-color: rgba(255, 255, 255, 0.2);
   }
   
-  /* Measurement markings */
+  /* Measurement markings - cookbook styling */
   .measurement-marks {
     position: absolute;
     top: 1.5rem;
@@ -81,7 +87,7 @@ import { Icon } from "astro-icon/components";
     color: rgba(255, 255, 255, 0.4);
   }
   
-  /* Coffee stain */
+  /* Coffee stain for authenticity */
   .coffee-stain {
     position: absolute;
     bottom: 2rem;
@@ -131,6 +137,11 @@ import { Icon } from "astro-icon/components";
     border: 2px dashed rgba(255, 255, 255, 0.3);
     position: relative;
     z-index: 2;
+    transition: transform 0.3s ease;
+  }
+  
+  .cookbook-logo:hover {
+    transform: rotate(10deg);
   }
   
   .cookbook-icon {
@@ -175,6 +186,7 @@ import { Icon } from "astro-icon/components";
     border-left: 3px solid var(--primary-color);
     margin: 2rem 0;
     position: relative;
+    border-radius: 0 0.5rem 0.5rem 0;
   }
   
   .profile-quote::before {
@@ -189,15 +201,60 @@ import { Icon } from "astro-icon/components";
   
   .social-icons a {
     transition: transform 0.3s ease, color 0.3s ease;
+    margin-right: 1rem;
+    display: inline-block;
   }
   
   .social-icons a:hover {
     transform: translateY(-3px);
     color: var(--primary-color) !important;
   }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .cookbook-intro {
+      padding: 1.5rem !important;
+    }
+    
+    .cookbook-header {
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: center;
+      width: 100%;
+    }
+    
+    .profile-heading {
+      font-size: 2rem !important;
+      margin-bottom: 1rem !important;
+      text-align: center;
+      width: 100%;
+    }
+    
+    .cookbook-logo {
+      margin: 0 auto 1rem;
+    }
+    
+    .cookbook-subtitle {
+      font-size: 1.1rem;
+      text-align: center;
+      width: 100%;
+    }
+    
+    .coffee-stain, 
+    .notebook-tape,
+    .measurement-marks {
+      display: none; /* Hide decorative elements on mobile for cleaner look */
+    }
+    
+    .profile-quote {
+      padding: 1rem;
+      margin: 1rem 0;
+      font-size: 1rem !important;
+    }
+  }
 </style>
 
-<div class="notebook-page cookbook-intro py-10 px-6 md:px-10 mt-6">
+<div class="notebook-page cookbook-intro py-8 px-6 md:px-10 mt-6">
   <div class="flex flex-col items-start">
     <div class="w-full">
       <div class="cookbook-header">
@@ -228,11 +285,11 @@ import { Icon } from "astro-icon/components";
           </div>
         </div>
         <div class="w-full md:w-1/2">
-          <p class="text-lg leading-relaxed mb-8 ml-2 border-l-4 border-primary-400 dark:border-primary-600 pl-4">
+          <p class="text-lg leading-relaxed mb-6 ml-2 border-l-4 border-primary-400 dark:border-primary-600 pl-4 font-handwriting">
             Software Developer | Nigerian | Cook.
           </p>
           
-          <div class="social-icons flex-row gap-4 mt-2 mb-6">
+          <div class="social-icons flex mt-2 mb-4">
             <a href="https://github.com/raeeceip" title="GitHub" target="_blank" class="text-2xl text-primary-700 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-all hover:-translate-y-1">
               <Icon name="tabler:brand-github" />
             </a>
@@ -250,10 +307,10 @@ import { Icon } from "astro-icon/components";
             </a>
           </div>
           
-          <a href="mailto:chiboguchisomu@gmail.com" class="text-base inline-block no-underline text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors font-handwriting">chiso.</a>
+          <a href="mailto:chiboguchisomu@gmail.com" class="text-base inline-block no-underline text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors font-handwriting">
+            chiboguchisomu@gmail.com
+          </a>
         </div>
-        
-
       </div>
     </div>
   </div>
@@ -276,3 +333,14 @@ import { Icon } from "astro-icon/components";
   <!-- Coffee stain -->
   <div class="coffee-stain"></div>
 </div>
+
+<style>
+  /* Special utility classes */
+  .font-handwriting {
+    font-family: var(--handwriting-font);
+  }
+  
+  .font-header {
+    font-family: var(--header-font-family);
+  }
+</style>

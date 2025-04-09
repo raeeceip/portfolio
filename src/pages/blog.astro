@@ -1,11 +1,11 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import ArticleListItem from "../components/items/ArticleListItem.astro";
 import SiteHeader from "@components/layout/SiteHeader.astro";
 import { Icon } from "astro-icon/components";
+import ArticleListItem from "../components/items/ArticleListItem.astro";
+import Layout from "../layouts/Layout.astro";
 
-import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
 const posts = await getCollection("blog", ({ data }) => {
   return import.meta.env.PROD ? data.draft !== true : true;
@@ -23,73 +23,329 @@ for (const post of publishedPosts) {
 const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a));
 ---
 
+<style>
+  .recipe-tab {
+    position: absolute;
+    top: -2rem;
+    left: 2.5rem;
+    background-color: theme("colors.primary.600");
+    color: white;
+    padding: 0.5rem 1.5rem;
+    font-family: var(--cursive-font);
+    font-weight: 600;
+    border-radius: 0.5rem 0.5rem 0 0;
+    z-index: -1;
+    box-shadow: 
+      inset 0 -5px 10px rgba(0, 0, 0, 0.1),
+      2px -2px 5px rgba(0, 0, 0, 0.05);
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    @media (max-width: 768px) {
+      left: 1.5rem;
+      padding: 0.4rem 1rem;
+      font-size: 0.9rem;
+    }
+  }
+  
+  .dark .recipe-tab {
+    background-color: theme("colors.primary.700");
+    box-shadow: 
+      inset 0 -5px 10px rgba(0, 0, 0, 0.2),
+      2px -2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tab-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+  
+  .sidebar-nav {
+    position: sticky;
+    top: 24px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid theme("colors.secondary.300");
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    box-shadow: 2px 2px 6px rgba(81, 115, 63, 0.1);
+    background-image: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 27px,
+        rgba(81, 115, 63, 0.05) 27px,
+        rgba(81, 115, 63, 0.05) 28px
+      );
+    background-size: 100% 28px;
+    transform: rotate(0.8deg);
+    transition: transform 0.3s ease;
+  }
+  
+  .dark .sidebar-nav {
+    background-color: rgba(58, 77, 48, 0.1);
+    border-color: theme("colors.secondary.700");
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+    background-image: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 27px,
+        rgba(255, 255, 255, 0.02) 27px,
+        rgba(255, 255, 255, 0.02) 28px
+      );
+  }
+  
+  .sidebar-nav:hover {
+    transform: rotate(0deg);
+  }
+  
+  .sidebar-heading {
+    font-family: var(--handwriting-font);
+    font-size: 1.2rem;
+    color: theme("colors.primary.700");
+    margin-bottom: 0.75rem;
+    position: relative;
+    display: inline-block;
+    
+    @apply dark:text-primary-400;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: theme("colors.primary.400");
+      opacity: 0.3;
+      border-radius: 1px;
+    }
+  }
+  
+  .year-nav {
+    border-left: 2px solid theme("colors.primary.200");
+    padding-left: 1rem;
+    
+    @apply dark:border-primary-800;
+  }
+  
+  .year-link {
+    font-family: var(--handwriting-font);
+    display: block;
+    color: theme("colors.primary.600");
+    margin-bottom: 0.5rem;
+    position: relative;
+    transition: all 0.2s ease;
+    transform-origin: left;
+    
+    @apply dark:text-primary-400;
+    
+    &:hover {
+      color: theme("colors.primary.800");
+      transform: scale(1.05);
+      
+      @apply dark:text-primary-300;
+    }
+    
+    &::before {
+      content: '•';
+      position: absolute;
+      left: -1.25rem;
+      color: theme("colors.primary.500");
+      
+      @apply dark:text-primary-600;
+    }
+  }
+  
+  .subscribe-box {
+    margin-top: 1.5rem;
+    background-color: rgba(255, 255, 200, 0.2);
+    border: 1px dashed theme("colors.primary.400");
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transform: rotate(-0.5deg);
+    
+    @apply dark:bg-primary-900/10 dark:border-primary-700;
+  }
+  
+  .feed-link {
+    display: flex;
+    align-items: center;
+    font-family: var(--handwriting-font);
+    color: theme("colors.primary.600");
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+    
+    @apply dark:text-primary-400;
+    
+    &:hover {
+      color: theme("colors.primary.800");
+      transform: translateX(5px);
+      
+      @apply dark:text-primary-300;
+    }
+  }
+  
+  .year-section-title {
+    font-family: var(--handwriting-font);
+    font-size: 1.5rem;
+    color: theme("colors.primary.700");
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid theme("colors.primary.200");
+    display: inline-block;
+    
+    @apply dark:text-primary-400 dark:border-primary-800;
+    
+    /* Add a paperclip */
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: 1rem;
+      width: 25px;
+      height: 12px;
+      border: 2px solid theme("colors.accent.500");
+      border-bottom: none;
+      border-radius: 25px 25px 0 0;
+      transform: rotate(5deg);
+      opacity: 0.6;
+      
+      @apply dark:border-accent-600 dark:opacity-40;
+    }
+  }
+  
+  /* Recipe stain decorations */
+  .recipe-stain {
+    position: absolute;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(165, 42, 42, 0.04) 0%,
+      rgba(165, 42, 42, 0.06) 50%,
+      rgba(165, 42, 42, 0) 70%
+    );
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  
+  .dark .recipe-stain {
+    background: radial-gradient(
+      ellipse at center,
+      rgba(217, 119, 6, 0.1) 0%,
+      rgba(193, 105, 6, 0.08) 50%,
+      transparent 70%
+    );
+  }
+  
+  .stain-1 {
+    bottom: 3rem;
+    right: 3rem;
+    width: 100px;
+    height: 100px;
+    transform: rotate(12deg) scale(1.2, 1);
+  }
+  
+  .stain-2 {
+    top: 25%;
+    left: 2rem;
+    width: 60px;
+    height: 60px;
+    transform: rotate(-6deg) scale(0.8, 1);
+  }
+  
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .sidebar-nav {
+      position: relative;
+      top: 0;
+      transform: rotate(0);
+      margin-bottom: 1.5rem;
+    }
+    
+    .year-section-title {
+      font-size: 1.3rem;
+    }
+    
+    .stain-1, .stain-2 {
+      display: none;
+    }
+  }
+</style>
+
 <Layout title="Recipe Journal">
   <main class="container px-4 md:px-0">
     <SiteHeader />
 
     <div class="notebook-page mt-8 relative">
-      <div class="recipe-tab">Journal</div>
+      <div class="recipe-tab">
+        <Icon name="tabler:book" class="tab-icon" />
+        <span>Journal</span>
+      </div>
       
       <div class="flex flex-col md:flex-row gap-10">
-        <div class="md:w-72 flex-shrink-0">
-          <div class="sticky top-24">
-            <div class="handwritten text-xl text-primary-700 dark:text-primary-400 mb-3">Journal Index</div>
-            <ul class="space-y-1 border-l-2 border-primary-200 dark:border-primary-800 pl-4">
+        <aside class="md:w-72 flex-shrink-0 order-1 md:order-1">
+          <div class="sidebar-nav">
+            <h2 class="sidebar-heading">Journal Index</h2>
+            <ul class="year-nav">
               {years.map((year) => (
                 <li>
-                  <a href={`#year-${year}`} class="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors">
+                  <a href={`#year-${year}`} class="year-link">
                     {year} Entries
                   </a>
                 </li>
               ))}
             </ul>
             
-            <div class="mt-8 p-4 bg-secondary-50 dark:bg-secondary-800/30 rounded border border-dashed border-primary-200 dark:border-primary-700">
-              <div class="handwritten text-primary-600 dark:text-primary-400 mb-2">Subscribe:</div>
-              <div class="flex gap-3">
-                <a href="/rss.xml" class="flex items-center gap-1 text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors">
-                  <Icon name="tabler:rss" class="text-sm" />
-                  <span class="text-sm">RSS</span>
+            <div class="subscribe-box">
+              <div class="sidebar-heading mb-2">Subscribe:</div>
+              <div class="flex flex-col">
+                <a href="/rss.xml" class="feed-link">
+                  <Icon name="tabler:rss" class="w-4 h-4" />
+                  <span>RSS Feed</span>
                 </a>
-                <a href="/feed.json" class="flex items-center gap-1 text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors">
-                  <Icon name="tabler:json" class="text-sm" />
-                  <span class="text-sm">JSON</span>
+                <a href="/feed.json" class="feed-link">
+                  <Icon name="tabler:json" class="w-4 h-4" />
+                  <span>JSON Feed</span>
                 </a>
               </div>
             </div>
           </div>
-        </div>
+        </aside>
         
-        <div class="md:flex-1">
-          <h2 class="recipe-title">My Journal</h2>
+        <div class="md:flex-1 order-2 md:order-2">
+          <h2 class="recipe-title text-3xl font-bold mb-6">My Recipe Journal</h2>
           
           <!-- prettier-ignore -->
-          <p class="mb-8 leading-relaxed">
-            I write about things that pique my interest, things that I'm learning, thinking about, working on, or just frequently-asked questions. Some of my posts may or may not be related to technology/software at all, but I hope you find them interesting regardless. I am trying to write a lot more often these days and when I do, I try to share them on Twitter as well but you can subscribe to the RSS feed or JSONFeed to find & read new articles in your favorite reader.
+          <p class="mb-8 leading-relaxed font-handwriting text-lg">
+            I write about things that interest me - from coding techniques to software architecture and design patterns. Some recipes may not be tech-related, but I hope you find them appetizing regardless. Feel free to explore by year or subscribe for fresh content!
           </p>
           
           <div class="mt-10 space-y-16">
             {
               years.map((year) => (
-                <div id={`year-${year}`} class="recipe-section">
-                  <h2 class="handwritten text-xl text-primary-700 dark:text-primary-400 mb-5 border-b border-primary-200 dark:border-primary-800 pb-2 inline-block">{year} Entries</h2>
-                  <ul class="space-y-6 mt-6">
+                <section id={`year-${year}`} class="recipe-section">
+                  <h3 class="year-section-title">{year} Entries</h3>
+                  <ul class="space-y-6 mt-8">
                     {postsByYear[year].map((post, index) => (
                       <li class={index % 4 === 1 ? "transform rotate-0.5deg" : index % 4 === 3 ? "transform -rotate-0.5deg" : ""}>
                         <ArticleListItem post={post} />
                       </li>
                     ))}
                   </ul>
-                </div>
+                </section>
               ))
             }
           </div>
         </div>
       </div>
       
-      <!-- Add some recipe stains/decorations -->
-      <div class="absolute bottom-8 right-8 w-16 h-16 rounded-full border-2 border-primary-600/10 rotate-12"></div>
-      <div class="absolute top-1/3 left-4 w-8 h-8 rounded-full bg-primary-600/5 -rotate-6"></div>
+      <!-- Recipe stains -->
+      <div class="recipe-stain stain-1"></div>
+      <div class="recipe-stain stain-2"></div>
     </div>
   </main>
 </Layout>

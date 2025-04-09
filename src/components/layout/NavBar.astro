@@ -49,15 +49,27 @@ import { Icon } from "astro-icon/components";
     height: 100%;
     background-image: 
       radial-gradient(
+        circle at 0 25%, 
+        var(--notebook-holes-color) 0, 
+        var(--notebook-holes-color) 4px, 
+        transparent 4px
+      ),
+      radial-gradient(
         circle at 0 50%, 
         var(--notebook-holes-color) 0, 
         var(--notebook-holes-color) 4px, 
         transparent 4px
+      ),
+      radial-gradient(
+        circle at 0 75%, 
+        var(--notebook-holes-color) 0, 
+        var(--notebook-holes-color) 4px, 
+        transparent 4px
       );
-    background-size: 30px 8px;
-    background-repeat: repeat-y;
+    background-size: 10px 33.33%;
+    background-repeat: no-repeat;
+    z-index: 1;
     pointer-events: none;
-    z-index: 10;
   }
   
   .nav-link {
@@ -65,7 +77,7 @@ import { Icon } from "astro-icon/components";
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    font-family: var(--cursive-font);
+    font-family: var(--handwriting-font);
     font-weight: 500;
     padding: 0.5rem 0;
     text-decoration: none;
@@ -114,8 +126,9 @@ import { Icon } from "astro-icon/components";
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-family: var(--cursive-font);
+    font-family: var(--handwriting-font);
     font-weight: 700;
+    font-size: 1.2rem; /* Slightly larger logo font */
     color: var(--primary-color);
     position: relative;
     margin-left: 2rem;
@@ -131,6 +144,67 @@ import { Icon } from "astro-icon/components";
     color: var(--primary-color);
   }
 
+  /* Mobile menu button */
+  .mobile-menu-button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: 1px dashed var(--primary-color);
+    color: var(--primary-color);
+    border-radius: 0.25rem;
+    padding: 0.3rem;
+    margin-right: 0.5rem;
+    transform: rotate(-1deg);
+  }
+  
+  /* Mobile navigation menu */
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 1rem;
+    right: 1rem;
+    background-color: var(--notebook-paper-color);
+    border: 1px dashed rgba(81, 115, 63, 0.4);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    z-index: 999;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    transform-origin: top center;
+    transform: scale(0.95);
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+    
+    /* Notebook paper lines */
+    background-image: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 1px,
+        var(--notebook-line-color) 1px,
+        var(--notebook-line-color) 2px,
+        transparent 2px,
+        transparent 24px
+      );
+    background-size: 100% 24px;
+  }
+  
+  .mobile-nav.open {
+    transform: scale(1);
+    opacity: 1;
+  }
+  
+  .mobile-nav .nav-link {
+    display: flex;
+    width: 100%;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px dashed rgba(81, 115, 63, 0.2);
+  }
+  
+  .mobile-nav .nav-link:last-child {
+    border-bottom: none;
+  }
+  
   /* Theme toggle button */
   .theme-toggle {
     background-color: transparent;
@@ -151,35 +225,45 @@ import { Icon } from "astro-icon/components";
   [data-icon="tabler:moon"], [data-icon="tabler:sun"] {
     font-size: 1.25rem;
   }
+  
+  /* Media queries for responsive design */
+  @media (max-width: 768px) {
+    .mobile-menu-button {
+      display: flex;
+    }
+    
+    .desktop-nav {
+      display: none;
+    }
+    
+    .mobile-nav.open {
+      display: block;
+    }
+    
+    .site-logo {
+      margin-left: 1rem; /* Less margin on mobile */
+    }
+  }
 </style>
 
-<nav class="nav-container w-full py-4" x-data>
-  <div class="notebook-tabs">
-    <div class="tab active">
-      <Icon name="tabler:home" class="tab-icon" />
-      <span>Home</span>
-    </div>
-    <div class="tab">
-      <Icon name="tabler:book" class="tab-icon" />
-      <span>Recipes</span>
-    </div>
-    <div class="tab">
-      <Icon name="tabler:note" class="tab-icon" />
-      <span>Notes</span>
-    </div>
-    <div class="tab">
-      <Icon name="tabler:tools" class="tab-icon" />
-      <span>Tools</span>
-    </div>
-  </div>
-  
-  <div class="container mx-auto flex items-center justify-between px-4 md:px-6">
+<nav class="nav-container w-full py-3" x-data="{ mobileMenuOpen: false }">
+  <div class="container mx-auto flex items-center justify-between px-3 md:px-6">
     <a href="/" class="site-logo text-xl">
       <span class="logo-icon"><Icon name="tabler:chef-hat" /></span>
       <span>chiso</span>
     </a>
     
-    <div class="flex items-center md:text-base gap-4 md:gap-8 pl-6">
+    <!-- Mobile menu button -->
+    <button 
+      class="mobile-menu-button" 
+      @click="mobileMenuOpen = !mobileMenuOpen"
+      aria-label="Toggle mobile menu"
+    >
+      <Icon name="tabler:menu-2" />
+    </button>
+    
+    <!-- Desktop navigation -->
+    <div class="desktop-nav flex items-center md:text-base gap-4 md:gap-6 pl-4">
       <a href="/" class="nav-link">
         <Icon name="tabler:home" class="nav-icon" />
         <span>Home</span>
@@ -197,6 +281,30 @@ import { Icon } from "astro-icon/components";
         <span>Recipe Collection</span>
       </a>
       <a href="/tools" class="nav-link">
+        <Icon name="tabler:tools" class="nav-icon" />
+        <span>Kitchen Tools</span>
+      </a>
+    </div>
+
+    <!-- Mobile navigation menu -->
+    <div class="mobile-nav" :class="{ 'open': mobileMenuOpen }">
+      <a href="/" class="nav-link" @click="mobileMenuOpen = false">
+        <Icon name="tabler:home" class="nav-icon" />
+        <span>Home</span>
+      </a>
+      <a href="/blog" class="nav-link" @click="mobileMenuOpen = false">
+        <Icon name="tabler:book" class="nav-icon" />
+        <span>Recipe Journal</span>
+      </a>
+      <a href="/notes" class="nav-link" @click="mobileMenuOpen = false">
+        <Icon name="tabler:note" class="nav-icon" />
+        <span>Quick Notes</span>
+      </a>
+      <a href="/projects" class="nav-link" @click="mobileMenuOpen = false">
+        <Icon name="tabler:books" class="nav-icon" />
+        <span>Recipe Collection</span>
+      </a>
+      <a href="/tools" class="nav-link" @click="mobileMenuOpen = false">
         <Icon name="tabler:tools" class="nav-icon" />
         <span>Kitchen Tools</span>
       </a>
@@ -221,75 +329,14 @@ import { Icon } from "astro-icon/components";
 
 <div class="h-16"></div> <!-- Spacer to account for fixed navbar -->
 
-<style>
-  /* Notebook tabs at the top */
-  .notebook-tabs {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 2px;
-    z-index: 12;
-  }
-  
-  .notebook-tabs .tab {
-    padding: 0.25rem 1rem;
-    background-color: var(--primary-color);
-    color: white;
-    border-radius: 0.5rem 0.5rem 0 0;
-    font-family: var(--cursive-font);
-    font-size: 0.9rem;
-    transform: translateY(-60%);
-    opacity: 0.7;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .notebook-tabs .tab::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%);
-    background-size: 8px 8px;
-    opacity: 0.3;
-    z-index: 0;
-  }
-  
-  .notebook-tabs .tab span,
-  .notebook-tabs .tab .tab-icon {
-    position: relative;
-    z-index: 1;
-  }
-  
-  .tab-icon {
-    width: 1rem;
-    height: 1rem;
-  }
-  
-  .notebook-tabs .tab.active,
-  .notebook-tabs .tab:hover {
-    transform: translateY(-100%);
-    opacity: 1;
-  }
-</style>
-
 <script is:inline>
+  // Theme handling
   function handleThemeChange(isDarkMode) {
     document.documentElement.classList.toggle("dark", isDarkMode);
 
-    // Update the theme-color meta for the appropriate colors in the broweser
+    // Update the theme-color meta for the appropriate colors in the browser
     const themeColor = document.querySelector("meta[name=theme-color]");
-    themeColor.setAttribute("content", isDarkMode ? "#3A4D30" : "#F5F5EB");
+    themeColor.setAttribute("content", isDarkMode ? "#3A4D30" : "#51733F");
   }
 
   const persistedDarkModeFlag = (localStorage.getItem("theme") ?? "") === "dark";
@@ -322,50 +369,5 @@ import { Icon } from "astro-icon/components";
         this.setMode("light");
       },
     });
-  });
-  
-  // Handle notebook tabs
-  document.addEventListener('DOMContentLoaded', function() {
-    const tabs = document.querySelectorAll('.notebook-tabs .tab');
-    
-    // Set active tab based on current page
-    const currentPath = window.location.pathname;
-    
-    if (currentPath === '/') {
-      setActiveTab(0);
-    } else if (currentPath.includes('/blog') || currentPath.includes('/posts')) {
-      setActiveTab(1);
-    } else if (currentPath.includes('/notes')) {
-      setActiveTab(2);
-    } else if (currentPath.includes('/tools') || currentPath.includes('/projects')) {
-      setActiveTab(3);
-    }
-    
-    // Set active tab on click
-    tabs.forEach((tab, index) => {
-      tab.addEventListener('click', function() {
-        switch (index) {
-          case 0:
-            window.location.href = '/';
-            break;
-          case 1:
-            window.location.href = '/blog';
-            break;
-          case 2:
-            window.location.href = '/notes';
-            break;
-          case 3:
-            window.location.href = '/tools';
-            break;
-        }
-      });
-    });
-    
-    function setActiveTab(index) {
-      tabs.forEach(tab => tab.classList.remove('active'));
-      if (tabs[index]) {
-        tabs[index].classList.add('active');
-      }
-    }
   });
 </script>

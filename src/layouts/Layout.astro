@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import NavBar from "@components/layout/NavBar.astro";
+import CoverPage from "@components/layout/CoverPage.astro";
 import Footer from "@components/layout/Footer.astro";
 import PrivacyBanner from "@components/items/PrivacyBanner.astro";
 
@@ -26,7 +27,8 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
     <meta charset="utf-8" />
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#F5F5EB" />
+    <!-- Updated theme color to match notebook theme -->
+    <meta name="theme-color" content="#51733F" />
     <meta name="description" content={desc} />
     <meta name="keywords" content={keywords} />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -74,589 +76,10 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
     </script>
 
     <title>{title}</title>
-    
-    <style is:global>
-      /* Improved notebook look */
-      :root {
-        --cover-primary: #4D6F3B;
-        --cover-secondary: #3F5C31;
-        --cover-texture: rgba(255, 255, 255, 0.05);
-        --cover-text: #F7F7EE;
-        --ribbon-color: #8B4513;
-        --page-color: #F5F5EB;
-        --page-shadow: rgba(0, 0, 0, 0.15);
-        --transition-duration: 1s;
-      }
-      
-      /* Notebook cover styling - improved texture and depth */
-      .notebook-cover {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, var(--cover-primary), var(--cover-secondary));
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        transform-origin: left;
-        animation: coverOpen 5s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
-        box-shadow: 
-          5px 0 25px rgba(0, 0, 0, 0.4),
-          inset 0 0 50px rgba(0, 0, 0, 0.2);
-        text-align: center;
-        overflow: hidden;
-      }
-      
-      /* Improved book cover texture with layered patterns */
-      .notebook-cover::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-          url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
-          radial-gradient(var(--cover-texture) 2px, transparent 2px);
-        background-size: 40px 40px, 20px 20px;
-        opacity: 0.8;
-      }
-      
-      /* Additional texture layer */
-      .notebook-cover::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%23ffffff' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
-        z-index: 1;
-        opacity: 0.7;
-      }
-      
-      /* Enhanced notebook spine with more realistic binding */
-      .notebook-spine {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 25px;
-        height: 100%;
-        background-color: var(--cover-secondary);
-        z-index: 9998;
-        box-shadow: 
-          2px 0 10px rgba(0, 0, 0, 0.2),
-          inset -5px 0 10px rgba(0, 0, 0, 0.2);
-        animation: spineFade 5s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
-      }
-      
-      @keyframes spineFade {
-        0%, 90% {
-          opacity: 1;
-        }
-        100% {
-          opacity: 0;
-          visibility: hidden;
-        }
-      }
-      
-      .notebook-spine::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 5px;
-        width: 15px;
-        height: 100%;
-        background-image: 
-          repeating-linear-gradient(
-            0deg,
-            rgba(0, 0, 0, 0.2),
-            rgba(0, 0, 0, 0.2) 8px,
-            rgba(255, 255, 255, 0.15) 8px,
-            rgba(255, 255, 255, 0.15) 12px
-          );
-      }
-      
-      /* Add binding holes to the spine */
-      .notebook-spine::after {
-        content: "";
-        position: absolute;
-        top: 10%;
-        left: 0;
-        width: 100%;
-        height: 80%;
-        background-image: 
-          radial-gradient(
-            circle at center,
-            rgba(0, 0, 0, 0.3) 2px,
-            transparent 2px
-          );
-        background-size: 100% 40px;
-        background-repeat: repeat-y;
-        opacity: 0.7;
-      }
-      
-      /* Improved notebook title styling */
-      .notebook-title {
-        font-family: var(--cursive-font);
-        color: var(--cover-text);
-        font-size: 3.5rem;
-        font-weight: bold;
-        line-height: 1.1;
-        text-shadow: 
-          3px 3px 5px rgba(0, 0, 0, 0.3),
-          0 0 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 0.5rem;
-        position: relative;
-        z-index: 10;
-        letter-spacing: 0.05em;
-      }
-      
-      .notebook-title::before {
-        content: "";
-        position: absolute;
-        bottom: -5px;
-        left: 10%;
-        width: 80%;
-        height: 2px;
-        background: rgba(255, 255, 255, 0.4);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-      }
-      
-      .notebook-subtitle {
-        font-family: var(--handwriting-font);
-        color: var(--cover-text);
-        font-size: 1.5rem;
-        font-weight: normal;
-        text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
-        margin-top: 1rem;
-        opacity: 0.9;
-        background-color: rgba(0, 0, 0, 0.15);
-        padding: 0.5rem 1.5rem;
-        border-radius: 3px;
-        transform: rotate(-1deg);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        animation: fadeIn 1s 0.5s both;
-        z-index: 10;
-        position: relative;
-      }
-      
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px) rotate(-1deg);
-        }
-        to {
-          opacity: 0.9;
-          transform: translateY(0) rotate(-1deg);
-        }
-      }
-      
-      /* Enhanced decorative frame around cover title */
-      .cover-frame {
-        border: 3px solid rgba(255, 255, 255, 0.3);
-        border-radius: 1rem;
-        padding: 3rem;
-        position: relative;
-        transform: rotate(-3deg);
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.05));
-        box-shadow: 
-          0 0 30px rgba(0, 0, 0, 0.2),
-          inset 0 0 15px rgba(255, 255, 255, 0.1);
-        max-width: 550px;
-        width: 90%;
-        margin: 0 auto;
-        overflow: hidden;
-        z-index: 5;
-      }
-      
-      /* Enhanced texture to the frame */
-      .cover-frame::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-        z-index: -1;
-        opacity: 0.5;
-      }
-      
-      /* Improved cookbook badge */
-      .cookbook-badge {
-        position: absolute;
-        top: -1.5rem;
-        right: -1.5rem;
-        background: linear-gradient(135deg, var(--ribbon-color), #A0522D);
-        color: #FFF8DC;
-        font-family: var(--cursive-font);
-        padding: 0.85rem 1.35rem;
-        border-radius: 50%;
-        transform: rotate(15deg);
-        font-size: 0.9rem;
-        font-weight: bold;
-        box-shadow: 
-          2px 2px 8px rgba(0, 0, 0, 0.3),
-          inset 0 0 5px rgba(255, 255, 255, 0.15);
-        z-index: 10;
-        border: 2px dashed rgba(255, 255, 255, 0.3);
-        letter-spacing: 0.05em;
-        animation: badgePulse 3s infinite alternate;
-      }
-      
-      @keyframes badgePulse {
-        0% {
-          transform: rotate(15deg) scale(1);
-          box-shadow: 
-            2px 2px 8px rgba(0, 0, 0, 0.3),
-            inset 0 0 5px rgba(255, 255, 255, 0.15);
-        }
-        100% {
-          transform: rotate(15deg) scale(1.05);
-          box-shadow: 
-            3px 3px 12px rgba(0, 0, 0, 0.4),
-            inset 0 0 8px rgba(255, 255, 255, 0.2);
-        }
-      }
-      
-      /* Improved cookbook corners */
-      .cookbook-corner {
-        position: absolute;
-        width: 35px;
-        height: 35px;
-        border: 3px solid rgba(255, 255, 255, 0.4);
-        z-index: 2;
-        box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-      }
-      
-      .top-left {
-        top: 10px;
-        left: 10px;
-        border-right: none;
-        border-bottom: none;
-      }
-      
-      .top-right {
-        top: 10px;
-        right: 10px;
-        border-left: none;
-        border-bottom: none;
-      }
-      
-      .bottom-left {
-        bottom: 10px;
-        left: 10px;
-        border-right: none;
-        border-top: none;
-      }
-      
-      .bottom-right {
-        bottom: 10px;
-        right: 10px;
-        border-left: none;
-        border-top: none;
-      }
-      
-      /* Enhanced cookbook ribbon */
-      .cookbook-ribbon {
-        position: absolute;
-        top: 30%;
-        right: -8%;
-        width: 200px;
-        height: 45px;
-        background: linear-gradient(to bottom, var(--ribbon-color), #654321);
-        color: #FFF8DC;
-        transform: rotate(45deg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: var(--handwriting-font);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-        z-index: 3;
-        border-top: 1px solid rgba(255, 255, 255, 0.3);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-        font-weight: bold;
-        font-size: 1.1rem;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-        letter-spacing: 0.1em;
-      }
-      
-      .cookbook-ribbon::before,
-      .cookbook-ribbon::after {
-        content: '';
-        position: absolute;
-        width: 15px;
-        height: 15px;
-        background-color: rgba(0, 0, 0, 0.3);
-        bottom: -7px;
-        z-index: -1;
-      }
-      
-      /* Ribbon texture */
-      .cookbook-ribbon span {
-        position: relative;
-        z-index: 2;
-      }
-      
-      .cookbook-ribbon span::before {
-        content: '';
-        position: absolute;
-        top: -10px;
-        left: -80px;
-        width: 160px;
-        height: 30px;
-        background-image: 
-          linear-gradient(90deg, 
-            rgba(255, 255, 255, 0) 0%, 
-            rgba(255, 255, 255, 0.1) 20%, 
-            rgba(255, 255, 255, 0.1) 80%, 
-            rgba(255, 255, 255, 0) 100%
-          );
-        z-index: -1;
-      }
-      
-      /* Chef hat icon */
-      .cover-icon {
-        position: absolute;
-        top: -2rem;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(135deg, #5b8347, #4a6e39);
-        color: var(--cover-text);
-        width: 4rem;
-        height: 4rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 
-          0 5px 15px rgba(0, 0, 0, 0.3),
-          inset 0 0 10px rgba(255, 255, 255, 0.1);
-        z-index: 10;
-        animation: float 3s ease-in-out infinite;
-      }
-      
-      .cover-icon svg {
-        width: 2.5rem;
-        height: 2.5rem;
-        filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
-      }
-      
-      @keyframes float {
-        0%, 100% {
-          transform: translateX(-50%) translateY(0);
-        }
-        50% {
-          transform: translateX(-50%) translateY(-5px);
-        }
-      }
-      
-      /* ADDED: New page transition animations */
-      .notebook-container {
-        position: relative;
-        min-height: 100vh;
-        background-color: var(--page-color);
-        box-shadow: 
-          inset 5px 0 15px var(--page-shadow),
-          inset -5px 0 15px var(--page-shadow);
-        z-index: 1;
-        padding-left: 25px; /* Adjusts for spine width */
-        transition: transform var(--transition-duration), opacity var(--transition-duration);
-      }
-      
-      /* Enhanced page background texture with paper grain */
-      .notebook-container::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E"),
-          linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-        background-size: 200px 200px, 20px 20px, 20px 20px;
-        z-index: -1;
-        opacity: 0.7;
-        pointer-events: none;
-      }
-      
-      .notebook-content {
-        position: relative;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem 1rem;
-        transition: transform 0.5s ease-out, opacity 0.5s ease-out;
-      }
-      
-      /* Page animation keyframes */
-      @keyframes coverOpen {
-        0% {
-          transform: perspective(1800px) rotateY(0deg);
-          box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
-        }
-        5% {
-          transform: perspective(1800px) rotateY(-5deg);
-          box-shadow: 8px 0 30px rgba(0, 0, 0, 0.45);
-        }
-        10% {
-          transform: perspective(1800px) rotateY(-3deg);
-          box-shadow: 7px 0 28px rgba(0, 0, 0, 0.43);
-        }
-        15% {
-          transform: perspective(1800px) rotateY(-8deg);
-          box-shadow: 10px 0 32px rgba(0, 0, 0, 0.47);
-        }
-        30% {
-          transform: perspective(1800px) rotateY(-45deg);
-          box-shadow: 25px 0 40px rgba(0, 0, 0, 0.5);
-        }
-        70% {
-          transform: perspective(1800px) rotateY(-85deg);
-          box-shadow: 40px 0 50px rgba(0, 0, 0, 0.3);
-          opacity: 1;
-        }
-        95% {
-          transform: perspective(1800px) rotateY(-100deg);
-          opacity: 0.3;
-        }
-        100% {
-          transform: perspective(1800px) rotateY(-110deg);
-          opacity: 0;
-          visibility: hidden;
-          display: none;
-        }
-      }
-      
-      /* Enhanced Page Swipe Animations */
-      .page-enter {
-        animation: pageSwipeEnter 0.8s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
-      }
-      
-      .page-exit {
-        animation: pageSwipeExit 0.8s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
-      }
-      
-      @keyframes pageSwipeEnter {
-        0% {
-          transform: translateX(100%);
-          opacity: 0;
-          box-shadow: -5px 0 25px rgba(0, 0, 0, 0.2);
-        }
-        50% {
-          transform: translateX(50%);
-          opacity: 0.7;
-        }
-        100% {
-          transform: translateX(0);
-          opacity: 1;
-          box-shadow: none;
-        }
-      }
-      
-      @keyframes pageSwipeExit {
-        0% {
-          transform: translateX(0);
-          opacity: 1;
-          box-shadow: none;
-        }
-        50% {
-          transform: translateX(-50%);
-          opacity: 0.7;
-        }
-        100% {
-          transform: translateX(-100%);
-          opacity: 0;
-          box-shadow: 5px 0 25px rgba(0, 0, 0, 0.2);
-        }
-      }
-      
-      /* Page corner fold effect */
-      .page-corner-fold {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: 0 0 50px 50px;
-        border-color: transparent transparent rgba(0, 0, 0, 0.05) transparent;
-        box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        z-index: 4;
-        pointer-events: none;
-      }
-      
-      /* Page curl effect on hover */
-      .notebook-content:hover .page-corner-fold {
-        border-width: 0 0 60px 60px;
-      }
-      
-      /* Page fold effect - left edge */
-      .notebook-content::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 40px;
-        height: 100%;
-        background: linear-gradient(90deg, 
-          rgba(0, 0, 0, 0.03) 0%, 
-          rgba(0, 0, 0, 0) 100%);
-        pointer-events: none;
-        z-index: 5;
-      }
-      
-      /* Page fold effect - right edge */
-      .notebook-content::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 40px;
-        height: 100%;
-        background: linear-gradient(270deg, 
-          rgba(0, 0, 0, 0.03) 0%, 
-          rgba(0, 0, 0, 0) 100%);
-        pointer-events: none;
-        z-index: 5;
-      }
-    </style>
   </head>
   <body>
-    <!-- Notebook cover animation on first load -->
-    <div class="notebook-cover">
-      <div class="cover-frame">
-        <div class="cover-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3c1.918 0 3.52 1.35 3.91 3.152a4 4 0 0 1 2.09 7.433a4 4 0 0 1 -2 3.41v2.005h-8v-2.005a4 4 0 0 1 -2 -3.41a4 4 0 0 1 2.092 -7.433a3.999 3.999 0 0 1 3.908 -3.152z"></path>
-            <path d="M6.161 17.009l-2.161 1.563v1.428h16v-1.428l-2.16 -1.563"></path>
-          </svg>
-        </div>
-        <div class="cookbook-badge">Software Chef</div>
-        <h1 class="notebook-title">Chiso's Cookbook</h1>
-        <p class="notebook-subtitle">Recipes for Software Development</p>
-        
-        <!-- Cookbook decorative patterns -->
-        <div class="cookbook-corner top-left"></div>
-        <div class="cookbook-corner top-right"></div>
-        <div class="cookbook-corner bottom-left"></div>
-        <div class="cookbook-corner bottom-right"></div>
-      </div>
-      
-      <!-- Cookbook ribbon -->
-      <div class="cookbook-ribbon">
-        <span>2024 Edition</span>
-      </div>
-    </div>
-    <div class="notebook-spine"></div>
+    <!-- Cover page component -->
+    <CoverPage />
     
     <!-- Enhanced notebook container for page transitions -->
     <div class="notebook-container" id="notebook-container">
@@ -670,7 +93,7 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
     </div>
     
     <script is:inline>
-      // Page transition handling
+      // Page transition handling with optimized cover animation
       document.addEventListener('DOMContentLoaded', function() {
         // Store the current page URL to detect navigation
         let currentPage = window.location.pathname;
@@ -678,31 +101,16 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
         // Check if this is the first visit to the site
         const isFirstVisit = !localStorage.getItem('visited');
         
-        // Cover and spine elements
-        const cover = document.querySelector('.notebook-cover');
-        const spine = document.querySelector('.notebook-spine');
-        
-        // If it's the first visit, show the cover animation and mark as visited
+        // Mark as visited immediately to avoid cover animation on reload
         if (isFirstVisit) {
           localStorage.setItem('visited', 'true');
-          // The cover animation will play naturally as defined in CSS
-          // After animation completes, completely remove the elements
-          setTimeout(() => {
-            if (cover) {
-              cover.remove(); // Completely remove from DOM
-            }
-            if (spine) {
-              spine.remove(); // Completely remove from DOM
-            }
-          }, 5000); // Match with animation duration
+          // Cover animation will play naturally from CSS
         } else {
           // If not first visit, remove the cover and spine immediately
-          if (cover) {
-            cover.remove(); // Completely remove from DOM
-          }
-          if (spine) {
-            spine.remove(); // Completely remove from DOM
-          }
+          const cover = document.getElementById('notebook-cover');
+          const spine = document.getElementById('notebook-spine');
+          if (cover) cover.remove();
+          if (spine) spine.remove();
         }
         
         // Handle internal links for page transitions
@@ -727,33 +135,7 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
             // Wait for the animation to complete, then navigate
             setTimeout(() => {
               window.location.href = link.href;
-            }, 800); // Match this with your animation duration
-          }
-        });
-        
-        // Handle internal links for page transitions
-        document.addEventListener('click', function(e) {
-          // Find closest anchor tag
-          const link = e.target.closest('a');
-          
-          // Only handle internal links on the same domain
-          if (link && 
-              link.href && 
-              link.href.startsWith(window.location.origin) && 
-              !link.hasAttribute('data-no-transition') &&
-              link.href !== window.location.href &&
-              !e.ctrlKey && !e.metaKey) {
-            
-            e.preventDefault();
-            const notebookContent = document.getElementById('notebook-content');
-            
-            // Initiate page exit animation
-            notebookContent.classList.add('page-exit');
-            
-            // Wait for the animation to complete, then navigate
-            setTimeout(() => {
-              window.location.href = link.href;
-            }, 800); // Match this with your animation duration
+            }, 400); // Faster transition
           }
         });
         
@@ -769,7 +151,7 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
             // Remove the class after animation completes
             setTimeout(() => {
               notebookContent.classList.remove('page-enter');
-            }, 800); // Match with animation duration
+            }, 400); // Faster transition
             
             // Update current page
             currentPage = window.location.pathname;
@@ -777,7 +159,6 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
         });
         
         // For initial page load, only animate content if not first visit 
-        // (otherwise it competes with cover animation)
         if (!isFirstVisit) {
           const notebookContent = document.getElementById('notebook-content');
           notebookContent.classList.add('page-enter');
@@ -785,7 +166,7 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
           // Remove the class after animation completes
           setTimeout(() => {
             notebookContent.classList.remove('page-enter');
-          }, 800);
+          }, 400); // Faster transition
         }
         
         // Handle navigation events
@@ -796,32 +177,10 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
             notebookContent.classList.add('page-enter');
             setTimeout(() => {
               notebookContent.classList.remove('page-enter');
-            }, 800);
+            }, 400); // Faster transition
           }
         };
       });
-      
-      // Remove a specific class from an element after a delay
-      function removeClassAfterDelay(elementId, className, delay) {
-        setTimeout(() => {
-          const element = document.getElementById(elementId);
-          if (element) {
-            element.classList.remove(className);
-          }
-        }, delay);
-      }
-      
-      // Add page turn sound effect (optional)
-      function playPageTurnSound() {
-        // Create audio element if you want to add page turning sound
-        // Uncomment to enable sound
-        /*
-        const audio = new Audio('/sounds/page-turn.mp3');
-        audio.volume = 0.3;
-        audio.play().catch(e => {
-          // Handle autoplay restrictions silently
-          console.log('Sound could not be played automatically');
-        });
-        */
-      }
     </script>
+  </body>
+</html>
