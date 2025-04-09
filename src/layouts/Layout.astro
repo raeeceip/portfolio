@@ -24,31 +24,36 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Updated theme color to match notebook theme -->
-    <meta name="theme-color" content="#51733F" />
-    <meta name="description" content={desc} />
-    <meta name="keywords" content={keywords} />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+<!-- Replace the existing meta tags in your src/layouts/Layout.astro file with these -->
 
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="chiso's kitchen notebook" />
-    <meta property="og:site" content="https://chiso.dev" />
-    <meta property="og:url" content="https://chiso.dev" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={desc} />
-    <meta property="og:image" content={metaImage} />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Updated theme color to match notebook theme -->
+<meta name="theme-color" content="#51733F" />
+<meta name="description" content={desc} />
+<meta name="keywords" content={keywords} />
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://chiso.dev" />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={desc} />
-    <meta property="twitter:image" content={metaImage} />
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Chiso's Cookbook" />
+<meta property="og:url" content={`https://chiso.dev${Astro.url.pathname}`} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={desc} />
+<meta property="og:image" content="https://chiso.dev/images/notebook-meta.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Chiso's Cookbook with Chibogu Chisom Raphael written diagonally across a notebook page" />
 
-    {!!pubDate ? <meta name="article:published_time" content={pubDate.toISOString()} /> : null}
-    {tags?.map((tag) => <meta name="article:tag" content={tag} />)}
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={`https://chiso.dev${Astro.url.pathname}`} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={desc} />
+<meta property="twitter:image" content="https://chiso.dev/images/notebook-meta.png" />
+
+{!!pubDate ? <meta property="article:published_time" content={pubDate.toISOString()} /> : null}
+{tags?.map((tag) => <meta property="article:tag" content={tag} />)}
 
     <script src="/vendor/alpine-persist.js" defer is:inline></script>
     <script src="/vendor/alpine.js" defer is:inline></script>
