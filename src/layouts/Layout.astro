@@ -36,21 +36,21 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
-<meta property="og:site_name" content="Chiso's Cookbook" />
-<meta property="og:url" content={`https://chiso.dev${Astro.url.pathname}`} />
+<meta property="og:site_name" content="Chiso's Notebook" />
+<meta property="og:url" content={`https://chiso.fly.dev${Astro.url.pathname}`} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={desc} />
-<meta property="og:image" content="https://chiso.dev/images/notebook-meta.png" />
+<meta property="og:image" content="https://chiso.fly.dev/images/notebook-meta.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="Chiso's Cookbook with Chibogu Chisom Raphael written diagonally across a notebook page" />
+<meta property="og:image:alt" content="Chiso's notebook with handwritten name Chibogu Chisom Raphael" />
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={`https://chiso.dev${Astro.url.pathname}`} />
+<meta property="twitter:url" content={`https://chiso.fly.dev${Astro.url.pathname}`} />
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={desc} />
-<meta property="twitter:image" content="https://chiso.dev/images/notebook-meta.png" />
+<meta property="twitter:image" content="https://chiso.fly.dev/images/notebook-meta.png" />
 
 {!!pubDate ? <meta property="article:published_time" content={pubDate.toISOString()} /> : null}
 {tags?.map((tag) => <meta property="article:tag" content={tag} />)}
