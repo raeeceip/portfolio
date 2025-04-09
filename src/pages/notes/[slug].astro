@@ -4,6 +4,7 @@ import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 
 import Tags from "@components/misc/Tags.astro";
+import SiteHeader from "@components/layout/SiteHeader.astro";
 
 import H1 from "@components/mdx/H1.astro";
 import H2 from "@components/mdx/H2.astro";
@@ -44,29 +45,156 @@ const metaUrl = getMetaUrl(title, date);
     margin-left: 0;
     margin-right: 0;
   }
+  
+  .recipe-container {
+    position: relative;
+    background-color: theme("colors.secondary.100");
+    border: 1px solid theme("colors.secondary.300");
+    border-radius: 0.5rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 5px 5px 0 rgba(81, 115, 63, 0.2);
+    background-image: 
+      repeating-linear-gradient(
+        theme("colors.secondary.200") 0px,
+        theme("colors.secondary.200") 1px,
+        transparent 1px,
+        transparent 28px
+      );
+    background-size: 100% 28px;
+  }
+  
+  .dark .recipe-container {
+    background-color: rgba(58, 77, 48, 0.2);
+    border-color: theme("colors.secondary.700");
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.2);
+    background-image: 
+      repeating-linear-gradient(
+        rgba(255, 255, 255, 0.05) 0px,
+        rgba(255, 255, 255, 0.05) 1px,
+        transparent 1px,
+        transparent 28px
+      );
+  }
+  
+  .recipe-date {
+    font-family: var(--handwriting-font);
+    font-size: 1rem;
+    color: theme("colors.primary.600");
+  }
+  
+  .dark .recipe-date {
+    color: theme("colors.primary.400");
+  }
+  
+  .recipe-label {
+    position: absolute;
+    top: -1.5rem;
+    right: 2rem;
+    background-color: theme("colors.primary.50");
+    border: 1px solid theme("colors.primary.200");
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    font-family: var(--handwriting-font);
+    color: theme("colors.primary.700");
+    transform: rotate(2deg);
+  }
+  
+  .dark .recipe-label {
+    background-color: theme("colors.primary.900");
+    border-color: theme("colors.primary.700");
+    color: theme("colors.primary.300");
+  }
+  
+  .thumbtack {
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    background-color: theme("colors.primary.500");
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark .thumbtack {
+    background-color: theme("colors.primary.600");
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .note-thumbtack-1 {
+    top: 1rem;
+    left: 1rem;
+  }
+  
+  .note-thumbtack-2 {
+    top: 1rem;
+    right: 1rem;
+  }
+  
+  .note-meta {
+    position: relative;
+    background-color: rgba(255, 255, 245, 0.5);
+    border: 1px dashed theme("colors.primary.300");
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--handwriting-font);
+    transform: rotate(-0.5deg);
+  }
+  
+  .dark .note-meta {
+    background-color: rgba(58, 77, 48, 0.1);
+    border-color: theme("colors.primary.700");
+  }
 </style>
 
 <Layout {title} {desc} metaImage={metaUrl} {keywords} {tags} pubDate={date}>
-  <div class="w-fit max-w-full flex items-start gap-2 mt-6 mx-auto">
-    <main class="container">
-      <h1 class="text-3xl md:text-4xl font-bold !leading-normal !md:leading-tight tracking-normal">{title}</h1>
-      <div class="my-3.5"><Tags data={tags || []} /></div>
+  <div class="container px-4 md:px-0 mt-6">
+    <SiteHeader />
+    
+    <div class="flex flex-col lg:flex-row gap-6 mt-8">
+      <aside class="lg:w-64 flex-shrink-0 order-2 lg:order-1">
+        <div class="lg:sticky lg:top-24">
+          <TableOfContents {headings} asSidebar />
+          
+          <div class="mt-8 p-4 border-l-4 border-primary-300 dark:border-primary-700 bg-secondary-50 dark:bg-secondary-800/30">
+            <div class="handwritten text-primary-600 dark:text-primary-400 mb-2">Note date:</div>
+            <div class="recipe-date mb-4">{date.toLocaleString("en-US", { dateStyle: "long" })}</div>
+            
+            <div class="handwritten text-primary-600 dark:text-primary-400 mb-2">Categories:</div>
+            <Tags data={tags || []} />
+            
+            <div class="mt-6">
+              <a href={"https://github.com/raeeceip/chiso.dev/tree/master/src/content/notes/" + note.id} 
+                 target="_blank"
+                 class="flex items-center gap-2 text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
+                <Icon name="octicon:mark-github-16" /> 
+                <span class="handwritten">Edit on Github</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </aside>
+      
+      <main class="lg:flex-1 order-1 lg:order-2">
+        <div class="recipe-container">
+          <div class="thumbtack note-thumbtack-1"></div>
+          <div class="thumbtack note-thumbtack-2"></div>
+          <div class="recipe-label">Quick Note</div>
+          
+          <h1 class="recipe-title text-3xl md:text-4xl font-bold leading-tight tracking-normal mb-6">{title}</h1>
+          
+          <div class="note-meta">
+            <p class="mb-1">Published on <b>{date.toLocaleString("en-US", { dateStyle: "long" })}</b></p>
+            <Tags data={tags || []} />
+          </div>
 
-      <p>Published on <b>{date.toLocaleString("en-US", { dateStyle: "long" })}</b></p>
+          <TableOfContents {headings} />
 
-      <TableOfContents {headings} />
-
-      <article class="blog-content">
-        <Content components={{ h1: H1, h2: H2, h3: H3, pre: Code }} />
-      </article>
-
-      <p class="mt-8">
-        <Icon name="octicon:mark-github-16" /> Edit this note on <a href={"https://github.com/raeeceip/chiso.dev/tree/master/src/content/notes/" + note.id} target="_blank">
-          Github
-        </a>
-      </p>
-    </main>
-
-    <TableOfContents {headings} asSidebar />
+          <article class="blog-content mt-8">
+            <Content components={{ h1: H1, h2: H2, h3: H3, pre: Code }} />
+          </article>
+        </div>
+      </main>
+    </div>
   </div>
 </Layout>

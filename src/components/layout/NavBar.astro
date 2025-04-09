@@ -3,52 +3,177 @@ import { Icon } from "astro-icon/components";
 ---
 
 <style>
-  a {
+  .nav-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: var(--notebook-paper-color);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px dashed rgba(81, 115, 63, 0.4);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    
+    /* Notebook paper design */
+    background-image: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 1px,
+        var(--notebook-line-color) 1px,
+        var(--notebook-line-color) 2px,
+        transparent 2px,
+        transparent 24px
+      ),
+      linear-gradient(
+        to right,
+        var(--notebook-margin-color) 30px,
+        transparent 30px
+      );
+    background-size: 100% 24px, 100% 100%;
+    box-shadow: 0 2px 8px rgba(81, 115, 63, 0.1);
+  }
+  
+  .dark .nav-container {
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Left side binding holes */
+  .nav-container::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(
+        circle at 0 50%, 
+        var(--notebook-holes-color) 0, 
+        var(--notebook-holes-color) 4px, 
+        transparent 4px
+      );
+    background-size: 30px 8px;
+    background-repeat: repeat-y;
+    pointer-events: none;
+    z-index: 10;
+  }
+  
+  .nav-link {
+    position: relative;
     display: inline-block;
+    font-family: var(--cursive-font);
+    font-weight: 500;
+    padding: 0.5rem 0;
+    text-decoration: none;
+    color: theme("colors.primary.700");
+    transition: all 0.3s ease;
+    transform: rotate(-0.5deg);
+  }
+  
+  .dark .nav-link {
+    color: theme("colors.primary.300");
+  }
+  
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+    opacity: 0.7;
+  }
+  
+  .nav-link:hover {
+    color: var(--primary-color);
+    transform: rotate(0.5deg) translateY(-1px);
+  }
+  
+  .nav-link:hover::after {
+    width: 100%;
+    opacity: 1;
+  }
+  
+  .site-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--cursive-font);
+    font-weight: 700;
+    color: var(--primary-color);
+    position: relative;
+    margin-left: 2rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .site-logo:hover {
+    transform: translateY(-1px) rotate(1deg);
+  }
+  
+  .logo-icon {
+    display: inline-block;
+    color: var(--primary-color);
   }
 
-  [data-icon] {
-    color: theme("colors.secondary.600");
-    font-size: 1rem;
+  /* Theme toggle button */
+  .theme-toggle {
+    background-color: transparent;
+    border: 1px dashed var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: all 0.3s ease;
+    transform: rotate(-1deg);
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
   }
-
-  [data-icon="octicon:moon-24"] {
-    @apply rotate-90;
+  
+  .theme-toggle:hover {
+    transform: rotate(1deg);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
   }
-
-  [data-icon="octicon:sun-24"] {
-    color: theme("colors.secondary.900");
+  
+  [data-icon="tabler:moon"], [data-icon="tabler:sun"] {
+    font-size: 1.25rem;
   }
 </style>
 
-<nav class="max-w-screen w-full border-b border-b-secondary-100 dark:border-b-secondary-900" x-data>
-  <div class="md:container flex items-center justify-between space-x-5 py-4 px-8">
-    <div class="flex items-center text-sm md:text-base gap-5 md:gap-6 flex-wrap">
-      <img src="/images/favicon.jpg" alt="Logo" class="h-6 aspect-square rounded-md hidden md:block" />
-      <a href="/">Home</a>
-      <a href="/blog">Blog</a>
-      <a href="/notes">Notes</a>
-      <a href="/projects">Projects</a>
-      <a href="/tools">Tools</a>
+<nav class="nav-container w-full py-4" x-data>
+  <div class="container mx-auto flex items-center justify-between px-4 md:px-6">
+    <a href="/" class="site-logo text-xl">
+      <span class="logo-icon"><Icon name="tabler:chef-hat" /></span>
+      <span>chiso</span>
+    </a>
+    
+    <div class="flex items-center md:text-base gap-4 md:gap-8 pl-6">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/blog" class="nav-link">Recipe Journal</a>
+      <a href="/notes" class="nav-link">Quick Notes</a>
+      <a href="/projects" class="nav-link">Recipe Collection</a>
+      <a href="/tools" class="nav-link">Kitchen Tools</a>
     </div>
 
     <button
       x-cloak
-      class="h-8 aspect-square flex items-center justify-center border border-secondary-600 dark:border-0 dark:bg-secondary-200 rounded-full transition-all duration-300"
+      class="theme-toggle"
       @click="$store.theme.mode === 'dark' ? $store.theme.enableLightMode() : $store.theme.enableDarkMode()"
+      aria-label="Toggle dark mode"
     >
-      <div class="sr-only">Change color scheme</div>
-
       <template x-if="$store.theme.mode == 'light'">
-        <Icon name="octicon:moon-24" />
+        <Icon name="tabler:moon" />
       </template>
 
       <template x-if="$store.theme.mode == 'dark'">
-        <Icon name="octicon:sun-24" />
+        <Icon name="tabler:sun" />
       </template>
     </button>
   </div>
 </nav>
+
+<div class="h-16"></div> <!-- Spacer to account for fixed navbar -->
 
 <script is:inline>
   function handleThemeChange(isDarkMode) {
@@ -56,7 +181,7 @@ import { Icon } from "astro-icon/components";
 
     // Update the theme-color meta for the appropriate colors in the broweser
     const themeColor = document.querySelector("meta[name=theme-color]");
-    themeColor.setAttribute("content", isDarkMode ? "#1b1a18" : "#fdf9ef");
+    themeColor.setAttribute("content", isDarkMode ? "#3A4D30" : "#F5F5EB");
   }
 
   const persistedDarkModeFlag = (localStorage.getItem("theme") ?? "") === "dark";

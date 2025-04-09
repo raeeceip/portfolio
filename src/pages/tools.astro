@@ -1,6 +1,7 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import SiteHeader from "@components/layout/SiteHeader.astro";
+import { Icon } from "astro-icon/components";
 
 import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
@@ -86,68 +87,240 @@ const tools: Tool[] = [
 ];
 ---
 
-<Layout title="Tools">
-  <main class="container">
+<style>
+  .tool-card {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid theme("colors.secondary.300");
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 2px 2px 5px rgba(81, 115, 63, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transform: rotate(-0.3deg);
+  }
+  
+  .dark .tool-card {
+    background-color: rgba(58, 77, 48, 0.1);
+    border-color: theme("colors.secondary.700");
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tool-card:hover {
+    transform: translateY(-3px) rotate(0deg);
+    box-shadow: 3px 3px 10px rgba(81, 115, 63, 0.1);
+  }
+  
+  .dark .tool-card:hover {
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .tool-name {
+    font-family: var(--header-font-family);
+    font-weight: 600;
+    color: theme("colors.primary.700");
+    
+    @apply dark:text-primary-400;
+  }
+  
+  .tool-section {
+    position: relative;
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+  }
+  
+  .tool-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 10%;
+    width: 80%;
+    height: 1px;
+    background-image: 
+      repeating-linear-gradient(
+        to right,
+        theme("colors.primary.300"),
+        theme("colors.primary.300") 8px,
+        transparent 8px,
+        transparent 12px
+      );
+  }
+  
+  .dark .tool-section::before {
+    background-image: 
+      repeating-linear-gradient(
+        to right,
+        theme("colors.primary.700"),
+        theme("colors.primary.700") 8px,
+        transparent 8px,
+        transparent 12px
+      );
+  }
+  
+  .highlighter-mark {
+    position: relative;
+    display: inline-block;
+    padding: 0 0.25rem;
+    z-index: 1;
+  }
+  
+  .highlighter-mark::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: theme("colors.primary.100");
+    transform: rotate(-1deg);
+    z-index: -1;
+  }
+  
+  .dark .highlighter-mark::before {
+    background-color: theme("colors.primary.900");
+  }
+  
+  .tool-list {
+    font-family: var(--handwriting-font);
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+  
+  .tool-list li {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  
+  .tool-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0.5rem;
+    color: var(--primary-color);
+  }
+  
+  .note-box {
+    position: relative;
+    background-color: rgba(255, 255, 211, 0.3);
+    border: 1px dashed theme("colors.primary.400");
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    font-family: var(--handwriting-font);
+    transform: rotate(0.5deg);
+  }
+  
+  .dark .note-box {
+    background-color: rgba(58, 77, 48, 0.15);
+    border-color: theme("colors.primary.600");
+  }
+  
+  .note-label {
+    position: absolute;
+    top: -0.8rem;
+    left: 1rem;
+    background-color: theme("colors.primary.100");
+    color: theme("colors.primary.700");
+    padding: 0.1rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    transform: rotate(-1deg);
+  }
+  
+  .dark .note-label {
+    background-color: theme("colors.primary.900");
+    color: theme("colors.primary.400");
+  }
+</style>
+
+<Layout title="Chef's Toolkit">
+  <main class="container px-4 md:px-0">
     <SiteHeader />
 
-    <h2 class="text-3xl mb-3">Tools</h2>
+    <div class="notebook-page mt-6 relative">
+      <div class="recipe-tab">Toolkit</div>
+      
+      <h2 class="recipe-title">My Kitchen Tools</h2>
+      
+      <div class="recipe-note mb-4">
+        The essential tools I use to create...
+      </div>
 
-    <!-- prettier-ignore -->
-    <p>
-      My primary stack includes PHP, Go and Typescript but I have used a variety of other languages and tools over the years out of necessity or out of curiosity. Here are some of the tools I have used and am comfortable with, there are a lot not on this list that I have school-related experience with or have no interest in generally working with again.
-    </p>
+      <!-- prettier-ignore -->
+      <p class="leading-relaxed mb-8">
+        My primary stack includes PHP, Go and Typescript but I have used a variety of other languages and tools over the years out of necessity or out of curiosity. Here are some of the tools I have used and am comfortable with, there are a lot not on this list that I have school-related experience with or have no interest in generally working with again.
+      </p>
 
-    <ul class="flex flex-col gap-y-4 lg:gap-y-5 mt-5">
-      {
-        tools.map((tool) => (
-          <li class="w-full flex items-start md:items-center gap-3">
-            <div
-              class="w-10 min-w-10 md:w-12 md:min-w-12 aspect-square object-cover flex items-center justify-center rounded-md mt-1 md:mt-0"
-              style={{ backgroundColor: tool.color }}>
-              <Image src={tool.logo} alt={tool.name} class="w-5 md:w-6 aspect-square invert" />
-            </div>
+      <ul class="space-y-5 mt-8">
+        {
+          tools.map((tool, index) => (
+            <li class={index % 2 === 0 ? "transform rotate-0.3deg" : "transform -rotate-0.3deg"}>
+              <div class="tool-card">
+                <div
+                  class="w-12 min-w-12 aspect-square object-cover flex items-center justify-center rounded-md"
+                  style={{ backgroundColor: tool.color }}>
+                  <Image src={tool.logo} alt={tool.name} class="w-6 aspect-square invert" />
+                </div>
 
-            <div class="space-y-0.5">
-              <h3 class="text-xl">{tool.name}</h3>
-              <p class="md:text-base opacity-75">{tool.description}</p>
-            </div>
+                <div>
+                  <h3 class="tool-name text-xl">{tool.name}</h3>
+                  <p class="text-secondary-700 dark:text-secondary-300 text-[15px] leading-relaxed">{tool.description}</p>
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="tool-section mt-12">
+        <h2 class="handwritten text-xl text-primary-700 dark:text-primary-400 mb-5">
+          <span class="inline-flex items-center gap-2">
+            <Icon name="tabler:star" />
+            <span>Tools I'm Excited About</span>
+          </span>
+        </h2>
+        
+        <ul class="tool-list mt-3 pl-2">
+          <!-- prettier-ignore -->
+          <li>
+            <a href="https://www.solidjs.com/" target="_blank" class="highlighter-mark">Solid.js</a> - I have used React a lot but I start new projects with this, it is more performant and has better first-party/primitives support.
           </li>
-        ))
-      }
-    </ul>
+          <li><a href="https://inko-lang.org" target="_blank" class="highlighter-mark">Inko</a> - It is like Rust but apparently easier!</li>
+          <li><a href="https://elixir-lang.org" target="_blank" class="highlighter-mark">Elixir</a> - Awesome for real-time software but I haven't had a lot of time to try it out.</li>
+          <li><a href="https://flatbuffers.dev" target="_blank" class="highlighter-mark">Flatbuffers</a> - More efficient than gRPC & protobufs</li>
+          <li><a href="https://surrealdb.com" target="_blank" class="highlighter-mark">SurrealDB</a> - A multi-model database with interesting features</li>
+        </ul>
+      </div>
 
-    <section class="my-8">
-      <H2>Things I am excited for</H2>
-      <ul class="list-disc list-inside mt-3">
-        <!-- prettier-ignore -->
-        <li>
-          <a href="https://www.solidjs.com/" target="_blank">Solid.js</a> - I have used React a lot but I start new projects with this, it is more performant and has better first-party/primitives support.
-        </li>
-        <li><a href="https://inko-lang.org" target="_blank">Inko</a> - It is like Rust but apparently easier!</li>
-        <li><a href="https://elixir-lang.org" target="_blank">Elixir</a> - Awesome for real-time software but I haven't had a lot of time to try it out.</li>
-        <li><a href="https://flatbuffers.dev" target="_blank">Flatbuffers</a> - More efficient than gRPC & protobufs</li>
-        <li><a href="https://surrealdb.com" target="_blank">SurrealDB</a></li>
-      </ul>
-    </section>
+      <div class="tool-section mt-10">
+        <h2 class="handwritten text-xl text-primary-700 dark:text-primary-400 mb-5">
+          <span class="inline-flex items-center gap-2">
+            <Icon name="tabler:tools" />
+            <span>Other Ingredients I've Used</span>
+          </span>
+        </h2>
 
-    <section class="my-8">
-      <H2>Other things I have used</H2>
+        <ul class="tool-list mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 pl-2">
+          <li><b>C++</b> - school experience and occasional self-torture</li>
+          <li><b>Java</b> - school experience</li>
+          <li><b>Kotlin</b> - also school experience, but I enjoyed it</li>
+          <li><b>Python</b> - school experience and occasional scripting</li>
+          <li><b>Erlang</b> - tried it briefly</li>
+          <li><b>PostgreSQL</b> - I haven't used this much but I intend to use it more</li>
+          <li><b>MongoDB</b> - used for several projects</li>
+          <li><b>Laravel</b> - PHP framework I've worked with</li>
+        </ul>
+      </div>
 
-      <ul class="list-disc list-inside mt-3">
-        <li><b>C++</b> - school experience and occasional self-torture</li>
-        <li><b>Java</b> - school experience</li>
-        <li><b>Kotlin</b> - also school experience, but I enjoyed it</li>
-        <li><b>Python</b> - school experience and occasional scripting</li>
-        <li><b>Erlang</b></li>
-        <li><b>PostgreSQL</b> - I haven't used this much but I intend to use it more in the future</li>
-        <li><b>MongoDB</b></li>
-        <li><b>Laravel</b></li>
-      </ul>
-    </section>
-
-    <!-- prettier-ignore -->
-    <p class="text-sm bg-[var(--foreground-color)] text-[var(--background-color)] px-4 py-3">
-      I am always interested in trying out new things, just to see how they suck and how they are better than my current tools, if you have any suggestions or anything that excites you, feel free to @ me on Twitter/X!
-    </p>
+      <div class="note-box mt-12">
+        <div class="note-label">Chef's Note</div>
+        <p>I am always interested in trying out new things, just to see how they suck and how they are better than my current tools. If you have any suggestions or anything that excites you, feel free to @ me on Twitter/X!</p>
+      </div>
+      
+      <!-- Add some recipe stains/decorations -->
+      <div class="absolute bottom-8 right-12 w-16 h-16 rounded-full border-2 border-primary-600/10 rotate-12"></div>
+      <div class="absolute top-1/3 left-8 w-8 h-8 rounded-full bg-primary-600/5 -rotate-6"></div>
+    </div>
   </main>
 </Layout>

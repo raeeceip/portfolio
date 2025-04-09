@@ -1,16 +1,276 @@
-<hr class="mt-12" />
+---
+import { Icon } from "astro-icon/components";
+---
 
-<footer class="container text-sm leading-7 text-center pt-6 pb-12 px-6 space-y-3">
-  <p>
-    &copy; {new Date().getFullYear()}
-    <b>Chisom R. C.</b> | All Rights Reserved.
-  </p>
+<style>
+  .footer-container {
+    background-color: rgba(245, 245, 235, 0.8);
+    border-top: 1px dashed theme("colors.primary.300");
+    position: relative;
+  }
+  
+  .dark .footer-container {
+    background-color: rgba(58, 77, 48, 0.3);
+    border-top: 1px dashed theme("colors.primary.700");
+  }
+  
+  .footer-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      repeating-linear-gradient(
+        theme("colors.secondary.200") 0px,
+        theme("colors.secondary.200") 1px,
+        transparent 1px,
+        transparent 28px
+      );
+    background-size: 100% 28px;
+    opacity: 0.3;
+    z-index: -1;
+  }
+  
+  .dark .footer-container::before {
+    background-image: 
+      repeating-linear-gradient(
+        rgba(255, 255, 255, 0.05) 0px,
+        rgba(255, 255, 255, 0.05) 1px,
+        transparent 1px,
+        transparent 28px
+      );
+  }
+  
+  .footer-heading {
+    font-family: var(--cursive-font);
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: theme("colors.primary.700");
+    transform: rotate(-1deg);
+  }
+  
+  .dark .footer-heading {
+    color: theme("colors.primary.400");
+  }
+  
+  .footer-heading::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 80%;
+    height: 2px;
+    background-color: var(--primary-color);
+  }
+  
+  .social-icon {
+    transition: transform 0.3s ease, color 0.3s ease;
+    background-color: rgba(81, 115, 63, 0.1);
+    border-radius: 50%;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .dark .social-icon {
+    background-color: rgba(81, 115, 63, 0.2);
+  }
+  
+  .social-icon:hover {
+    transform: translateY(-3px) rotate(5deg);
+    color: var(--primary-color);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark .social-icon:hover {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .site-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--handwriting-font);
+    color: theme("colors.secondary.600");
+    justify-content: center;
+  }
+  
+  .footer-links li {
+    position: relative;
+    padding-left: 1.25rem;
+  }
+  
+  .footer-links li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    font-family: var(--handwriting-font);
+  }
+  
+  .sponsor-button {
+    position: relative;
+    background-color: theme("colors.primary.600");
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    transform: rotate(1deg);
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .sponsor-button:hover {
+    transform: translateY(-3px) rotate(0deg);
+    background-color: theme("colors.primary.700");
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .sponsor-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(45deg, 
+      rgba(255, 255, 255, 0.1) 25%, 
+      transparent 25%, 
+      transparent 50%, 
+      rgba(255, 255, 255, 0.1) 50%, 
+      rgba(255, 255, 255, 0.1) 75%, 
+      transparent 75%, 
+      transparent);
+    background-size: 10px 10px;
+    z-index: 0;
+    opacity: 0.2;
+  }
+  
+  .sponsor-button span, .sponsor-button [data-icon] {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .copyright {
+    font-family: var(--handwriting-font);
+    text-align: center;
+    position: relative;
+  }
+  
+  .copyright::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 25%;
+    width: 50%;
+    height: 1px;
+    background-image: 
+      repeating-linear-gradient(
+        to right,
+        theme("colors.primary.300"),
+        theme("colors.primary.300") 4px,
+        transparent 4px,
+        transparent 8px
+      );
+  }
+  
+  .dark .copyright::after {
+    background-image: 
+      repeating-linear-gradient(
+        to right,
+        theme("colors.primary.700"),
+        theme("colors.primary.700") 4px,
+        transparent 4px,
+        transparent 8px
+      );
+  }
+</style>
 
-  <p>
-    Source code is available at <a href="https://github.com/raeeceip/chiso.dev" target="_blank">github.com/raeeceip/chiso.dev</a>
-  </p>
-
-  <p>
-    If you for some reason want to support me & what I work on, you can sponsor me on <a href="https://github.com/sponsors/raeeceip" target="_blank">Github</a>
-  </p>
-</footer>
+<div class="notebook-page mt-20 pt-8 pb-12 border-t-0 rounded-t-none rounded-b-lg">
+  <div class="recipe-tab absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full">Cookbook End</div>
+  
+  <div class="container px-4 md:px-0">
+    <div class="grid md:grid-cols-3 gap-10">
+      <!-- About Column -->
+      <div>
+        <h3 class="footer-heading text-xl font-semibold">Chef's Bio</h3>
+        <p class="text-primary-700 dark:text-primary-300 mb-6 leading-relaxed">
+          Creating digital experiences with passion and precision, focused on elegant solutions to complex problems.
+        </p>
+        <div class="flex gap-4">
+          <a href="https://github.com/raeeceip" class="social-icon text-xl text-primary-700 dark:text-primary-300" target="_blank" aria-label="GitHub">
+            <Icon name="tabler:brand-github" />
+          </a>
+          <a href="https://x.com/gnchiso" class="social-icon text-xl text-primary-700 dark:text-primary-300" target="_blank" aria-label="Twitter">
+            <Icon name="tabler:brand-twitter" />
+          </a>
+          <a href="/rss.xml" class="social-icon text-xl text-primary-700 dark:text-primary-300" aria-label="RSS Feed">
+            <Icon name="tabler:rss" />
+          </a>
+        </div>
+      </div>
+      
+      <!-- Quick Links -->
+      <div>
+        <h3 class="footer-heading text-xl font-semibold">Journal Sections</h3>
+        <ul class="space-y-3 footer-links">
+          <li>
+            <a href="/" class="text-primary-700 dark:text-primary-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" style="font-family: var(--handwriting-font);">Home</a>
+          </li>
+          <li>
+            <a href="/blog" class="text-primary-700 dark:text-primary-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" style="font-family: var(--handwriting-font);">Recipe Journal</a>
+          </li>
+          <li>
+            <a href="/projects" class="text-primary-700 dark:text-primary-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" style="font-family: var(--handwriting-font);">Recipe Collection</a>
+          </li>
+          <li>
+            <a href="/tools" class="text-primary-700 dark:text-primary-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" style="font-family: var(--handwriting-font);">Kitchen Tools</a>
+          </li>
+          <li>
+            <a href="/notes" class="text-primary-700 dark:text-primary-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" style="font-family: var(--handwriting-font);">Quick Notes</a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Support -->
+      <div>
+        <h3 class="footer-heading text-xl font-semibold">Tip the Chef</h3>
+        <p class="text-primary-700 dark:text-primary-300 mb-5 leading-relaxed">
+          If you appreciate my recipes and want to support my kitchen:
+        </p>
+        <a href="https://github.com/sponsors/raeeceip" class="sponsor-button" target="_blank">
+          <Icon name="tabler:heart" />
+          <span>Sponsor on GitHub</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="mt-12 pt-6 border-t border-primary-300 dark:border-primary-700 text-center">
+      <div class="site-footer mb-4">
+        <Icon name="tabler:chef-hat" class="text-primary-600 dark:text-primary-400" />
+        <span>Handcrafted with love</span>
+      </div>
+      
+      <p class="copyright text-primary-700 dark:text-primary-300">
+        &copy; {new Date().getFullYear()} <b>Chisom R. C.</b> | All Rights Reserved
+      </p>
+      <p class="text-xs text-primary-600 dark:text-primary-400 mt-4" style="font-family: var(--handwriting-font);">
+        Source code available on <a href="https://github.com/raeeceip/chiso.dev" target="_blank" class="underline hover:text-primary-800 dark:hover:text-primary-300 transition-colors">GitHub</a>
+      </p>
+    </div>
+    
+    <!-- Decorative elements -->
+    <div class="hidden md:block absolute bottom-8 right-8 w-20 h-20 rounded-full bg-primary-100 dark:bg-primary-900/30 opacity-20 transform rotate-12"></div>
+    <div class="hidden md:block absolute bottom-20 left-10 w-10 h-10 rounded-full bg-primary-200 dark:bg-primary-800/30 opacity-20 transform -rotate-6"></div>
+    
+    <!-- Book binding at the bottom to make it feel like end of notebook -->
+    <div class="absolute bottom-0 left-0 w-full h-4 bg-primary-600 dark:bg-primary-700 transform translate-y-1/2 rounded-b-lg"></div>
+  </div>
+</div>

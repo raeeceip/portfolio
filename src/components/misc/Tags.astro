@@ -12,7 +12,35 @@ let { data: tags } = Astro.props;
     <div class="flex gap-2 flex-wrap">
       {tags.map((tag) => (
         <!-- prettier-ignore -->
-        <a href={"/tags/" + slugify(tag)} class="tag">{tag?.toLowerCase()?.trim()}</a>
+        <a href={"/tags/" + slugify(tag)} class="recipe-tag">{tag?.toLowerCase()?.trim()}</a>
       ))}
     </div>
 </Show>
+
+<style>
+  .recipe-tag {
+    display: inline-block;
+    background-color: theme("colors.primary.50");
+    color: theme("colors.primary.700");
+    font-size: theme("fontSize.xs");
+    padding: theme("spacing[0.5]") theme("spacing.2");
+    border-radius: theme("borderRadius.sm");
+    border: 1px dashed theme("colors.primary.200");
+    user-select: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    font-family: var(--handwriting-font);
+    text-decoration: none;
+    
+    &:hover {
+      background-color: theme("colors.primary.100");
+      transform: rotate(-1deg);
+    }
+    
+    @apply dark:bg-primary-900/30 dark:text-primary-300 dark:border-primary-800;
+    
+    .dark &:hover {
+      @apply dark:bg-primary-800/40;
+    }
+  }
+</style>

@@ -18,36 +18,127 @@ const { project } = Astro.props;
   [data-icon] {
     display: inline-block;
   }
+  
+  .recipe-card {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid theme("colors.secondary.300");
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 3px 3px 0 rgba(81, 115, 63, 0.1);
+    overflow: hidden;
+  }
+  
+  .dark .recipe-card {
+    background-color: rgba(58, 77, 48, 0.1);
+    border-color: theme("colors.secondary.700");
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  }
+  
+  .recipe-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 5px 5px 15px rgba(81, 115, 63, 0.1);
+  }
+  
+  .dark .recipe-card:hover {
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .recipe-title {
+    font-family: var(--header-font-family);
+    color: theme("colors.primary.700");
+    font-weight: 600;
+    
+    @apply dark:text-primary-400;
+  }
+  
+  .recipe-description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    
+    @apply text-secondary-700 dark:text-secondary-300;
+  }
+  
+  .recipe-status {
+    font-family: var(--handwriting-font);
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: theme("colors.primary.50");
+    color: theme("colors.primary.700");
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    transform: rotate(3deg);
+    border: 1px dashed theme("colors.primary.200");
+    
+    @apply dark:bg-primary-900/30 dark:text-primary-400 dark:border-primary-800;
+  }
+  
+  .corner-fold {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(135deg, theme("colors.primary.100") 50%, transparent 50%);
+    border-top-left-radius: 0.5rem;
+  }
+  
+  .dark .corner-fold {
+    background: linear-gradient(135deg, theme("colors.primary.900") 50%, transparent 50%);
+  }
+  
+  .recipe-actions a {
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  
+  .recipe-actions a:hover {
+    transform: translateY(-2px);
+    color: theme("colors.primary.600");
+    
+    @apply dark:text-primary-400;
+  }
 </style>
 
-<div>
-  <div class="relative w-full aspect-video object-cover rounded-md mb-4 sm:hidden overflow-hidden">
-    <Show when={project.status != "active"}>
-      <div class="text-sm absolute top-2 right-2 bg-[var(--background-color)] text-[var(--foreground-color)] border border-[var(--highlight-border-color)] px-2.5 py-1 rounded-md">
-        {project.status}
-      </div>
-    </Show>
-    <img src={`/images/projects/${project.image}`} alt={project.name} class="w-full h-full" />
-  </div>
-
-  <div class="flex flex-col gap-y-1.5">
-    <h2 class="text-primary-text-light dark:text-primary-text-dark text-xl">
-      {project.name}
-      {project.status != "active" ? <sup class="hidden sm:inline-block text-sm font-light opacity-60">({project.status})</sup> : null}
-    </h2>
-    <p class="text-primary-text-light/60 dark:text-primary-text-dark/60">{project.description}</p>
-
-    <div class="w-full flex justify-between items-center">
-      <Tags data={(project?.tags || []) as string[]} />
-
-      <div class="text-xl space-x-2.5">
-        <Show when={!!project.website_url}>
-          <a href={project.website_url ?? ""} target="_blank" title="Visit website"><Icon name="tabler:external-link" /></a>
-        </Show>
-
-        <Show when={!!project.github_url}>
-          <a href={project.github_url ?? ""} target="_blank" title="View on Github"><Icon name="tabler:brand-github" /></a>
-        </Show>
+<div class="recipe-card">
+  <div class="corner-fold"></div>
+  
+  <Show when={project.status != "active"}>
+    <div class="recipe-status">
+      {project.status}
+    </div>
+  </Show>
+  
+  <div class="flex items-start gap-4">
+    <div class="hidden sm:block w-24 h-24 flex-shrink-0 overflow-hidden rounded">
+      <img src={`/images/projects/${project.image}`} alt={project.name} class="w-full h-full object-cover" />
+    </div>
+    
+    <div class="flex-grow">
+      <h2 class="recipe-title text-xl mb-2">
+        {project.name}
+      </h2>
+      
+      <p class="recipe-description mb-4">{project.description}</p>
+      
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <Tags data={(project?.tags || []) as string[]} />
+        
+        <div class="recipe-actions text-xl space-x-3 text-secondary-600 dark:text-secondary-400">
+          <Show when={!!project.website_url}>
+            <a href={project.website_url ?? ""} target="_blank" title="Try this recipe">
+              <Icon name="tabler:external-link" />
+            </a>
+          </Show>
+          
+          <Show when={!!project.github_url}>
+            <a href={project.github_url ?? ""} target="_blank" title="View ingredients">
+              <Icon name="tabler:brand-github" />
+            </a>
+          </Show>
+        </div>
       </div>
     </div>
   </div>

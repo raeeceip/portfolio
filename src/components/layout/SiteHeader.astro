@@ -1,32 +1,109 @@
 ---
 import { Icon } from "astro-icon/components";
-import { Image } from "astro:assets";
 ---
 
-<div class="flex items-center gap-4 my-6">
-  <Image src="/images/avatar-3.jpg" alt="My Avatar" class="w-24 lg:w-28 aspect-square rounded" width={98} height={98} />
+<style>
+  .profile-heading {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .profile-heading::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60%;
+    height: 2px;
+    background-color: var(--primary-color);
+  }
+  
+  .profile-quote {
+    font-family: var(--header-font-family);
+    font-style: italic;
+    color: #444;
+    background-color: var(--quote-bg);
+    padding: 1.5rem;
+    border-left: 3px solid var(--primary-color);
+    margin: 2rem 0;
+    position: relative;
+  }
+  
+  .profile-quote::before {
+    content: '"';
+    font-size: 4rem;
+    position: absolute;
+    top: -0.5rem;
+    left: 0.5rem;
+    opacity: 0.1;
+    font-family: var(--header-font-family);
+  }
+  
+  .social-icons a {
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  
+  .social-icons a:hover {
+    transform: translateY(-3px);
+    color: var(--primary-color) !important;
+  }
+</style>
 
-  <div class="space-y-1.5 lg:space-y-2.5 -mt-1">
-    <h1 class="text-3xl lg:text-4xl font-bold m-0">chiso.</h1>
+<div class="notebook-page py-10 px-6 md:px-10 mt-6">
+  <div class="flex flex-col items-start">
+    <div class="w-full">
+      <h1 class="profile-heading text-4xl lg:text-5xl font-bold mb-6 font-header">
+        <span class="writing-effect">
+          <span class="writing-letter">c</span>
+          <span class="writing-letter">h</span>
+          <span class="writing-letter">i</span>
+          <span class="writing-letter">s</span>
+          <span class="writing-letter">o</span>
+          <span class="writing-letter">.</span>
+        </span>
+      </h1>
+      
+      <div class="flex flex-col md:flex-row items-start gap-8">
+        <div class="w-full md:w-1/2">
+          <div class="profile-quote text-lg relative ml-4">
+            "Good code is like effective communication – clear, purposeful, and built with careful attention to detail."
+     
+            <div class="absolute -left-4 top-0 bottom-0 w-1 bg-primary-500 dark:bg-primary-600 opacity-80">
+              
+            </div>
+          </div>
+        </div>
+        <div class="w-full md:w-1/2">
+          <p class="text-lg leading-relaxed mb-8 ml-2 border-l-4 border-primary-400 dark:border-primary-600 pl-4">
+            Software Developer | Nigerian | Cook.
+          </p>
+          
+          <div class="social-icons grid-rows-3 gap-4 mt-2 mb-6">
+            <a href="https://github.com/raeeceip" title="GitHub" target="_blank" class="text-2xl text-primary-700 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-all hover:-translate-y-1">
+              <Icon name="tabler:brand-github" />
+            </a>
+    
+            <a href="https://x.com/chiso" title="Twitter" target="_blank" class="text-2xl text-primary-700 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-all hover:-translate-y-1">
+              <Icon name="tabler:brand-twitter" />
+            </a>
+    
+            <a href="/rss.xml" title="RSS Feed" class="text-2xl text-primary-700 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-all hover:-translate-y-1">
+              <Icon name="tabler:rss" />
+            </a>
+    
+            <a href="/feed.json" title="JSONFeed" class="text-2xl text-primary-700 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-all hover:-translate-y-1">
+              <Icon name="tabler:json" />
+            </a>
+          </div>
+          
+          <a href="mailto:chiboguchisomu@gmail.com" class="text-base inline-block no-underline text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors font-handwriting">chiso.</a>
+        </div>
+        
 
-    <a href="mailto:chiboguchisomu@gmail.com" class="text-sm inline-block no-underline">chiso@chiso.dev</a>
-
-    <div class="flex gap-2.5">
-      <a href="https://github.com/raeeceip" title="GitHub" target="_blank">
-        <Icon name="tabler:brand-github" />
-      </a>
-
-      <a href="https://x.com/chiso" title="Twitter" target="_blank">
-        <Icon name="tabler:brand-twitter" />
-      </a>
-
-      <a href="/rss.xml" title="RSS Feed">
-        <Icon name="tabler:rss" />
-      </a>
-
-      <a href="/feed.json" title="JSONFeed" class="text-2xl -mt-1">
-        <Icon name="tabler:json" />
-      </a>
+      </div>
     </div>
   </div>
+  
+  <!-- Decorative elements -->
+  <div class="absolute top-4 right-4 w-16 h-16 rounded-full border-2 border-primary-600/10 rotate-12"></div>
 </div>

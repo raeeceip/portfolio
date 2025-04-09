@@ -44,37 +44,231 @@ const metaUrl = image ? image : getMetaUrl(title, date);
     margin-left: 0;
     margin-right: 0;
   }
+  
+  .recipe-container {
+    position: relative;
+    background-color: theme("colors.secondary.100");
+    border: 1px solid theme("colors.secondary.300");
+    border-radius: 0.5rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 5px 5px 0 rgba(81, 115, 63, 0.2);
+    background-image: 
+      repeating-linear-gradient(
+        theme("colors.secondary.200") 0px,
+        theme("colors.secondary.200") 1px,
+        transparent 1px,
+        transparent 28px
+      );
+    background-size: 100% 28px;
+  }
+  
+  .dark .recipe-container {
+    background-color: rgba(58, 77, 48, 0.2);
+    border-color: theme("colors.secondary.700");
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.2);
+    background-image: 
+      repeating-linear-gradient(
+        rgba(255, 255, 255, 0.05) 0px,
+        rgba(255, 255, 255, 0.05) 1px,
+        transparent 1px,
+        transparent 28px
+      );
+  }
+  
+  .recipe-date {
+    font-family: var(--handwriting-font);
+    font-size: 1rem;
+    color: theme("colors.primary.600");
+  }
+  
+  .dark .recipe-date {
+    color: theme("colors.primary.400");
+  }
+  
+  .recipe-label {
+    position: absolute;
+    top: -1.5rem;
+    right: 2rem;
+    background-color: theme("colors.primary.50");
+    border: 1px solid theme("colors.primary.200");
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    font-family: var(--handwriting-font);
+    color: theme("colors.primary.700");
+    transform: rotate(2deg);
+  }
+  
+  .dark .recipe-label {
+    background-color: theme("colors.primary.900");
+    border-color: theme("colors.primary.700");
+    color: theme("colors.primary.300");
+  }
+  
+  .recipe-disclaimer {
+    position: relative;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    background-color: theme("colors.secondary.50");
+    border: 1px dashed theme("colors.primary.200");
+    border-radius: 0.25rem;
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .dark .recipe-disclaimer {
+    background-color: rgba(58, 77, 48, 0.1);
+    border-color: theme("colors.primary.800");
+  }
+  
+  .thumbtack {
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1rem;
+    height: 1rem;
+    background-color: theme("colors.primary.500");
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark .thumbtack {
+    background-color: theme("colors.primary.600");
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
 </style>
 
 <Layout {title} {desc} metaImage={metaUrl} {keywords} {tags} pubDate={date}>
-  <div class="w-fit max-w-full flex items-start gap-2 mt-6 mx-auto">
-    <main class="container">
-      <h1 class="text-4xl md:text-5xl font-bold leading-tight tracking-normal">{title}</h1>
-      {image && (
-        <img src={image} alt={title} class="w-full h-auto my-4 rounded-lg shadow-lg" />
-      )}
-      <div class="my-3.5"><Tags data={tags || []} /></div>
+  <div class="container mt-6 mx-auto px-4 md:px-0">
+    <div class="flex flex-col xl:flex-row gap-6">
+      <aside class="lg:w-64 flex-shrink-0 order-2 xl:order-1">
+        <div class="lg:sticky lg:top-24">
+          <TableOfContents {headings} asSidebar />
+          
+          <div class="mt-8 p-4 border-l-4 border-primary-300 dark:border-primary-700 bg-secondary-50 dark:bg-secondary-800/30">
+            <div class="handwritten text-primary-600 dark:text-primary-400 mb-2">Recipe date:</div>
+            <div class="recipe-date mb-4">{date.toLocaleString("en-US", { dateStyle: "long" })}</div>
+            
+            <div class="handwritten text-primary-600 dark:text-primary-400 mb-2">Categories:</div>
+            <Tags data={tags || []} />
+          </div>
+        </div>
+      </aside>
+      
+      <main class="lg:flex-1 order-1 xl:order-2">
+        <div class="recipe-container">
+          <div class="recipe-label">Recipe Notes</div>
+          
+          <h1 class="recipe-title text-3xl md:text-4xl font-bold leading-tight tracking-normal mb-6">{title}</h1>
+          
+          {image && (
+            <img src={image} alt={title} class="w-full h-auto my-6 rounded-lg shadow-lg" />
+          )}
+          
+          <TableOfContents {headings} />
 
-      <p>Published on <b>{date.toLocaleString("en-US", { dateStyle: "long" })}</b></p>
+          <article class="blog-content mt-8">
+            <Content components={{ h1: H1, h2: H2, h3: H3, pre: Code }} />
+          </article>
 
-      <TableOfContents {headings} />
+          <div class="flex justify-end mt-10">
+            <a href={"https://github.com/raeeceip/chiso.dev/tree/master/src/content/blog/" + post.id} 
+               target="_blank"
+               class="flex items-center gap-2 text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
+              <Icon name="octicon:mark-github-16" /> 
+              <span class="handwritten">Edit this note on Github</span>
+            </a>
+          </div>
 
-      <article class="blog-content">
-        <Content components={{ h1: H1, h2: H2, h3: H3, pre: Code }} />
-      </article>
-
-      <p class="mt-8">
-        <Icon name="octicon:mark-github-16" /> Edit this page on <a href={"https://github.com/raeeceip/chiso.dev/tree/master/src/content/blog/" + post.id} target="_blank">
-          Github
-        </a>
-      </p>
-
-      <!-- prettier-ignore -->
-      <p class="text-sm leading-loose bg-secondary-dark text-primary-text-dark dark:bg-primary-100 dark:text-secondary-900 px-6 py-4 mt-8">
-        <b>Disclaimer</b>: This article represents my own opinions and experiences at the time of writing this article. These opinions may change over time and my experiences could be different from yours, if you find anything that is objectively incorrect or that you need to discuss further, please contact me via any of the links in the header section of this website's homepage.
-      </p>
-    </main>
-
-    <TableOfContents {headings} asSidebar />
+          <div class="recipe-disclaimer">
+            <div class="thumbtack"></div>
+            <p><strong>Note:</strong> This article represents my own opinions and experiences at the time of writing. These opinions may change over time and my experiences could be different from yours. If you find anything that is objectively incorrect or that you need to discuss further, please contact me via any of the links in the header section of this website's homepage.</p>
+          </div>
+        </div>
+      </main>
+      
+      <!-- Chef's notebook add-ons on right side -->
+      <aside class="hidden xl:block xl:w-64 flex-shrink-0 order-3 relative">
+        <div class="sticky top-24 space-y-6">
+          <!-- Cooking time sticky note -->
+          <div class="sticky-note relative bg-yellow-100 dark:bg-yellow-900/30 p-4 shadow-md transform -rotate-2">
+            <h4 class="handwritten text-lg text-primary-700 dark:text-primary-300 mb-2">Reading time:</h4>
+            <p class="handwritten text-primary-600 dark:text-primary-400">{Math.ceil(post.body.length / 1500)} min read</p>
+            <div class="absolute -bottom-2 -right-2 w-4 h-4 bg-primary-300/30 dark:bg-primary-700/30 rounded-full blur-sm"></div>
+          </div>
+          
+          <!-- Recent recipes card -->
+          <div class="recipe-card bg-secondary-50 dark:bg-secondary-900/30 p-4 border border-dashed border-primary-400 dark:border-primary-600 rounded shadow-md transform rotate-1">
+            <h4 class="handwritten text-lg text-primary-700 dark:text-primary-300 mb-2">Related recipes:</h4>
+            <div class="space-y-3">
+              <div class="flex items-start gap-2">
+                <Icon name="tabler:file-text" class="text-primary-400 dark:text-primary-600 mt-1" />
+                <a href="#" class="handwritten text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300">Key ingredients for developers</a>
+              </div>
+              <div class="flex items-start gap-2">
+                <Icon name="tabler:file-text" class="text-primary-400 dark:text-primary-600 mt-1" />
+                <a href="#" class="handwritten text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300">How to braise a legacy codebase</a>
+              </div>
+              <div class="flex items-start gap-2">
+                <Icon name="tabler:file-text" class="text-primary-400 dark:text-primary-600 mt-1" />
+                <a href="#" class="handwritten text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300">Perfect microservices plating</a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Chef's measurement conversions -->
+          <div class="conversion-card bg-secondary-100 dark:bg-secondary-800/30 p-4 border-t border-l border-primary-300 dark:border-primary-700 rounded-lg shadow-md transform -rotate-1">
+            <h4 class="handwritten text-lg text-primary-700 dark:text-primary-300 mb-2">Chef's reminders:</h4>
+            <div class="space-y-2 text-sm text-primary-600 dark:text-primary-400">
+              <p class="handwritten">Test early, test often</p>
+              <p class="handwritten">Comments explain "why", not "what"</p>
+              <p class="handwritten">Readable > clever</p>
+              <p class="handwritten">Commit small, commit often</p>
+            </div>
+            <!-- Coffee stain -->
+            <div class="absolute -top-4 -left-4 w-12 h-12 rounded-full bg-primary-700/10 dark:bg-primary-300/10 transform blur-sm"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
   </div>
+
+<style>
+  .sticky-note {
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 0.25rem;
+  }
+  
+  .dark .sticky-note {
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .recipe-card {
+    position: relative;
+  }
+  
+  .recipe-card::after {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 10px;
+    border: 1px solid var(--primary-color);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    opacity: 0.5;
+  }
+  
+  .conversion-card {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .handwritten {
+    font-family: var(--handwriting-font);
+  }
+</style>
 </Layout>

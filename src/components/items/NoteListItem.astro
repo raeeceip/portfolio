@@ -18,45 +18,93 @@ const {
 
   time {
     font-size: theme("fontSize.sm");
-    color: theme("colors.secondary.600");
+    font-family: var(--handwriting-font);
+    color: theme("colors.primary.600");
 
-    @apply text-primary-text-light/60 dark:text-primary-text-dark/60;
+    @apply dark:text-primary-400;
+  }
+  
+  .note-card {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid theme("colors.secondary.300");
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 2px 2px 5px rgba(81, 115, 63, 0.1);
+    overflow: hidden;
+    transform: rotate(-0.5deg);
+  }
+  
+  .dark .note-card {
+    background-color: rgba(58, 77, 48, 0.1);
+    border-color: theme("colors.secondary.700");
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .note-card:hover {
+    transform: translateY(-3px) rotate(0deg);
+    box-shadow: 3px 3px 10px rgba(81, 115, 63, 0.1);
+  }
+  
+  .dark .note-card:hover {
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
   }
 
   .note-title {
     display: block;
-    font-family: var(--header-font-family), var(--alt-font-family), Arial, Helvetica, sans-serif;
-    font-size: theme("fontSize.xl");
-    font-weight: theme("fontWeight.bold");
-    line-height: theme("lineHeight.tight");
-    color: theme("colors.primary.text.light");
+    font-family: var(--cursive-font);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: theme("colors.primary.700");
     text-decoration: none;
-    margin-bottom: theme("margin.4");
+    margin-bottom: 0.75rem;
+    border-bottom: 1px dashed theme("colors.secondary.300");
+    padding-bottom: 0.5rem;
 
-    @apply dark:text-primary-text-dark;
+    @apply dark:text-primary-400 dark:border-secondary-700;
 
     &:hover {
-      text-decoration: underline;
-      text-underline-offset: theme("textUnderlineOffset.4");
+      color: theme("colors.primary.600");
+      @apply dark:text-primary-300;
     }
   }
 
   .note-description {
-    @apply text-[14px] text-primary-text-light/60 dark:text-primary-text-dark/60 leading-relaxed tracking-normal -mt-2 mb-3;
+    @apply text-[15px] text-secondary-700 dark:text-secondary-300 leading-relaxed tracking-normal mb-3;
+  }
+  
+  .pushpin {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    background-color: theme("colors.accent.500");
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark .pushpin {
+    background-color: theme("colors.accent.600");
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 </style>
 
-<div>
+<div class="note-card">
+  <div class="pushpin"></div>
+  
   <a href={"/notes/" + slug} class="note-title">{data.title}</a>
   <p class="note-description">{data.description}</p>
 
-  <div class="flex items-center justify-between">
+  <div class="flex flex-wrap items-center justify-between gap-2">
     <div class="max-w-[75%]">
       <Tags data={data.tags || []} />
     </div>
 
     <time datetime={data.date.toISOString()}>
-      {new Date(data.date).toLocaleDateString("en-GB")}
+      {new Date(data.date).toLocaleDateString("en-US", {month: 'short', day: 'numeric', year: 'numeric'})}
     </time>
   </div>
 </div>

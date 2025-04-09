@@ -20,9 +20,33 @@ const {
 
   time {
     font-size: theme("fontSize.sm");
-    color: theme("colors.secondary.600");
+    font-family: var(--handwriting-font);
+    color: theme("colors.primary.600");
 
-    @apply text-primary-text-light/60 dark:text-primary-text-dark/60;
+    @apply dark:text-primary-400;
+  }
+
+  .recipe-card {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid theme("colors.secondary.300");
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .dark .recipe-card {
+    background-color: rgba(58, 77, 48, 0.1);
+    border-color: theme("colors.secondary.700");
+  }
+  
+  .recipe-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 3px 3px 10px rgba(81, 115, 63, 0.1);
+  }
+  
+  .dark .recipe-card:hover {
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
   }
 
   .post-title {
@@ -31,34 +55,52 @@ const {
     font-size: theme("fontSize.xl");
     font-weight: theme("fontWeight.bold");
     line-height: theme("lineHeight.tight");
-    color: theme("colors.primary.text.light");
+    color: theme("colors.primary.700");
     text-decoration: none;
     margin-bottom: theme("margin.4");
+    border-bottom: 1px dashed theme("colors.secondary.300");
+    padding-bottom: 0.5rem;
 
-    @apply dark:text-primary-text-dark;
+    @apply dark:text-primary-400 dark:border-secondary-700;
 
     &:hover {
-      text-decoration: underline;
-      text-underline-offset: theme("textUnderlineOffset.4");
+      color: theme("colors.primary.600");
+      @apply dark:text-primary-300;
     }
   }
 
   .post-description {
-    @apply text-[14px] text-primary-text-light/60 dark:text-primary-text-dark/60 leading-relaxed tracking-normal -mt-2 mb-3;
+    @apply text-[15px] text-secondary-700 dark:text-secondary-300 leading-relaxed tracking-normal mb-4;
+  }
+  
+  .corner-fold {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-top: 20px solid theme("colors.primary.100");
+    border-left: 20px solid transparent;
+    border-top-right-radius: 0.5rem;
+  }
+  
+  .dark .corner-fold {
+    border-top-color: theme("colors.primary.900");
   }
 </style>
 
-<div>
+<div class="recipe-card">
+  <div class="corner-fold"></div>
   <a href={"/posts/" + slug} class="post-title">{data.title}</a>
   <p class="post-description" class:list={isPreview ? "hidden" : ""}>{data.description}</p>
 
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between mt-2">
     <div class="max-w-[75%]">
       <Tags data={data.tags || []} />
     </div>
 
     <time datetime={data.date.toISOString()}>
-      {new Date(data.date).toLocaleDateString("en-GB")}
+      {new Date(data.date).toLocaleDateString("en-US", {year: 'numeric', month: 'short', day: 'numeric'})}
     </time>
   </div>
 </div>

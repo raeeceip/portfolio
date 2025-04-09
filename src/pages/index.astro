@@ -1,13 +1,11 @@
 ---
-import Layout from "@layouts/Layout.astro";
 import SiteHeader from "@components/layout/SiteHeader.astro";
-import ProjectPreviewListItem from "@components/items/ProjectPreviewListItem.astro";
+import Layout from "@layouts/Layout.astro";
 
+import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
-import H1 from "@components/mdx/H1.astro";
-import MinimalArticleListItem from "@components/items/MinimalArticleListItem.astro";
 
-const MAX_LATEST = 6;
+const MAX_LATEST = 3;
 
 const posts = await getCollection("blog", ({ data }) => {
   return import.meta.env.PROD ? data.draft !== true : true;
@@ -18,40 +16,475 @@ const publishedPosts = posts?.sort((a, b) => b.data.date.valueOf() - a.data.date
 const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATEST);
 ---
 
-<Layout title="chiso">
-  <main class="container">
+<style>
+  .section-title {
+    font-family: var(--header-font-family);
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 2rem;
+    padding: 0.25rem 0.5rem;
+    background-color: theme("colors.primary.600");
+    color: white;
+    border-radius: 0 0.25rem 0.25rem 0;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark .section-title {
+    background-color: theme("colors.primary.700");
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  }
+  
+  .section-title::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-bottom: 10px solid theme("colors.primary.700");
+    border-left: 10px solid transparent;
+    z-index: -1;
+  }
+  
+  .dark .section-title::before {
+    border-bottom-color: theme("colors.primary.800");
+  }
+  
+  .feature-card {
+    position: relative;
+    border: 1px solid theme("colors.secondary.300");
+    border-radius: 0 0.5rem 0.5rem 0.5rem;
+    overflow: visible;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+    background-image: 
+      repeating-linear-gradient(
+        theme("colors.secondary.100") 0px,
+        theme("colors.secondary.100") 1px,
+        transparent 1px,
+        transparent 26px
+      );
+    background-size: 100% 26px;
+    padding-top: 26px;
+  }
+  
+  .feature-card::before {
+    content: "";
+    position: absolute;
+    top: -0.5rem;
+    left: 1.5rem;
+    width: 6rem;
+    height: 2rem;
+    background-color: theme("colors.primary.600");
+    border-radius: 0.5rem 0.5rem 0 0;
+    z-index: -1;
+    box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .feature-card.alt::before {
+    background-color: theme("colors.accent.500");
+    left: auto;
+    right: 1.5rem;
+  }
+  
+  .dark .feature-card {
+    border-color: theme("colors.secondary.700");
+    background-color: rgba(58, 77, 48, 0.3);
+    background-image: 
+      repeating-linear-gradient(
+        rgba(255, 255, 255, 0.03) 0px,
+        rgba(255, 255, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 26px
+      );
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-3px) rotate(0.5deg);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark .feature-card:hover {
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Handwritten note style */
+  .handwritten {
+    font-family: var(--handwriting-font);
+    color: theme("colors.primary.700");
+    transform: rotate(-1deg);
+    position: relative;
+    line-height: 1.5;
+    font-size: 1.1rem;
+  }
+  
+  .dark .handwritten {
+    color: theme("colors.primary.300");
+  }
+  
+  /* Paper clip visual */
+  .paper-clip {
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    width: 30px;
+    height: 60px;
+    border: 2px solid theme("colors.accent.500");
+    border-radius: 5px 5px 0 0;
+    border-bottom: none;
+    transform: rotate(45deg);
+    opacity: 0.7;
+  }
+  
+  .dark .paper-clip {
+    border-color: theme("colors.accent.600");
+  }
+  
+  .skills-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+  }
+  
+  .skill-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    background-color: theme("colors.secondary.50");
+    border: none;
+    transition: all 0.3s ease;
+    position: relative;
+    transform: rotate(1deg);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .skill-item::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      linear-gradient(to right, rgba(81, 115, 63, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(81, 115, 63, 0.1) 1px, transparent 1px);
+    background-size: 5px 5px;
+    z-index: -1;
+  }
+  
+  .skill-item:nth-child(odd) {
+    transform: rotate(-1deg);
+  }
+  
+  .dark .skill-item {
+    background-color: rgba(58, 77, 48, 0.3);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .dark .skill-item::after {
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  }
+  
+  .skill-item:hover {
+    transform: translateY(-3px) rotate(0);
+    background-color: rgba(81, 115, 63, 0.1);
+    box-shadow: 3px 3px 10px rgba(81, 115, 63, 0.3);
+  }
+  
+  .dark .skill-item:hover {
+    background-color: rgba(81, 115, 63, 0.2);
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .skill-item span {
+    margin-top: 0.5rem;
+    font-family: var(--handwriting-font);
+    font-size: 1.1rem;
+  }
+  
+  .view-more {
+    display: inline-block;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: transform 0.3s ease;
+  }
+  
+  .view-more:hover {
+    transform: translateX(5px);
+  }
+  
+  .special-banner {
+    background-color: theme("colors.secondary.50");
+    color: theme("colors.primary.800");
+    padding: 2rem;
+    border-radius: 0.5rem;
+    margin: 3rem 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 5px 5px 0 rgba(81, 115, 63, 0.3);
+    border: 1px solid theme("colors.secondary.300");
+    border-left: 4px solid theme("colors.primary.600");
+    transform: rotate(-0.5deg);
+  }
+  
+  .dark .special-banner {
+    background-color: rgba(58, 77, 48, 0.2);
+    color: theme("colors.secondary.100");
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.3);
+    border-color: theme("colors.secondary.700");
+    border-left-color: theme("colors.primary.600");
+  }
+  
+  .special-banner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      repeating-linear-gradient(
+        rgba(81, 115, 63, 0.05) 0px,
+        rgba(81, 115, 63, 0.05) 1px,
+        transparent 1px,
+        transparent 26px
+      );
+    background-size: 100% 26px;
+    z-index: -1;
+  }
+  
+  .special-banner h3 {
+    font-family: var(--handwriting-font);
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    transform: rotate(0.5deg);
+    color: theme("colors.primary.700");
+  }
+  
+  .dark .special-banner h3 {
+    color: theme("colors.primary.400");
+  }
+  
+  .fork-knife {
+    position: absolute;
+    right: 2rem;
+    top: 1rem;
+    font-size: 3rem;
+    opacity: 0.2;
+    transform: rotate(15deg);
+  }
+</style>
+
+<Layout title="Chiso - Developer Portfolio">
+  <main>
     <SiteHeader />
+    
+    <!-- Hero Section -->
+    <section id="hero" class="container px-4 md:px-0 mt-12 mb-20">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+        <div class="md:col-span-7">
+          <div class="relative">
+            <div class="absolute -top-10 -left-3 w-8 h-32 border-r-2 border-b-2 border-t-2 border-primary-600 rounded-tr-md rounded-br-md"></div>
+            
+            <h2 class="text-4xl md:text-5xl font-bold leading-tight mb-8 font-header">
+              <div class="handwritten text-2xl text-primary-700 dark:text-primary-400 mb-2 ml-4">Chiso's Special:</div>
+              Sometimes  <span class="text-primary-600 dark:text-primary-400">I</span> pay <span class="text-primary-600 dark:text-primary-400">attention</span>
+            </h2>
+            
+            <p class="text-lg text-secondary-600 dark:text-secondary-300 leading-relaxed mb-8 ml-4 border-l-4 border-secondary-200 dark:border-secondary-700 pl-4">
+              I'm Chiso, a software developer based in Ottawa, Canada. I find my self building cool stuff sometimes, and I would like to share that with the world
+            </p>
+            
+            <div class="flex flex-wrap gap-4 ml-4">
+              <a href="mailto:chiboguchisomu@gmail.com" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded transition-all">
+                <Icon name="tabler:mail" />
+                <span>Get in touch</span>
+              </a>
+              <a href="#projects" class="inline-flex items-center gap-2 border-2 border-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-700 dark:text-primary-400 px-6 py-3 rounded transition-all">
+                <Icon name="tabler:code" />
+                <span>See my work</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="md:col-span-5">
+          <div class="feature-card p-6 mt-10 relative">
+            <div class="paper-clip"></div>
+            <h3 class="handwritten text-xl mb-4 text-primary-700 dark:text-primary-400 flex items-center gap-2">
+              <Icon name="tabler:chef-hat" class="opacity-60" />
+              <span>My Recipe for Success:</span>
+            </h3>
+            
+            <ul class="space-y-5 mt-6">
+              <li class="flex items-start gap-3">
+                <Icon name="tabler:code" class="text-accent-600 dark:text-accent-400 mt-1" />
+                <span class="leading-tight">Full-Stack Development</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <Icon name="tabler:api" class="text-accent-600 dark:text-accent-400 mt-1" />
+                <span class="leading-tight">API Design & Integration</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <Icon name="tabler:rocket" class="text-accent-600 dark:text-accent-400 mt-1" />
+                <span class="leading-tight">Performance Optimization</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <Icon name="tabler:layout-dashboard" class="text-accent-600 dark:text-accent-400 mt-1" />
+                <span class="leading-tight">UI/UX Enhancement</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <Icon name="tabler:stack" class="text-accent-600 dark:text-accent-400 mt-1" />
+                <span class="leading-tight">System Architecture</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Special Banner -->
+    <div class="container px-4 md:px-0 my-24">
+      <div class="special-banner">
+        <div class="fork-knife">🍴</div>
+        <h3>Let's cook up something amazing together</h3>
+        <p class="text-lg opacity-90 mb-6 max-w-2xl">Open to collaboration and new opportunities. Get in touch to discuss your project needs.</p>
+        <a href="mailto:chiboguchisomu@gmail.com" class="inline-block bg-primary-600 text-white dark:bg-primary-700 font-semibold py-2 px-6 rounded hover:bg-primary-700 dark:hover:bg-primary-600 transition-all transform hover:-rotate-1">Contact me</a>
+      </div>
+    </div>
 
-    <section id="about-me">
-      <!-- prettier-ignore -->
-      <p>
-        Hello, my name is Chiso. I am a software developer based out of Ottawa, Canada. I like building cool stuff and figuring out many things, and I have many <a href="/tools">tools</a> I like to use to do so. I <a href="/blog">write</a> here from time to time and I also stream infrequently on <a href="https://x.com/gnchiso">X</a>.
-      </p>
+    <!-- Latest Posts Section -->
+    <section id="articles" class="container px-4 md:px-0 my-20">
+      <h2 class="section-title text-3xl">Recipe Journal</h2>
+      <div class="handwritten text-xl text-primary-700 dark:text-primary-400 -mt-6 mb-8 ml-4">
+        Notes from my kitchen...
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {publishedPosts.map((post, index) => (
+          <a href={`/posts/${post.slug}`} class={`feature-card block no-underline hover:no-underline group ${index % 3 === 1 ? 'alt' : ''}`}>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <div class="handwritten text-sm text-primary-600 dark:text-primary-400">
+                  {new Date(post.data.date).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})}
+                </div>
+              </div>
+              <h3 class="text-xl font-semibold text-primary-text-light dark:text-primary-text-dark mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors font-header">{post.data.title}</h3>
+              
+              <div class="h-px w-full bg-secondary-200 dark:bg-secondary-700 my-3"></div>
+              
+              <p class="text-secondary-600 dark:text-secondary-400 mb-4 line-clamp-3 leading-relaxed">{post.data.description}</p>
+              <div class="flex items-center text-primary-600 dark:text-primary-400 font-medium">
+                <span>Read notes</span>
+                <Icon name="tabler:arrow-right" class="ml-2 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <div class="flex justify-center mt-12">
+        <a href="/blog" class="view-more flex items-center gap-2 py-2 px-4 border border-primary-600 rounded hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all">
+          <span>View full journal</span>
+          <Icon name="tabler:arrow-right" />
+        </a>
+      </div>
     </section>
 
-    <section class="mt-6" id="articles">
-      <H1>Latest posts</H1>
-
-      <div class="mt-5 space-y-5">
-        {publishedPosts.map((post) => <MinimalArticleListItem post={post} />)}
+    <!-- Featured Projects Section -->
+    <section id="projects" class="container px-4 md:px-0 my-20 pb-10">
+      <h2 class="section-title text-3xl">Featured Recipes</h2>
+      <div class="handwritten text-xl text-primary-700 dark:text-primary-400 -mt-6 mb-8 ml-4">
+        My favorite creations to date...
       </div>
 
-      <div class="flex w-full justify-end mt-10">
-        <a href="/blog" class="text-sm">View all articles &rarr;</a>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {projects.map((project, index) => (
+          <div class={`feature-card h-full group ${index % 2 === 1 ? 'alt' : ''}`}>
+            <div class="p-6 flex flex-col h-full">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-primary-100 dark:bg-primary-800/30 rounded flex items-center justify-center text-primary-600 dark:text-primary-400 group-hover:bg-primary-200 dark:group-hover:bg-primary-700/30 transition-colors rotate-3">
+                  <Icon name="tabler:chef-hat" class="text-lg" />
+                </div>
+                <h3 class="text-xl font-semibold group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors font-header">{project.name}</h3>
+              </div>
+              
+              <div class="handwritten text-primary-700/70 dark:text-primary-400/70 text-sm mb-2">Ingredients:</div>
+              <p class="text-secondary-600 dark:text-secondary-400 flex-grow mb-6 leading-relaxed">{project.description}</p>
+              
+              <div class="flex flex-wrap gap-3 mt-auto">
+                {project.github_url && (
+                  <a href={project.github_url} class="text-sm py-2 px-3 border border-secondary-300 dark:border-secondary-700 rounded flex items-center gap-2 hover:bg-secondary-100 dark:hover:bg-secondary-800 transition-colors">
+                    <Icon name="tabler:brand-github" />
+                    <span>View Code</span>
+                  </a>
+                )}
+                {project.website_url && (
+                  <a href={project.website_url} class="text-sm py-2 px-3 border border-primary-600 text-primary-700 dark:text-primary-400 rounded flex items-center gap-2 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors">
+                    <Icon name="tabler:external-link" />
+                    <span>Live Demo</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="flex justify-center mt-12">
+        <a href="/projects" class="view-more flex items-center gap-2 py-2 px-4 border border-primary-600 rounded hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all">
+          <span>View all recipes</span>
+          <Icon name="tabler:arrow-right" />
+        </a>
       </div>
     </section>
-
-    <hr class="my-12" />
-
-    <section id="projects">
-      <H1>Featured projects</H1>
-
-      <div class="mt-5 space-y-5">
-        {projects.map((project) => <ProjectPreviewListItem project={project} />)}
+    
+    <!-- Skills Section -->
+    <section id="tools" class="container px-4 md:px-0 my-20">
+      <h2 class="section-title text-3xl">Technologies & Tools</h2>
+      
+      <div class="feature-card p-8 mb-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+          <div class="skill-item">
+            <Icon name="typescript" class="text-4xl mb-2" />
+            <span class="font-medium">TypeScript</span>
+          </div>
+          <div class="skill-item">
+            <Icon name="react" class="text-4xl mb-2" />
+            <span class="font-medium">React</span>
+          </div>
+          <div class="skill-item">
+            <Icon name="rust" class="text-4xl mb-2" />
+            <span class="font-medium">Rust</span>
+          </div>
+          <div class="skill-item">
+            <Icon name="go" class="text-4xl mb-2" />
+            <span class="font-medium">Go</span>
+          </div>
+          <div class="skill-item">
+            <Icon name="tailwindcss" class="text-4xl mb-2" />
+            <span class="font-medium">Tailwind</span>
+          </div>
+          <div class="skill-item">
+            <Icon name="neovim" class="text-4xl mb-2" />
+            <span class="font-medium">Neovim</span>
+          </div>
+        </div>
       </div>
-
-      <div class="flex w-full justify-end mt-10">
-        <a href="/projects" class="text-sm">View all projects &rarr;</a>
+      
+      <div class="flex justify-center">
+        <a href="/tools" class="view-more flex items-center gap-2 py-2 px-4 rounded-md hover:bg-secondary-50 dark:hover:bg-secondary-800/50 transition-all">
+          <span>View all tools</span>
+          <Icon name="tabler:arrow-right" />
+        </a>
       </div>
     </section>
   </main>
