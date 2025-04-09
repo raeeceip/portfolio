@@ -76,11 +76,33 @@ html {
   font-size: var(--body-font-size);
   line-height: var(--body-line-height);
   letter-spacing: var(--body-letter-spacing);
-  background-color: theme("colors.secondary.light");
+  background-color: #e0e0d5; /* Background outside the notebook */
   color: theme("colors.primary.text.light");
   transition:
     background-color 0.3s,
     color 0.3s;
+  height: 100%;
+  overflow-x: hidden;
+  
+  &.dark {
+    background-color: #2A3A20; /* Darker background outside the notebook */
+    color: var(--foreground-color);
+  }
+}
+
+/* Main notebook container */
+.notebook-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: var(--notebook-paper-color);
+  min-height: 100vh;
+  position: relative;
+  box-shadow: 
+    0 0 30px rgba(0, 0, 0, 0.1),
+    -2px 0 5px rgba(0, 0, 0, 0.05),
+    2px 0 5px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  border-radius: 0;
   
   /* Paper texture */
   background-image: 
@@ -89,22 +111,45 @@ html {
     linear-gradient(transparent 3px, #f5f5eb 3px),
     linear-gradient(90deg, transparent 3px, #f5f5eb 3px);
   background-size: 20px 20px, 20px 20px, 40px 40px, 40px 40px;
-  background-color: #f5f5eb;
   background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+}
 
-  &.dark {
-    background-color: var(--notebook-paper-color);
-    color: var(--foreground-color);
-    background-image: 
-      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(transparent 3px, #3A4D30 3px),
-      linear-gradient(90deg, transparent 3px, #3A4D30 3px);
-    background-size: 20px 20px, 20px 20px, 40px 40px, 40px 40px;
-    background-color: #3A4D30;
-  }
+.dark .notebook-container {
+  background-color: var(--notebook-paper-color);
+  box-shadow: 
+    0 0 30px rgba(0, 0, 0, 0.3),
+    -2px 0 5px rgba(0, 0, 0, 0.1),
+    2px 0 5px rgba(0, 0, 0, 0.1);
+  background-image: 
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(transparent 3px, #3A4D30 3px),
+    linear-gradient(90deg, transparent 3px, #3A4D30 3px);
+  background-size: 20px 20px, 20px 20px, 40px 40px, 40px 40px;
+}
 
-  @media(min-width: 2000px) {
+/* Notebook spiral binding */
+.notebook-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.05), transparent);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Content wrapper inside notebook */
+.notebook-content {
+  position: relative;
+  padding-bottom: 2rem;
+  z-index: 2;
+}
+
+@media(min-width: 2000px) {
+  html {
     font-size: 1rem;
   }
 }

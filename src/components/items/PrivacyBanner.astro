@@ -32,24 +32,25 @@ const script = `
 `;
 ---
 
-<div id="privacy-banner" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg hidden">
+<div id="privacy-banner" class="fixed bottom-0 left-0 right-0 hidden z-50">
+  <div class="sticky-note-banner bg-primary-50 dark:bg-primary-900/80 border-t border-primary-200 dark:border-primary-800 p-4 shadow-lg relative">
     <div class="container mx-auto max-w-4xl flex items-center justify-between gap-4">
-      <p class="text-sm text-gray-600">
-        We use cookies and similar technologies to help personalize content, analyze traffic, and provide a better experience. By clicking "Accept," you consent to our use of cookies. Read our
-        <a href="/privacy" class="underline hover:text-gray-900">
+      <p class="text-sm text-primary-700 dark:text-primary-300 handwritten">
+        We use cookies to improve your cooking experience. By clicking "Accept," you consent to our use of cookies. Read our
+        <a href="/privacy" class="underline hover:text-primary-800 dark:hover:text-primary-200">
           Privacy Policy
         </a>
       </p>
       <div class="flex items-center gap-4">
         <button
           id="accept-privacy"
-          class="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800 transition-colors"
+          class="px-4 py-2 bg-primary-600 text-white text-sm rounded-md hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600 transition-colors transform hover:-rotate-1 handwritten"
         >
           Accept
         </button>
         <button
           id="close-privacy"
-          class="text-gray-500 hover:text-gray-700 transition-colors p-2 rounded-md"
+          class="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors p-2 rounded-md"
           aria-label="Close"
         >
           <span class="sr-only">Close</span>
@@ -67,7 +68,50 @@ const script = `
         </button>
       </div>
     </div>
+    
+    <!-- Thumbtack pins -->
+    <div class="absolute -top-2 left-6 w-4 h-4 bg-primary-500 dark:bg-primary-600 rounded-full shadow-sm"></div>
+    <div class="absolute -top-2 right-6 w-4 h-4 bg-primary-500 dark:bg-primary-600 rounded-full shadow-sm"></div>
   </div>
+</div>
+
+<style>
+  .handwritten {
+    font-family: var(--handwriting-font);
+  }
+  
+  .sticky-note-banner {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .sticky-note-banner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 20px,
+        rgba(81, 115, 63, 0.05) 20px,
+        rgba(81, 115, 63, 0.05) 21px
+      );
+    pointer-events: none;
+  }
+  
+  .dark .sticky-note-banner::before {
+    background-image: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 20px,
+        rgba(255, 255, 255, 0.03) 20px,
+        rgba(255, 255, 255, 0.03) 21px
+      );
+  }
+</style>
   
 <!-- {import.meta.env.DEV && (
   <button
