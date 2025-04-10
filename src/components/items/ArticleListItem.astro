@@ -24,7 +24,7 @@ const {
     font-family: var(--handwriting-font);
     color: theme("colors.primary.600");
 
-    @apply dark:text-primary-400;
+    @apply dark:text-primary-200; /* Lighter color for better contrast */
   }
 
   .recipe-card {
@@ -40,9 +40,9 @@ const {
   }
   
   .dark .recipe-card {
-    background-color: rgba(58, 77, 48, 0.1);
-    border-color: theme("colors.secondary.700");
-    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+    background-color: rgba(58, 77, 48, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
   }
   
   .recipe-card:hover {
@@ -51,7 +51,7 @@ const {
   }
   
   .dark .recipe-card:hover {
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
   }
 
   .post-title {
@@ -67,11 +67,11 @@ const {
     padding-bottom: 0.5rem;
     position: relative;
 
-    @apply dark:text-primary-400 dark:border-secondary-700;
+    @apply dark:text-primary-200 dark:border-secondary-600; /* Lighter text color and border */
 
     &:hover {
       color: theme("colors.primary.600");
-      @apply dark:text-primary-300;
+      @apply dark:text-primary-100;
     }
     
     /* Coffee stain for recipe authenticity */
@@ -99,8 +99,8 @@ const {
     .dark &::after {
       background: radial-gradient(
         ellipse at center,
-        rgba(165, 42, 42, 0.06) 0%,
-        rgba(165, 42, 42, 0.08) 50%,
+        rgba(165, 42, 42, 0.12) 0%,
+        rgba(165, 42, 42, 0.15) 50%,
         rgba(165, 42, 42, 0) 70%
       );
     }
@@ -112,8 +112,8 @@ const {
   }
 
   .post-description {
-    @apply text-[15px] text-secondary-700 dark:text-secondary-300 leading-relaxed tracking-normal mb-4;
-    font-family: var(--body-font-family);
+    font-family: var(--handwriting-font); /* Changed to handwritten font */
+    @apply text-[15px] text-secondary-700 dark:text-primary-100 leading-relaxed tracking-normal mb-4;
     position: relative;
     z-index: 1;
   }
@@ -131,7 +131,7 @@ const {
   }
   
   .dark .corner-fold {
-    border-top-color: theme("colors.primary.900");
+    border-top-color: theme("colors.primary.800");
   }
   
   .recipe-card:hover .corner-fold {
@@ -154,7 +154,7 @@ const {
   }
   
   .dark .tape-effect {
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.3);
   }
   
   /* Media queries for mobile responsiveness */
@@ -182,7 +182,7 @@ const {
   <div class="corner-fold"></div>
   <a href={"/posts/" + slug} class="post-title">
     {data.title}
-    <span class="inline-block ml-2 text-primary-500 dark:text-primary-400 transform -translate-y-1">
+    <span class="inline-block ml-2 text-primary-500 dark:text-primary-200 transform -translate-y-1">
       <Icon name="tabler:chef-hat" class="w-4 h-4" />
     </span>
   </a>
@@ -194,7 +194,7 @@ const {
     </div>
 
     <time datetime={data.date.toISOString()} class="flex items-center">
-      <Icon name="tabler:calendar" class="w-4 h-4 mr-1 text-primary-500 dark:text-primary-400" />
+      <Icon name="tabler:calendar" class="w-4 h-4 mr-1 text-primary-500 dark:text-primary-200" />
       {new Date(data.date).toLocaleDateString("en-US", {year: 'numeric', month: 'short', day: 'numeric'})}
     </time>
   </div>

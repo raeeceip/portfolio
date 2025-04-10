@@ -349,9 +349,8 @@ body::before {
   border-color: theme("colors.secondary.700");
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
 
-  @media (max-width: 768px) {
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
-  }
+  /* Add this line to make the background darker */
+  background-color: #2a3a20; /* Match the dark mode background outside the notebook */
 }
 
 /* Recipe title styling */
@@ -1075,4 +1074,54 @@ article.blog-content {
   position: relative;
   color: var(--primary-color);
   animation: pencil-wobble 1.5s ease-in-out;
+}
+
+/* ====== DARK MODE FIXES ====== */
+/* Add to the end of global.css */
+
+/* Make background darker for recipe containers in dark mode */
+.dark .notebook-page {
+  background-color: #2a3a20 !important; /* Match the dark mode background */
+}
+
+/* Fix text contrast in dark mode for all containers */
+.dark p,
+.dark li,
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark blockquote,
+.dark .recipe-note,
+.dark .post-description,
+.dark .recipe-description,
+.dark .recipe-title,
+.dark .recipe-section-title,
+.dark .sticky-section-label,
+.dark time,
+.dark .tag,
+.dark .recipe-tag,
+.dark .recipe-status {
+  color: #f5f5eb !important; /* Bright cream color for contrast */
+}
+
+/* Improve code blocks in dark mode */
+.dark pre,
+.dark .code-block {
+  background-color: #2a3a20 !important; /* Darker background */
+}
+
+.dark pre code,
+.dark .code-block code {
+  color: #f5f5eb !important; /* Brighter text */
+}
+
+/* Better backgrounds for cards */
+.dark .recipe-card,
+.dark .feature-card,
+.dark .note-card {
+  background-color: #2a3a20 !important; /* Match the dark mode background */
+  border-color: rgba(255, 255, 255, 0.15);
 }

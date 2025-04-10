@@ -28,9 +28,9 @@
 }
 
 .dark .notebook-page {
-  box-shadow:
-    5px 5px 15px rgba(0, 0, 0, 0.25),
-    0 0 5px rgba(0, 0, 0, 0.1);
+  background-color: var(--notebook-paper-color);
+  border-color: theme("colors.secondary.700");
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .dark .notebook-page:hover {

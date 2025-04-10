@@ -1,7 +1,7 @@
 ---
-import { Icon } from "astro-icon/components";
 import Show from "@components/misc/Show.astro";
 import Tags from "@components/misc/Tags.astro";
+import { Icon } from "astro-icon/components";
 import type { CollectionEntry } from "astro:content";
 
 type Project = CollectionEntry<"projects">["data"][number];
@@ -31,8 +31,8 @@ const { project } = Astro.props;
   }
   
   .dark .recipe-card {
-    background-color: rgba(58, 77, 48, 0.1);
-    border-color: theme("colors.secondary.700");
+    background-color: rgba(58, 77, 48, 0.3);
+    border-color: rgba(255, 255, 255, 0.15);
     box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
   }
   
@@ -42,7 +42,7 @@ const { project } = Astro.props;
   }
   
   .dark .recipe-card:hover {
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
   }
   
   .recipe-title {
@@ -50,14 +50,15 @@ const { project } = Astro.props;
     color: theme("colors.primary.700");
     font-weight: 600;
     
-    @apply dark:text-primary-400;
+    @apply dark:text-primary-200; /* Lighter color for better contrast */
   }
   
   .recipe-description {
+    font-family: var(--handwriting-font); /* Changed to handwritten font */
     font-size: 0.95rem;
     line-height: 1.5;
     
-    @apply text-secondary-700 dark:text-secondary-300;
+    @apply text-secondary-700 dark:text-primary-100; /* Lighter text for dark mode */
   }
   
   .recipe-status {
@@ -73,7 +74,7 @@ const { project } = Astro.props;
     transform: rotate(3deg);
     border: 1px dashed theme("colors.primary.200");
     
-    @apply dark:bg-primary-900/30 dark:text-primary-400 dark:border-primary-800;
+    @apply dark:bg-primary-800/30 dark:text-primary-200 dark:border-primary-600;
   }
   
   .corner-fold {
@@ -87,7 +88,7 @@ const { project } = Astro.props;
   }
   
   .dark .corner-fold {
-    background: linear-gradient(135deg, theme("colors.primary.900") 50%, transparent 50%);
+    background: linear-gradient(135deg, theme("colors.primary.800") 50%, transparent 50%);
   }
   
   .recipe-actions a {
@@ -98,7 +99,7 @@ const { project } = Astro.props;
     transform: translateY(-2px);
     color: theme("colors.primary.600");
     
-    @apply dark:text-primary-400;
+    @apply dark:text-primary-200;
   }
 </style>
 
@@ -126,7 +127,7 @@ const { project } = Astro.props;
       <div class="flex flex-wrap items-center justify-between gap-2">
         <Tags data={(project?.tags || []) as string[]} />
         
-        <div class="recipe-actions text-xl space-x-3 text-secondary-600 dark:text-secondary-400">
+        <div class="recipe-actions text-xl space-x-3 text-secondary-600 dark:text-primary-300">
           <Show when={!!project.website_url}>
             <a href={project.website_url ?? ""} target="_blank" title="Try this recipe">
               <Icon name="tabler:external-link" />
