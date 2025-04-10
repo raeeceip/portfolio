@@ -35,21 +35,22 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Chiso's Notebook" />
-    <meta property="og:url" content={`https://chiso.fly.dev${Astro.url.pathname}`} />
+    <meta property="og:site_name" content="Chiso's Cookbook" />
+    <meta property="og:url" content={`https://chiso.dev${Astro.url.pathname}`} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={desc} />
-    <meta property="og:image" content="https://chiso.fly.dev/images/notebook-meta.png" />
+    <meta property="og:image" content={metaImage.startsWith("http") ? metaImage : `https://chiso.dev${metaImage}`} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Chiso's notebook with handwritten name Chibogu Chisom Raphael" />
-
+    <meta property="og:image:alt" content="Chiso's cookbook page" />
+    
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={`https://chiso.fly.dev${Astro.url.pathname}`} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={desc} />
-    <meta property="twitter:image" content="https://chiso.fly.dev/images/notebook-meta.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@chiso" />
+    <meta name="twitter:url" content={`https://chiso.dev${Astro.url.pathname}`} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={desc} />
+    <meta name="twitter:image" content={metaImage.startsWith("http") ? metaImage : `https://chiso.dev${metaImage}`} />
 
     {!!pubDate ? <meta property="article:published_time" content={pubDate.toISOString()} /> : null}
     {tags?.map((tag) => <meta property="article:tag" content={tag} />)}
