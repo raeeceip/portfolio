@@ -117,6 +117,15 @@ function initCustomTransitions() {
         return;
       }
       
+      // Special handling for pagination links - extract any query parameters
+      const urlObj = new URL(url.href);
+      const params = new URLSearchParams();
+      for (const [key, value] of urlObj.searchParams.entries()) {
+        // Save all query parameters to sessionStorage
+        sessionStorage.setItem(`param_${key}`, value);
+        params.append(key, value);
+      }
+      
       // Prevent default navigation
       event.preventDefault();
       
@@ -145,18 +154,21 @@ function navigateWithTransition(url, isHistoryNavigation = false) {
     overlay.style.display = 'block';
   }
   
-  // Special handling for pagination links to ensure query params are preserved
+  // Special handling for pagination links - extract any query parameters
   const urlObj = new URL(url);
-  const pageParam = urlObj.searchParams.get('page');
+  const params = new URLSearchParams();
+  for (const [key, value] of urlObj.searchParams.entries()) {
+    // Save all query parameters to sessionStorage
+    sessionStorage.setItem(`param_${key}`, value);
+    params.append(key, value);
+  }
   
   // Store all this data for the next page
   localStorage.setItem('theme', currentTheme); // Ensure persistent storage
   sessionStorage.setItem('transitionTheme', currentTheme);
   sessionStorage.setItem('fromUrl', window.location.href);
   sessionStorage.setItem('isTransitioning', 'true');
-  if (pageParam) {
-    sessionStorage.setItem('pageParam', pageParam);
-  }
+  sessionStorage.setItem('hasQueryParams', params.toString().length > 0 ? 'true' : 'false');
   
   // Store navigation type in session
   sessionStorage.setItem('isHistoryNavigation', isHistoryNavigation ? 'true' : 'false');
@@ -185,25 +197,44 @@ window.addEventListener('load', () => {
   // Apply stored theme from the transition immediately
   applyStoredTheme();
   
-  // Special handling for pagination
-  const pageParam = sessionStorage.getItem('pageParam');
+  // Handle any stored query parameters
+  const hasQueryParams = sessionStorage.getItem('hasQueryParams') === 'true';
   const currentUrl = new URL(window.location.href);
   const isHistoryNavigation = sessionStorage.getItem('isHistoryNavigation') === 'true';
   
-  if (pageParam && !currentUrl.searchParams.has('page') && currentUrl.pathname === '/blog') {
-    // If we're on the blog page and should have a page parameter but don't,
-    // this is likely due to a navigation issue - add it now
-    currentUrl.searchParams.set('page', pageParam);
+  // Process any saved query parameters 
+  if (hasQueryParams && currentUrl.search === '') {
+    const queryParams = new URLSearchParams();
     
-    // Redirect without animation
-    window.isTransitioning = true;
-    window.location.replace(currentUrl.toString());
-    sessionStorage.removeItem('pageParam');
-    sessionStorage.removeItem('isHistoryNavigation');
-    return;
-  } else if (pageParam) {
-    // We successfully navigated with the page param
-    sessionStorage.removeItem('pageParam');
+    // Get all saved parameters from sessionStorage
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      if (key && key.startsWith('param_')) {
+        const paramName = key.substring(6); // Remove 'param_' prefix
+        queryParams.append(paramName, sessionStorage.getItem(key));
+      }
+    }
+    
+    // If we have parameters to restore
+    if (queryParams.toString().length > 0) {
+      // Build the new URL with the query parameters
+      currentUrl.search = queryParams.toString();
+      
+      // Redirect without animation
+      window.isTransitioning = true;
+      window.location.replace(currentUrl.toString());
+      
+      // Clean up the sessionStorage
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && key.startsWith('param_')) {
+          sessionStorage.removeItem(key);
+        }
+      }
+      sessionStorage.removeItem('hasQueryParams');
+      sessionStorage.removeItem('isHistoryNavigation');
+      return;
+    }
   }
   
   // Handle transition-in animations
@@ -226,6 +257,15 @@ window.addEventListener('load', () => {
       sessionStorage.removeItem('isTransitioning');
       sessionStorage.removeItem('fromUrl');
       sessionStorage.removeItem('isHistoryNavigation');
+      sessionStorage.removeItem('hasQueryParams');
+      
+      // Clean up any param entries
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && key.startsWith('param_')) {
+          sessionStorage.removeItem(key);
+        }
+      }
       
       // Force theme application again to ensure consistency
       applyStoredTheme();

@@ -35,8 +35,12 @@ const {
     padding: 1.5rem;
     transition: all 0.3s ease;
     box-shadow: 2px 2px 6px rgba(81, 115, 63, 0.1);
-    overflow: hidden;
+    overflow: visible; /* Allow decorative elements to be visible */
     transform: rotate(-0.2deg);
+    word-wrap: break-word; /* Allow words to break */
+    width: 100%; /* Use full width */
+    display: flex;
+    flex-direction: column;
   }
   
   .dark .recipe-card {
@@ -53,26 +57,28 @@ const {
   }
 
   .post-title {
-    display: block;
+    display: flex;
+    align-items: flex-start;
     font-family: var(--header-font-family), var(--alt-font-family), Arial, Helvetica, sans-serif;
     font-size: theme("fontSize.xl");
     font-weight: theme("fontWeight.bold");
-    line-height: theme("lineHeight.tight");
+    line-height: 1.3; /* Slightly increased for better readability */
     color: theme("colors.primary.700");
     text-decoration: none;
     margin-bottom: theme("margin.4");
     border-bottom: 1px dashed theme("colors.secondary.300");
+    width: 100%;
     padding-bottom: 0.5rem;
     position: relative;
-
-    @apply dark:text-primary-200 dark:border-secondary-600; /* Lighter text color and border */
-
+    
+    @apply dark:text-primary-200 dark:border-secondary-600; /* Restore the dark mode styling */
+    
     &:hover {
       color: theme("colors.primary.600");
       @apply dark:text-primary-100;
     }
     
-    /* Coffee stain for recipe authenticity */
+    /* Coffee stain for recipe authenticity - kept outside overflow area */
     &::after {
       content: '';
       position: absolute;
@@ -107,6 +113,15 @@ const {
       opacity: 1;
       transform: rotate(5deg) scale(1.5, 1);
     }
+  }
+  
+  .title-text {
+    flex: 1;
+    display: block;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    max-width: calc(100% - 1.5rem); /* Allow space for the icon */
   }
 
   .post-description {
@@ -179,8 +194,8 @@ const {
 <div class="recipe-card">
   <div class="corner-fold"></div>
   <a href={"/posts/" + slug} class="post-title">
-    {data.title}
-    <span class="inline-block ml-2 text-primary-500 dark:text-primary-200 transform -translate-y-1">
+    <span class="title-text">{data.title}</span>
+    <span class="title-icon inline-flex items-center ml-2 text-primary-500 dark:text-primary-200 transform -translate-y-1 flex-shrink-0">
       <Icon name="tabler:chef-hat" class="w-4 h-4" />
     </span>
   </a>

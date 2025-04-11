@@ -7,9 +7,8 @@ import Layout from "../layouts/Layout.astro";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 
-// Pagination configuration
-const POSTS_PER_PAGE = 5; // Number of posts per page
-const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
+// Initial posts to show
+const INITIAL_POSTS = 5;
 
 const posts = await getCollection("blog", ({ data }) => {
   return import.meta.env.PROD ? data.draft !== true : true;
@@ -18,18 +17,10 @@ const posts = await getCollection("blog", ({ data }) => {
 // Sort posts by date (newest first)
 let publishedPosts = posts?.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-// Calculate total pages
+// Get initial posts to show
+const initialPosts = publishedPosts.slice(0, INITIAL_POSTS);
 const totalPosts = publishedPosts.length;
-const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
-
-// Make sure current page is within valid range
-const validatedPage = Math.max(1, Math.min(currentPage, totalPages));
-
-// Get posts for current page
-const paginatedPosts = publishedPosts.slice(
-  (validatedPage - 1) * POSTS_PER_PAGE, 
-  validatedPage * POSTS_PER_PAGE
-);
+const hasMorePosts = totalPosts > INITIAL_POSTS;
 
 // Group all posts by year for the sidebar
 let postsByYear: Record<string, Array<CollectionEntry<"blog">>> = {};
@@ -46,30 +37,10 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
 function getPaginationUrl(pageNum: number) {
   // Use absolute URLs instead of relative URLs to ensure proper navigation
   const baseUrl = new URL('/blog', Astro.url.origin).toString();
+  // Return the URL with proper query string format
   return pageNum === 1 ? baseUrl : `${baseUrl}?page=${pageNum}`;
 }
 
-// Calculate pagination page numbers logic outside of JSX
-const paginationNumbers = [];
-const maxPages = Math.min(5, totalPages);
-
-let startPage = 1;
-if (totalPages > 5) {
-  if (validatedPage <= 3) {
-    startPage = 1;
-  } else if (validatedPage >= totalPages - 2) {
-    startPage = totalPages - 4;
-  } else {
-    startPage = validatedPage - 2;
-  }
-}
-
-for (let i = 0; i < maxPages; i++) {
-  const pageNum = startPage + i;
-  if (pageNum <= totalPages) {
-    paginationNumbers.push(pageNum);
-  }
-}
 ---
 
 <style>
@@ -332,103 +303,6 @@ for (let i = 0; i < maxPages; i++) {
     transform: rotate(-6deg) scale(0.8, 1);
   }
   
-  /* Pagination styles */
-  .pagination-container {
-    margin-top: 3rem;
-    margin-bottom: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-  
-  .pagination-paper {
-    background-color: rgba(255, 255, 255, 0.6);
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.25rem;
-    box-shadow: 2px 2px 5px rgba(81, 115, 63, 0.1);
-    position: relative;
-    z-index: 1;
-    border: 1px solid theme("colors.secondary.300");
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    
-    @apply dark:bg-secondary-900/20 dark:border-secondary-700 dark:shadow-none;
-  }
-  
-  .pagination-info {
-    font-family: var(--handwriting-font);
-    color: theme("colors.primary.700");
-    
-    @apply dark:text-primary-300;
-  }
-  
-  .pagination-nav {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-left: 1rem;
-  }
-  
-  .page-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.5);
-    border: 1px solid theme("colors.primary.300");
-    color: theme("colors.primary.600");
-    transition: all 0.2s ease;
-    
-    @apply dark:bg-primary-900/10 dark:border-primary-700 dark:text-primary-400;
-    
-    &:hover {
-      background-color: theme("colors.primary.100");
-      transform: translateY(-2px);
-      
-      @apply dark:bg-primary-800/30;
-    }
-    
-    &.active {
-      background-color: theme("colors.primary.600");
-      border-color: theme("colors.primary.700");
-      color: white;
-      
-      @apply dark:bg-primary-500 dark:border-primary-600;
-    }
-    
-    &.disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      
-      &:hover {
-        transform: none;
-        background-color: rgba(255, 255, 255, 0.5);
-        
-        @apply dark:bg-primary-900/10;
-      }
-    }
-  }
-  
-  .pagination-paper::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    width: 100%;
-    height: 10px;
-    background-image: 
-      linear-gradient(45deg, transparent 33.333%, var(--notebook-paper-color) 33.333%, var(--notebook-paper-color) 66.667%, transparent 66.667%),
-      linear-gradient(-45deg, transparent 33.333%, var(--notebook-paper-color) 33.333%, var(--notebook-paper-color) 66.667%, transparent 66.667%);
-    background-size: 14px 10px;
-    background-position: 0 -4px;
-    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.05));
-    z-index: -1;
-  }
-  
   /* Sticky note for the sidebar navigation */
   .sticky-note {
     position: relative;
@@ -471,22 +345,6 @@ for (let i = 0; i < maxPages; i++) {
     .stain-1, .stain-2 {
       display: none;
     }
-    
-    .pagination-paper {
-      padding: 0.5rem 1rem;
-      flex-direction: column;
-      gap: 0.75rem;
-      width: 90%;
-    }
-    
-    .pagination-nav {
-      margin-left: 0;
-    }
-    
-    .page-btn {
-      width: 2rem;
-      height: 2rem;
-    }
   }
   
   .dark .posts-container {
@@ -513,6 +371,70 @@ for (let i = 0; i < maxPages; i++) {
   .dark .recipe-meta {
     color: rgba(255, 255, 255, 0.9);
   }
+  
+  /* Load More button styling */
+  .load-more-button {
+    display: block;
+    margin: 2rem auto;
+    background-color: var(--notebook-paper-color);
+    border: 2px dashed theme("colors.primary.500");
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    font-family: var(--handwriting-font);
+    font-size: 1.2rem;
+    color: theme("colors.primary.700");
+    position: relative;
+    transition: all 0.2s ease;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+    transform: rotate(-1deg);
+    
+    &:hover {
+      transform: translateY(-3px) rotate(0deg);
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15);
+      background-color: theme("colors.primary.50");
+    }
+    
+    &:active {
+      transform: translateY(1px) rotate(-2deg);
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Paperclip decoration */
+    &::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      width: 20px;
+      height: 35px;
+      border: 2px solid theme("colors.primary.400");
+      border-radius: 10px 10px 0 0;
+      border-bottom: none;
+      transform: rotate(25deg);
+      opacity: 0.7;
+    }
+    
+    @apply dark:bg-secondary-800 dark:text-primary-300 dark:border-primary-600 dark:hover:bg-secondary-700;
+  }
+  
+  .load-more-button.loading {
+    opacity: 0.7;
+    cursor: wait;
+  }
+  
+  .load-more-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-style: dotted;
+    
+    &:hover {
+      transform: rotate(-1deg);
+      box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+      background-color: var(--notebook-paper-color);
+      
+      @apply dark:bg-secondary-800;
+    }
+  }
 </style>
 
 <Layout title="Recipe Journal">
@@ -525,9 +447,9 @@ for (let i = 0; i < maxPages; i++) {
         <span>Journal</span>
       </div>
       
-      <div class="flex flex-col md:flex-row gap-10">
-        <aside class="md:w-72 flex-shrink-0 order-1 md:order-1">
-          <div class="sticky-note sidebar-nav">
+      <div class="flex flex-col md:flex-row gap-6 md:gap-10">
+        <aside class="md:w-72 lg:w-80 flex-shrink-0 order-1 md:order-1">
+          <div class="sticky top-4 sticky-note sidebar-nav">
             <h2 class="sticky-note-title sidebar-heading">Journal Index</h2>
             <ul class="year-nav">
               {years.map((year) => (
@@ -566,85 +488,25 @@ for (let i = 0; i < maxPages; i++) {
             
             <!-- Current page indicator -->
             <p class="text-sm font-handwriting text-primary-600 dark:text-primary-400">
-              Page {validatedPage} of {totalPages} ({totalPosts} recipes total)
+              Showing {initialPosts.length} of {totalPosts} recipes
             </p>
           </div>
           
           <!-- Current page posts -->
           <ul class="space-y-6 mt-8 posts-container">
-            {paginatedPosts.map((post, index) => (
+            {initialPosts.map((post, index) => (
               <li class={index % 4 === 1 ? "transform rotate-0.5deg" : index % 4 === 3 ? "transform -rotate-0.5deg" : ""}>
                 <ArticleListItem post={post} />
               </li>
             ))}
           </ul>
           
-          <!-- Enhanced Pagination controls -->
-          <div class="pagination-container">
-            <div class="pagination-paper">
-              <div class="pagination-info">
-                Page {validatedPage} of {totalPages}
-              </div>
-              
-              <div class="pagination-nav">
-                <!-- First page button -->
-                {validatedPage > 1 ? (
-                  <a href={getPaginationUrl(1)} class="page-btn" aria-label="First page" title="First page">
-                    <Icon name="tabler:chevrons-left" />
-                  </a>
-                ) : (
-                  <span class="page-btn disabled" aria-label="First page" title="First page">
-                    <Icon name="tabler:chevrons-left" />
-                  </span>
-                )}
-                
-                <!-- Previous page button -->
-                {validatedPage > 1 ? (
-                  <a href={getPaginationUrl(validatedPage - 1)} class="page-btn" aria-label="Previous page" title="Previous page">
-                    <Icon name="tabler:chevron-left" />
-                  </a>
-                ) : (
-                  <span class="page-btn disabled" aria-label="Previous page" title="Previous page">
-                    <Icon name="tabler:chevron-left" />
-                  </span>
-                )}
-                
-                <!-- Page numbers -->
-                {paginationNumbers.map(pageNum => (
-                  <a 
-                    href={getPaginationUrl(pageNum)} 
-                    class={`page-btn ${validatedPage === pageNum ? 'active' : ''}`}
-                    aria-label={`Page ${pageNum}`} 
-                    title={`Page ${pageNum}`}
-                  >
-                    {pageNum}
-                  </a>
-                ))}
-                
-                <!-- Next page button -->
-                {validatedPage < totalPages ? (
-                  <a href={getPaginationUrl(validatedPage + 1)} class="page-btn" aria-label="Next page" title="Next page">
-                    <Icon name="tabler:chevron-right" />
-                  </a>
-                ) : (
-                  <span class="page-btn disabled" aria-label="Next page" title="Next page">
-                    <Icon name="tabler:chevron-right" />
-                  </span>
-                )}
-                
-                <!-- Last page button -->
-                {validatedPage < totalPages ? (
-                  <a href={getPaginationUrl(totalPages)} class="page-btn" aria-label="Last page" title="Last page">
-                    <Icon name="tabler:chevrons-right" />
-                  </a>
-                ) : (
-                  <span class="page-btn disabled" aria-label="Last page" title="Last page">
-                    <Icon name="tabler:chevrons-right" />
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
+          {hasMorePosts && (
+            <button id="load-more-button" class="load-more-button">
+              <span>Load More Recipes</span>
+              <Icon name="tabler:book-download" class="ml-2 inline-block" />
+            </button>
+          )}
         </div>
       </div>
       
@@ -654,3 +516,106 @@ for (let i = 0; i < maxPages; i++) {
     </div>
   </main>
 </Layout>
+
+<script define:vars={{ restOfPosts: JSON.stringify(publishedPosts.slice(INITIAL_POSTS)) }}>
+  // Client-side JavaScript for the "Load More" functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const loadMoreButton = document.getElementById('load-more-button');
+    if (!loadMoreButton) return;
+    
+    const postsContainer = document.querySelector('.posts-container');
+    if (!postsContainer) return;
+    
+    // Parse the rest of the posts from the JSON string
+    const remainingPosts = JSON.parse(restOfPosts);
+    let currentIndex = 0;
+    const postsPerLoad = 5; // Number of posts to load with each click
+    
+    // Hide the button if there are no more posts to load
+    if (remainingPosts.length === 0) {
+      loadMoreButton.classList.add('disabled');
+      loadMoreButton.textContent = 'No More Recipes';
+      loadMoreButton.disabled = true;
+    }
+    
+    loadMoreButton.addEventListener('click', async () => {
+      // Disable the button and show loading state
+      loadMoreButton.classList.add('loading');
+      loadMoreButton.disabled = true;
+      loadMoreButton.innerHTML = '<span>Loading...</span> <svg class="animate-spin ml-2 h-5 w-5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+      
+      // Simulate a small delay for the loading indicator
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Get the next batch of posts
+      const postsToLoad = remainingPosts.slice(currentIndex, currentIndex + postsPerLoad);
+      currentIndex += postsPerLoad;
+      
+      // Add the new posts to the container
+      postsToLoad.forEach((post, index) => {
+        const rotation = (index % 4 === 1) ? 'transform rotate-0.5deg' : (index % 4 === 3) ? 'transform -rotate-0.5deg' : '';
+        const postElement = document.createElement('li');
+        postElement.className = rotation;
+        
+        // Use the same markup as in the template for consistency
+        // Note: This will be simpler than the actual ArticleListItem component
+        postElement.innerHTML = `
+          <div class="recipe-card">
+            <div class="corner-fold"></div>
+            <a href="/posts/${post.slug}" class="post-title">
+              <span class="title-text">${post.data.title}</span>
+              <span class="title-icon inline-flex items-center ml-2 text-primary-500 dark:text-primary-200 transform -translate-y-1 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M12 3c1.918 0 3.52 1.35 3.91 3.151a4 4 0 0 1 2.09 7.723l0 .126a4 4 0 0 1 -2 7a4 4 0 0 1 -4 2a4 4 0 0 1 -4 -2a4 4 0 0 1 -2 -7l0 -.126a4 4 0 0 1 2.09 -7.723a4 4 0 0 1 3.91 -3.151z"></path>
+                  <path d="M12 3v10"></path>
+                </svg>
+              </span>
+            </a>
+            <p class="post-description">${post.data.description || ''}</p>
+            <div class="flex items-center justify-between mt-2 flex-wrap gap-2">
+              <div class="max-w-[75%]">
+                ${post.data.tags ? `<div class="tags-container">${post.data.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>` : ''}
+              </div>
+              <time datetime="${new Date(post.data.date).toISOString()}" class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1 text-primary-500 dark:text-primary-200" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"></path>
+                  <path d="M16 3v4"></path>
+                  <path d="M8 3v4"></path>
+                  <path d="M4 11h16"></path>
+                  <path d="M11 15h1"></path>
+                  <path d="M12 15v3"></path>
+                </svg>
+                ${new Date(post.data.date).toLocaleDateString("en-US", {year: 'numeric', month: 'short', day: 'numeric'})}
+              </time>
+            </div>
+          </div>
+        `;
+        
+        postsContainer.appendChild(postElement);
+      });
+      
+      // Update the counter text
+      const counterText = document.querySelector('.text-sm.font-handwriting');
+      if (counterText) {
+        const totalShown = document.querySelectorAll('.posts-container li').length;
+        const totalPosts = totalShown + remainingPosts.length - currentIndex;
+        counterText.textContent = `Showing ${totalShown} of ${totalPosts} recipes`;
+      }
+      
+      // Reset the button state
+      loadMoreButton.classList.remove('loading');
+      loadMoreButton.disabled = false;
+      
+      // If there are no more posts to load, disable the button
+      if (currentIndex >= remainingPosts.length) {
+        loadMoreButton.classList.add('disabled');
+        loadMoreButton.innerHTML = '<span>All Recipes Loaded</span> <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 inline-block" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 12l5 5l10 -10"></path></svg>';
+        loadMoreButton.disabled = true;
+      } else {
+        loadMoreButton.innerHTML = '<span>Load More Recipes</span> <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 inline-block" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><path d="M3 6l0 13"></path><path d="M12 6l0 13"></path><path d="M21 6l0 13"></path></svg>';
+      }
+    });
+  });
+</script>

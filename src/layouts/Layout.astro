@@ -118,15 +118,13 @@ const metaImgUrl = metaImage;
       });
     </script>
     
+    <!-- Custom draggable feature cards script -->
+    <script src="/scripts/draggable.js" defer></script>
+    
   </head>
   <body>
-    <!-- Cover page component -->
-    <div id="cover-page" class="cover-page">
-      <div class="cover-content">
-        <h1>Chiso's Notebook</h1>
-        <p>Welcome to my digital journal</p>
-      </div>
-    </div>
+    <!-- Original Cover Page Component -->
+    <CoverPage />
     
     <!-- Enhanced notebook container for page transitions -->
     <div class="notebook-container" id="notebook-container" transition:animate="slide">
@@ -140,98 +138,51 @@ const metaImgUrl = metaImage;
     </div>
     
     <script is:inline>
-      // Page transition handling with optimized cover animation
+      // Improved cover page animation script
       document.addEventListener('DOMContentLoaded', function() {
-        // Store the current page URL to detect navigation
-        let currentPage = window.location.pathname;
+        const coverPage = document.getElementById('notebook-cover');
+        if (!coverPage) return;
         
-        // Check if this is the first visit to the site
-        const isFirstVisit = !localStorage.getItem('visited');
-        
-        // Mark as visited immediately to avoid cover animation on reload
-        if (isFirstVisit) {
-          localStorage.setItem('visited', 'true');
-          // Cover animation will play naturally from CSS
+        // Check for first-time visit
+        if (localStorage.getItem('visited') === 'true') {
+          // Returning visitor - hide cover page immediately
+          coverPage.style.display = 'none';
         } else {
-          // If not first visit, remove the cover and spine immediately
-          const cover = document.getElementById('notebook-cover');
-          const spine = document.getElementById('notebook-spine');
-          if (cover) cover.remove();
-          if (spine) spine.remove();
+          // First-time visitor - show cover page then animate it away after a delay
+          localStorage.setItem('visited', 'true');
+          
+          // Display the cover for first-time visitors
+          coverPage.style.display = 'flex';
+          
+          // After a longer delay, trigger the animation
+          setTimeout(function() {
+            coverPage.classList.add('open');
+            
+            // After animation completes, hide cover page completely
+            setTimeout(function() {
+              coverPage.style.display = 'none';
+            }, 4000); // Match the longer transition time (4s)
+          }, 5000); // Even longer delay to appreciate the cover
         }
+      });
+      
+      // Fast page transitions
+      document.addEventListener('astro:page-load', () => {
+        // For page transitions
+        const notebookContent = document.getElementById('notebook-content');
         
-        // Handle internal links for page transitions
-        document.addEventListener('click', function(e) {
-          // Find closest anchor tag
-          const link = e.target.closest('a');
-          
-          // Only handle internal links within the same domain
-          if (link && 
-              link.href && 
-              link.href.startsWith(window.location.origin) && 
-              !link.hasAttribute('data-no-transition') &&
-              link.href !== window.location.href &&
-              !e.ctrlKey && !e.metaKey) {
-            
-            e.preventDefault();
-            const notebookContent = document.getElementById('notebook-content');
-            
-            // Initiate page exit animation
-            notebookContent.classList.add('page-exit');
-            
-            // Wait for the animation to complete, then navigate
-            setTimeout(() => {
-              window.location.href = link.href;
-            }, 400); // Faster transition
-          }
-        });
-        
-        // Handle page loads (back/forward navigation or new page)
-        window.addEventListener('pageshow', function(e) {
-          // Check if this is a new navigation (not back/forward from cache)
-          if (currentPage !== window.location.pathname) {
-            const notebookContent = document.getElementById('notebook-content');
-            
-            // Add the enter animation class
-            notebookContent.classList.add('page-enter');
-            
-            // Remove the class after animation completes
-            setTimeout(() => {
-              notebookContent.classList.remove('page-enter');
-            }, 400); // Faster transition
-            
-            // Update current page
-            currentPage = window.location.pathname;
-          }
-        });
-        
-        // For initial page load, only animate content if not first visit 
-        if (!isFirstVisit) {
-          const notebookContent = document.getElementById('notebook-content');
-          notebookContent.classList.add('page-enter');
-          
-          // Remove the class after animation completes
+        // Faster rip-through effect on page changes
+        if (notebookContent) {
+          notebookContent.classList.add('fast-transition');
           setTimeout(() => {
-            notebookContent.classList.remove('page-enter');
-          }, 400); // Faster transition
+            notebookContent.classList.remove('fast-transition');
+          }, 300);
         }
-        
-        // Handle navigation events
-        window.onpopstate = function(event) {
-          // When navigating with browser back/forward buttons
-          const notebookContent = document.getElementById('notebook-content');
-          if (notebookContent) {
-            notebookContent.classList.add('page-enter');
-            setTimeout(() => {
-              notebookContent.classList.remove('page-enter');
-            }, 400); // Faster transition
-          }
-        };
       });
     </script>
     
     <!-- Add notebook enhancements script -->
-    <script src="/scripts/notebooks.js" defer></script>
+    <script src="/scripts/notebook.js" defer></script>
     
   </body>
 </html>

@@ -92,15 +92,16 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
   
   .dark .feature-card {
     border-color: theme("colors.secondary.700");
-    background-color: #3A4D30;
+    background-color: #4a5568;
     background-image: 
       repeating-linear-gradient(
-        rgba(255, 255, 255, 0.05) 0px,
-        rgba(255, 255, 255, 0.05) 1px,
+        rgba(255, 255, 255, 0.08) 0px,
+        rgba(255, 255, 255, 0.08) 1px,
         transparent 1px,
         transparent 26px
       );
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
   }
   
   .feature-card:hover {
@@ -356,7 +357,7 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
     <div class="container px-4 md:px-0 my-24">
       <div class="special-banner">
         <div class="fork-knife">🍴</div>
-        <h3>Let's cook up something amazing together</h3>
+        <h3>Let's cook up something <span class="underline decoration-wavy decoration-primary-500 decoration-2">amazing</span> together</h3>
         <p class=" handwritten text-lg opacity-90 mb-6 max-w-2xl">Open to collaboration and new opportunities. Get in touch to discuss your project needs.</p>
         <a href="mailto:chiboguchisomu@gmail.com" class="inline-block bg-primary-600 text-white dark:bg-primary-700 handwritten py-2 px-6 rounded hover:bg-primary-700 dark:hover:bg-primary-600 transition-all transform hover:-rotate-1">Contact me</a>
       </div>
@@ -382,7 +383,7 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
               
               <div class="h-px w-full bg-secondary-200 dark:bg-secondary-700 my-3"></div>
               
-              <p class="text-secondary-600 dark:text-secondary-400 mb-4 line-clamp-3 leading-relaxed">{post.data.description}</p>
+              <p class="text-secondary-600 dark:text-secondary-400 mb-4 overflow-hidden line-clamp-3 leading-relaxed max-h-24">{post.data.description}</p>
               <div class="flex items-center text-primary-600 dark:text-primary-400 font-medium">
                 <span>Read notes</span>
                 <Icon name="tabler:arrow-right" class="ml-2 group-hover:translate-x-1 transition-transform" />

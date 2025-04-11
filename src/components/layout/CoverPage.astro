@@ -20,7 +20,7 @@ import { Icon } from "astro-icon/components";
   
   <!-- Cookbook ribbon -->
   <div class="cookbook-ribbon">
-    <span>2024 Edition</span>
+    <span>2025 Edition</span>
   </div>
 </div>
 <div class="notebook-spine" id="notebook-spine"></div>
@@ -40,12 +40,18 @@ import { Icon } from "astro-icon/components";
     justify-content: center;
     align-items: center;
     transform-origin: left;
-    animation: coverOpen 10s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
+    animation: none;
     box-shadow: 
       5px 0 25px rgba(0, 0, 0, 0.4),
       inset 0 0 50px rgba(0, 0, 0, 0.2);
     text-align: center;
     overflow: hidden;
+    transition: transform 4s cubic-bezier(0.645, 0.045, 0.355, 1.000), opacity 3.5s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+  }
+
+  .notebook-cover.open {
+    transform: perspective(1800px) rotateY(-100deg);
+    opacity: 0;
   }
 
   /* Cover texture */
@@ -372,49 +378,10 @@ import { Icon } from "astro-icon/components";
     }
   }
 
-  /* Cover opening animation */
-  @keyframes coverOpen {
-    0% {
-      transform: perspective(1800px) rotateY(0deg);
-      box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
-    }
-    5% {
-      transform: perspective(1800px) rotateY(-5deg);
-      box-shadow: 8px 0 30px rgba(0, 0, 0, 0.45);
-    }
-    10% {
-      transform: perspective(1800px) rotateY(-3deg);
-      box-shadow: 7px 0 28px rgba(0, 0, 0, 0.43);
-    }
-    15% {
-      transform: perspective(1800px) rotateY(-8deg);
-      box-shadow: 10px 0 32px rgba(0, 0, 0, 0.47);
-    }
-    30% {
-      transform: perspective(1800px) rotateY(-45deg);
-      box-shadow: 25px 0 40px rgba(0, 0, 0, 0.5);
-    }
-    70% {
-      transform: perspective(1800px) rotateY(-85deg);
-      box-shadow: 40px 0 50px rgba(0, 0, 0, 0.3);
-      opacity: 1;
-    }
-    95% {
-      transform: perspective(1800px) rotateY(-100deg);
-      opacity: 0.3;
-    }
-    100% {
-      transform: perspective(1800px) rotateY(-110deg);
-      opacity: 0;
-      visibility: hidden;
-      display: none;
-    }
-  }
-  
   /* Mobile responsiveness */
   @media (max-width: 768px) {
     .notebook-cover {
-    animation: coverOpen 8s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
+    animation: none;
   }
   
   .notebook-spine {
