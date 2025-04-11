@@ -39,29 +39,50 @@ import { Icon } from "astro-icon/components";
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transform-origin: left;
-    animation: none;
+    transform-origin: 0% 50%; /* Precise left edge for book opening */
+    transform: perspective(1800px) rotateY(0deg);
     box-shadow: 
       5px 0 25px rgba(0, 0, 0, 0.4),
       inset 0 0 50px rgba(0, 0, 0, 0.2);
     text-align: center;
     overflow: hidden;
-    transition: transform 2.5s cubic-bezier(0.645, 0.045, 0.355, 1.000), opacity 2s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    transition: none; /* Remove the transition to use animation instead */
     will-change: transform, opacity;
+    animation: none; /* Initial state - no animation */
   }
 
   .notebook-cover.open {
-    transform: perspective(1800px) rotateY(-100deg);
-    opacity: 0;
+    animation: coverOpen 2.5s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
+    pointer-events: none;
   }
 
   /* Re-add specific animation for book opening effect */
   @keyframes coverOpen {
     0% {
       transform: perspective(1800px) rotateY(0deg);
+      box-shadow: 
+        5px 0 25px rgba(0, 0, 0, 0.4),
+        inset 0 0 50px rgba(0, 0, 0, 0.2);
+      opacity: 1;
+    }
+    30% {
+      transform: perspective(1800px) rotateY(-30deg);
+      box-shadow: 
+        15px 0 35px rgba(0, 0, 0, 0.5),
+        inset 0 0 60px rgba(0, 0, 0, 0.3);
+    }
+    60% {
+      transform: perspective(1800px) rotateY(-60deg);
+      box-shadow: 
+        25px 0 45px rgba(0, 0, 0, 0.6),
+        inset 0 0 70px rgba(0, 0, 0, 0.4);
     }
     100% {
       transform: perspective(1800px) rotateY(-100deg);
+      box-shadow: 
+        35px 0 55px rgba(0, 0, 0, 0.7),
+        inset 0 0 80px rgba(0, 0, 0, 0.5);
+      opacity: 0;
     }
   }
 
@@ -78,6 +99,12 @@ import { Icon } from "astro-icon/components";
       radial-gradient(rgba(255, 255, 255, 0.05) 2px, transparent 2px);
     background-size: 40px 40px, 20px 20px;
     opacity: 0.8;
+    transform-origin: 0% 50%;
+    transition: transform 0.5s ease-out;
+  }
+
+  .notebook-cover.open::before {
+    transform: perspective(1800px) rotateY(-20deg);
   }
 
   /* Additional texture layer */

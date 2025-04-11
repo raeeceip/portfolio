@@ -88,13 +88,6 @@ const metaImgUrl = metaImage;
       
       // Store theme in a data attribute for easier access during transitions
       document.documentElement.dataset.theme = currentTheme;
-      
-      // Check if this is first load to show cover
-      const isFirstVisit = !localStorage.getItem('visited');
-      if (isFirstVisit) {
-        document.documentElement.classList.add('first-visit');
-        localStorage.setItem('visited', 'true');
-      }
     </script>
     <!-- Include our custom transitions script -->
     <script is:inline src="/scripts/customTransitions.js"></script>
@@ -123,7 +116,7 @@ const metaImgUrl = metaImage;
     
   </head>
   <body>
-    <!-- Original Cover Page Component -->
+    <!-- Cover Page Component - will be controlled by JS -->
     <CoverPage />
     
     <!-- Enhanced notebook container for page transitions -->
@@ -138,32 +131,40 @@ const metaImgUrl = metaImage;
     </div>
     
     <script is:inline>
-      // Cover page animation script with proper opening effect
+      // Cover page animation script - improved to only show once
       document.addEventListener('DOMContentLoaded', function() {
         const coverPage = document.getElementById('notebook-cover');
+        const notebookSpine = document.getElementById('notebook-spine');
+        
         if (!coverPage) return;
         
         // Check for first-time visit
-        if (localStorage.getItem('visited') === 'true') {
-          // Returning visitor - hide cover page immediately
-          coverPage.style.display = 'none';
+        const isFirstVisit = !localStorage.getItem('visited');
+        
+        if (!isFirstVisit) {
+          // For returning visitors, immediately remove the cover
+          coverPage.remove();
+          if (notebookSpine) notebookSpine.remove();
         } else {
-          // First-time visitor - show cover page with animation
+          // First-time visitor - mark as visited immediately
           localStorage.setItem('visited', 'true');
           
-          // Display the cover for first-time visitors
+          // Make sure cover is visible with proper styling
           coverPage.style.display = 'flex';
+          if (notebookSpine) notebookSpine.style.display = 'block';
           
-          // Delay before animation for the user to appreciate the cover (5 seconds)
-          setTimeout(function() {
-            // Trigger the animation by adding the open class
+          // Trigger the open animation after a short delay
+          setTimeout(() => {
+            // Add the open class to trigger animation via CSS transition
             coverPage.classList.add('open');
             
-            // After animation completes, hide the cover completely
-            setTimeout(function() {
-              coverPage.style.display = 'none';
-            }, 2500); // Matches the 2.5s transition
-          }, 5000); // Full 5 seconds to appreciate the cover before it animates away
+            // After animation completes, completely remove the cover elements
+            // Duration matches the CSS animation time (2.5s) + small buffer
+            setTimeout(() => {
+              coverPage.remove();
+              if (notebookSpine) notebookSpine.remove();
+            }, 2700); 
+          }, 3000); // Display duration before animation starts - reduced from 10s
         }
       });
       

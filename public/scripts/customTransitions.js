@@ -5,24 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Apply stored theme immediately to prevent flash
   applyStoredTheme();
-  
-  // Handle first visit cover page display
-  handleCoverPageDisplay();
 });
 
-// This function handles whether to show the cover page on first visit
+// This function is intentionally empty to avoid conflicts with Layout.astro
 function handleCoverPageDisplay() {
-  const isFirstVisit = !localStorage.getItem('visited');
-  if (isFirstVisit) {
-    document.documentElement.classList.add('first-visit');
-    localStorage.setItem('visited', 'true');
-    
-    // Hide the cover page after user interaction
-    document.addEventListener('click', function hideCover() {
-      document.documentElement.classList.remove('first-visit');
-      document.removeEventListener('click', hideCover);
-    });
-  }
+  // This function is intentionally empty
+  // Cover page is managed in Layout.astro
 }
 
 // This function will be called on page load to set the correct theme
