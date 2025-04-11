@@ -16,13 +16,14 @@
   --color-text-light: #333333;
   --color-bg-dark: #1a202c; /* Darker background for dark mode */
   --color-text-dark: #f3f4f6;
-  
+
   /* Font variables */
-  --body-font-family: 'Open Sans', 'Noto Sans', sans-serif;
-  --header-font-family: 'Playfair Display', 'Times New Roman', serif;
-  --handwriting-font: 'Caveat', 'Indie Flower', 'Comic Sans MS', cursive;
-  --code-handwriting-font: 'Patrick Hand', 'Indie Flower', 'Comic Sans MS', monospace; /* Different handwriting for code */
-  
+  --body-font-family: "Open Sans", "Noto Sans", sans-serif;
+  --header-font-family: "Playfair Display", "Times New Roman", serif;
+  --handwriting-font: "Caveat", "Indie Flower", "Comic Sans MS", cursive;
+  --code-handwriting-font: "Patrick Hand", "Indie Flower", "Comic Sans MS",
+    monospace; /* Different handwriting for code */
+
   /* Notebook variables */
   --notebook-paper-color: #ffffff;
   --notebook-line-color: rgba(0, 0, 0, 0.07);
@@ -252,7 +253,8 @@ html {
 
 /* Faster page transitions */
 .notebook-content.fast-transition {
-  animation: tear-off-middle 0.3s cubic-bezier(0.755, 0.05, 0.855, 0.06) forwards;
+  animation: tear-off-middle 0.3s cubic-bezier(0.755, 0.05, 0.855, 0.06)
+    forwards;
 }
 
 .notebook-content.page-enter {
@@ -260,7 +262,8 @@ html {
 }
 
 .notebook-content.page-exit {
-  animation: tear-off-middle 0.4s cubic-bezier(0.755, 0.05, 0.855, 0.06) forwards;
+  animation: tear-off-middle 0.4s cubic-bezier(0.755, 0.05, 0.855, 0.06)
+    forwards;
 }
 
 @media (min-width: 2000px) {
@@ -277,21 +280,30 @@ body {
   color: var(--color-text-light);
   font-family: var(--handwriting-font);
   line-height: 1.6;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   /* Subtle paper texture background for notepad feel */
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px),
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.5) 1px,
+      transparent 1px
+    ),
     linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px),
     url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-  background-size: 26px 26px, 26px 26px, 200px 200px;
+  background-size:
+    26px 26px,
+    26px 26px,
+    200px 200px;
 }
 
 .dark body {
   background-color: var(--color-bg-dark);
   color: var(--color-text-dark);
   /* Darker but still visible texture for dark mode */
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
     linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
 }
@@ -309,7 +321,7 @@ body {
   overflow: visible; /* Allow decorative elements to overflow container */
   margin-bottom: 3rem;
   transform: rotate(0.2deg);
-  
+
   /* Restore notebook paper styling */
   background-image: 
     /* Horizontal ruled lines */
@@ -320,16 +332,16 @@ body {
       transparent 28px
     ),
     /* Vertical margin line */
-    linear-gradient(
-      to right,
-      var(--notebook-margin-color) 0px,
-      var(--notebook-margin-color) 30px,
-      transparent 30px
-    );
+      linear-gradient(
+        to right,
+        var(--notebook-margin-color) 0px,
+        var(--notebook-margin-color) 30px,
+        transparent 30px
+      );
   background-size:
     100% 28px,
     100% 100%;
-  
+
   @media (min-width: 768px) {
     padding: 2.5rem 2rem 2.5rem 4rem; /* More padding on larger screens */
   }
@@ -1145,7 +1157,12 @@ body {
   font-family: var(--handwriting-font);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--header-font-family);
 }
 
@@ -1159,16 +1176,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Clear the aggressive overrides */
-.dark p, 
-.dark h1, 
-.dark h2, 
-.dark h3, 
-.dark h4, 
-.dark h5, 
-.dark h6, 
-.dark a, 
-.dark span:not(.token), 
-.dark li, 
+.dark p,
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark a,
+.dark span:not(.token),
+.dark li,
 .dark button {
   color: inherit;
 }
@@ -1186,7 +1203,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Only code elements should use monospace */
-pre, code, .token, .code-block, .code-inline {
+pre,
+code,
+.token,
+.code-block,
+.code-inline {
   font-family: var(--code-font-family) !important;
 }
 
@@ -1196,16 +1217,16 @@ pre, code, .token, .code-block, .code-inline {
   color: #ffffff !important;
 }
 
-.dark p, 
-.dark h1, 
-.dark h2, 
-.dark h3, 
-.dark h4, 
-.dark h5, 
-.dark h6, 
-.dark a, 
-.dark span:not(.token), 
-.dark li, 
+.dark p,
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark a,
+.dark span:not(.token),
+.dark li,
 .dark button {
   color: #ffffff !important;
 }
@@ -1301,8 +1322,8 @@ main::after {
   right: 0;
   bottom: 0;
   background-image: repeating-linear-gradient(
-    transparent 0px, 
-    transparent 24px, 
+    transparent 0px,
+    transparent 24px,
     var(--notebook-line-color) 25px
   );
   background-size: 100% 25px;
@@ -1323,12 +1344,14 @@ main > * {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #3A4D30;
+  background-color: #3a4d30;
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  transition:
+    transform 0.5s ease-in-out,
+    opacity 0.5s ease-in-out;
 }
 
 .cover-content {
@@ -1348,8 +1371,9 @@ main > * {
 }
 
 /* Special handwriting font for code blocks */
-pre, code {
-  font-family: 'Indie Flower', 'Patrick Hand', 'Comic Sans MS', monospace !important;
+pre,
+code {
+  font-family: "Indie Flower", "Patrick Hand", "Comic Sans MS", monospace !important;
   background-color: #f6f2e8 !important;
   color: #3c4043 !important;
   border: 1px dashed #c4bdaa !important;
@@ -1360,15 +1384,18 @@ pre, code {
   font-weight: 500 !important;
 }
 
-.dark pre, .dark code {
+.dark pre,
+.dark code {
   background-color: #2d3a23 !important;
   color: #e5e7eb !important;
-  border-color: #51733F !important;
+  border-color: #51733f !important;
 }
 
 /* Different tone for inline code vs code blocks */
-p code, li code, td code {
-  font-family: 'Patrick Hand SC', 'Comic Sans MS', monospace !important;
+p code,
+li code,
+td code {
+  font-family: "Patrick Hand SC", "Comic Sans MS", monospace !important;
   font-size: 0.95em !important;
   background-color: #f0ebe0 !important;
   color: #5c6547 !important;
@@ -1377,10 +1404,12 @@ p code, li code, td code {
   border: 1px dotted #c4bdaa !important;
 }
 
-.dark p code, .dark li code, .dark td code {
+.dark p code,
+.dark li code,
+.dark td code {
   background-color: #364527 !important;
   color: #d1d5db !important;
-  border-color: #51733F !important;
+  border-color: #51733f !important;
 }
 
 /* ===== BEAUTIFUL NOTEPAD TEAR-OFF TRANSITIONS ===== */
@@ -1407,11 +1436,13 @@ body.page-transition-start #transition-overlay {
 }
 
 body.page-transition-start {
-  animation: tear-off-middle var(--page-transition-duration) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: tear-off-middle var(--page-transition-duration)
+    cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 body.page-transition-complete {
-  animation: reveal-middle var(--page-transition-duration) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: reveal-middle var(--page-transition-duration)
+    cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* Ensure content is visible after transitions complete */
@@ -1434,18 +1465,52 @@ body.page-transition-complete footer {
     transform: scale(0.98);
     opacity: 0.7;
     clip-path: polygon(
-      0% 0%, 100% 0%, 100% 35%, 
-      95% 38%, 90% 35%, 85% 39%, 80% 36%, 
-      75% 40%, 70% 37%, 65% 39%, 60% 35%, 
-      55% 38%, 50% 35%, 45% 39%, 40% 36%,
-      35% 40%, 30% 37%, 25% 39%, 20% 35%,
-      15% 38%, 10% 35%, 5% 39%, 0% 35%,
-      0% 65%, 5% 61%, 10% 65%, 15% 62%, 
-      20% 65%, 25% 61%, 30% 63%, 35% 60%,
-      40% 64%, 45% 61%, 50% 65%, 55% 62%,
-      60% 65%, 65% 61%, 70% 63%, 75% 60%,
-      80% 64%, 85% 61%, 90% 65%, 95% 62%, 
-      100% 65%, 100% 100%, 0% 100%
+      0% 0%,
+      100% 0%,
+      100% 35%,
+      95% 38%,
+      90% 35%,
+      85% 39%,
+      80% 36%,
+      75% 40%,
+      70% 37%,
+      65% 39%,
+      60% 35%,
+      55% 38%,
+      50% 35%,
+      45% 39%,
+      40% 36%,
+      35% 40%,
+      30% 37%,
+      25% 39%,
+      20% 35%,
+      15% 38%,
+      10% 35%,
+      5% 39%,
+      0% 35%,
+      0% 65%,
+      5% 61%,
+      10% 65%,
+      15% 62%,
+      20% 65%,
+      25% 61%,
+      30% 63%,
+      35% 60%,
+      40% 64%,
+      45% 61%,
+      50% 65%,
+      55% 62%,
+      60% 65%,
+      65% 61%,
+      70% 63%,
+      75% 60%,
+      80% 64%,
+      85% 61%,
+      90% 65%,
+      95% 62%,
+      100% 65%,
+      100% 100%,
+      0% 100%
     );
     filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.15));
   }
@@ -1453,18 +1518,52 @@ body.page-transition-complete footer {
     transform: scale(0.95);
     opacity: 0.4;
     clip-path: polygon(
-      0% 0%, 100% 0%, 100% 20%, 
-      95% 23%, 90% 20%, 85% 24%, 80% 21%, 
-      75% 25%, 70% 22%, 65% 24%, 60% 20%, 
-      55% 23%, 50% 20%, 45% 24%, 40% 21%,
-      35% 25%, 30% 22%, 25% 24%, 20% 20%,
-      15% 23%, 10% 20%, 5% 24%, 0% 20%,
-      0% 80%, 5% 76%, 10% 80%, 15% 77%, 
-      20% 80%, 25% 76%, 30% 78%, 35% 75%,
-      40% 79%, 45% 76%, 50% 80%, 55% 77%,
-      60% 80%, 65% 76%, 70% 78%, 75% 75%,
-      80% 79%, 85% 76%, 90% 80%, 95% 77%, 
-      100% 80%, 100% 100%, 0% 100%
+      0% 0%,
+      100% 0%,
+      100% 20%,
+      95% 23%,
+      90% 20%,
+      85% 24%,
+      80% 21%,
+      75% 25%,
+      70% 22%,
+      65% 24%,
+      60% 20%,
+      55% 23%,
+      50% 20%,
+      45% 24%,
+      40% 21%,
+      35% 25%,
+      30% 22%,
+      25% 24%,
+      20% 20%,
+      15% 23%,
+      10% 20%,
+      5% 24%,
+      0% 20%,
+      0% 80%,
+      5% 76%,
+      10% 80%,
+      15% 77%,
+      20% 80%,
+      25% 76%,
+      30% 78%,
+      35% 75%,
+      40% 79%,
+      45% 76%,
+      50% 80%,
+      55% 77%,
+      60% 80%,
+      65% 76%,
+      70% 78%,
+      75% 75%,
+      80% 79%,
+      85% 76%,
+      90% 80%,
+      95% 77%,
+      100% 80%,
+      100% 100%,
+      0% 100%
     );
     filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2));
   }
@@ -1472,18 +1571,52 @@ body.page-transition-complete footer {
     transform: scale(0.9);
     opacity: 0;
     clip-path: polygon(
-      0% 0%, 100% 0%, 100% 5%, 
-      95% 8%, 90% 5%, 85% 9%, 80% 6%, 
-      75% 10%, 70% 7%, 65% 9%, 60% 5%, 
-      55% 8%, 50% 5%, 45% 9%, 40% 6%,
-      35% 10%, 30% 7%, 25% 9%, 20% 5%,
-      15% 8%, 10% 5%, 5% 9%, 0% 5%,
-      0% 95%, 5% 91%, 10% 95%, 15% 92%, 
-      20% 95%, 25% 91%, 30% 93%, 35% 90%,
-      40% 94%, 45% 91%, 50% 95%, 55% 92%,
-      60% 95%, 65% 91%, 70% 93%, 75% 90%,
-      80% 94%, 85% 91%, 90% 95%, 95% 92%, 
-      100% 95%, 100% 100%, 0% 100%
+      0% 0%,
+      100% 0%,
+      100% 5%,
+      95% 8%,
+      90% 5%,
+      85% 9%,
+      80% 6%,
+      75% 10%,
+      70% 7%,
+      65% 9%,
+      60% 5%,
+      55% 8%,
+      50% 5%,
+      45% 9%,
+      40% 6%,
+      35% 10%,
+      30% 7%,
+      25% 9%,
+      20% 5%,
+      15% 8%,
+      10% 5%,
+      5% 9%,
+      0% 5%,
+      0% 95%,
+      5% 91%,
+      10% 95%,
+      15% 92%,
+      20% 95%,
+      25% 91%,
+      30% 93%,
+      35% 90%,
+      40% 94%,
+      45% 91%,
+      50% 95%,
+      55% 92%,
+      60% 95%,
+      65% 91%,
+      70% 93%,
+      75% 90%,
+      80% 94%,
+      85% 91%,
+      90% 95%,
+      95% 92%,
+      100% 95%,
+      100% 100%,
+      0% 100%
     );
     filter: drop-shadow(0 0 0px rgba(0, 0, 0, 0));
   }
@@ -1495,18 +1628,52 @@ body.page-transition-complete footer {
     transform: scale(0.9);
     opacity: 0;
     clip-path: polygon(
-      0% 0%, 100% 0%, 100% 5%, 
-      95% 8%, 90% 5%, 85% 9%, 80% 6%, 
-      75% 10%, 70% 7%, 65% 9%, 60% 5%, 
-      55% 8%, 50% 5%, 45% 9%, 40% 6%,
-      35% 10%, 30% 7%, 25% 9%, 20% 5%,
-      15% 8%, 10% 5%, 5% 9%, 0% 5%,
-      0% 95%, 5% 91%, 10% 95%, 15% 92%, 
-      20% 95%, 25% 91%, 30% 93%, 35% 90%,
-      40% 94%, 45% 91%, 50% 95%, 55% 92%,
-      60% 95%, 65% 91%, 70% 93%, 75% 90%,
-      80% 94%, 85% 91%, 90% 95%, 95% 92%, 
-      100% 95%, 100% 100%, 0% 100%
+      0% 0%,
+      100% 0%,
+      100% 5%,
+      95% 8%,
+      90% 5%,
+      85% 9%,
+      80% 6%,
+      75% 10%,
+      70% 7%,
+      65% 9%,
+      60% 5%,
+      55% 8%,
+      50% 5%,
+      45% 9%,
+      40% 6%,
+      35% 10%,
+      30% 7%,
+      25% 9%,
+      20% 5%,
+      15% 8%,
+      10% 5%,
+      5% 9%,
+      0% 5%,
+      0% 95%,
+      5% 91%,
+      10% 95%,
+      15% 92%,
+      20% 95%,
+      25% 91%,
+      30% 93%,
+      35% 90%,
+      40% 94%,
+      45% 91%,
+      50% 95%,
+      55% 92%,
+      60% 95%,
+      65% 91%,
+      70% 93%,
+      75% 90%,
+      80% 94%,
+      85% 91%,
+      90% 95%,
+      95% 92%,
+      100% 95%,
+      100% 100%,
+      0% 100%
     );
     filter: drop-shadow(0 0 0px rgba(0, 0, 0, 0));
   }
@@ -1514,18 +1681,52 @@ body.page-transition-complete footer {
     transform: scale(0.95);
     opacity: 0.4;
     clip-path: polygon(
-      0% 0%, 100% 0%, 100% 20%, 
-      95% 23%, 90% 20%, 85% 24%, 80% 21%, 
-      75% 25%, 70% 22%, 65% 24%, 60% 20%, 
-      55% 23%, 50% 20%, 45% 24%, 40% 21%,
-      35% 25%, 30% 22%, 25% 24%, 20% 20%,
-      15% 23%, 10% 20%, 5% 24%, 0% 20%,
-      0% 80%, 5% 76%, 10% 80%, 15% 77%, 
-      20% 80%, 25% 76%, 30% 78%, 35% 75%,
-      40% 79%, 45% 76%, 50% 80%, 55% 77%,
-      60% 80%, 65% 76%, 70% 78%, 75% 75%,
-      80% 79%, 85% 76%, 90% 80%, 95% 77%, 
-      100% 80%, 100% 100%, 0% 100%
+      0% 0%,
+      100% 0%,
+      100% 20%,
+      95% 23%,
+      90% 20%,
+      85% 24%,
+      80% 21%,
+      75% 25%,
+      70% 22%,
+      65% 24%,
+      60% 20%,
+      55% 23%,
+      50% 20%,
+      45% 24%,
+      40% 21%,
+      35% 25%,
+      30% 22%,
+      25% 24%,
+      20% 20%,
+      15% 23%,
+      10% 20%,
+      5% 24%,
+      0% 20%,
+      0% 80%,
+      5% 76%,
+      10% 80%,
+      15% 77%,
+      20% 80%,
+      25% 76%,
+      30% 78%,
+      35% 75%,
+      40% 79%,
+      45% 76%,
+      50% 80%,
+      55% 77%,
+      60% 80%,
+      65% 76%,
+      70% 78%,
+      75% 75%,
+      80% 79%,
+      85% 76%,
+      90% 80%,
+      95% 77%,
+      100% 80%,
+      100% 100%,
+      0% 100%
     );
     filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2));
   }
@@ -1533,18 +1734,52 @@ body.page-transition-complete footer {
     transform: scale(0.98);
     opacity: 0.7;
     clip-path: polygon(
-      0% 0%, 100% 0%, 100% 35%, 
-      95% 38%, 90% 35%, 85% 39%, 80% 36%, 
-      75% 40%, 70% 37%, 65% 39%, 60% 35%, 
-      55% 38%, 50% 35%, 45% 39%, 40% 36%,
-      35% 40%, 30% 37%, 25% 39%, 20% 35%,
-      15% 38%, 10% 35%, 5% 39%, 0% 35%,
-      0% 65%, 5% 61%, 10% 65%, 15% 62%, 
-      20% 65%, 25% 61%, 30% 63%, 35% 60%,
-      40% 64%, 45% 61%, 50% 65%, 55% 62%,
-      60% 65%, 65% 61%, 70% 63%, 75% 60%,
-      80% 64%, 85% 61%, 90% 65%, 95% 62%, 
-      100% 65%, 100% 100%, 0% 100%
+      0% 0%,
+      100% 0%,
+      100% 35%,
+      95% 38%,
+      90% 35%,
+      85% 39%,
+      80% 36%,
+      75% 40%,
+      70% 37%,
+      65% 39%,
+      60% 35%,
+      55% 38%,
+      50% 35%,
+      45% 39%,
+      40% 36%,
+      35% 40%,
+      30% 37%,
+      25% 39%,
+      20% 35%,
+      15% 38%,
+      10% 35%,
+      5% 39%,
+      0% 35%,
+      0% 65%,
+      5% 61%,
+      10% 65%,
+      15% 62%,
+      20% 65%,
+      25% 61%,
+      30% 63%,
+      35% 60%,
+      40% 64%,
+      45% 61%,
+      50% 65%,
+      55% 62%,
+      60% 65%,
+      65% 61%,
+      70% 63%,
+      75% 60%,
+      80% 64%,
+      85% 61%,
+      90% 65%,
+      95% 62%,
+      100% 65%,
+      100% 100%,
+      0% 100%
     );
     filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.15));
   }
@@ -1582,7 +1817,9 @@ html[data-theme="light"] {
 
 /* Add transitions to all elements to ensure smooth theme changes */
 * {
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 /* Prevent content flash during transitions */
@@ -1593,7 +1830,7 @@ html[data-theme] {
 /* Paper texture for the torn edges */
 .page-transition-start::before,
 .page-transition-complete::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -1609,29 +1846,43 @@ html[data-theme] {
   transition-duration: 0.1s !important; /* Make all animations very fast by default */
 }
 
-/* Exception for the cover page which should remain slow and dramatic */
+/* Exception for the cover page - make this take priority */
 .notebook-cover {
   transition-duration: 2.5s !important; /* Keep the slow transition only for the cover */
+  animation-duration: 2.5s !important;
   transition-property: transform, opacity !important;
   contain: layout style paint; /* Performance improvement */
 }
 
 .notebook-cover.open {
   transition-duration: 2.5s !important;
+  animation-duration: 2.5s !important;
   transition-property: transform, opacity !important;
 }
 
+/* Ensure explicit animations override the global 0.1s rule */
+[class].notebook-cover.open {
+  animation-duration: 2.5s !important;
+}
+
 /* Improve performance for critical page elements */
-img, video {
+img,
+video {
   content-visibility: auto;
   contain-intrinsic-size: auto;
 }
 
-a, button, .feature-card, input, textarea {
+a,
+button,
+.feature-card,
+input,
+textarea {
   transition-duration: 0.1s !important;
 }
 
 /* Optimize elements that appear later */
-footer, [id="contact"], [id^="section-"] {
+footer,
+[id="contact"],
+[id^="section-"] {
   content-visibility: auto;
 }

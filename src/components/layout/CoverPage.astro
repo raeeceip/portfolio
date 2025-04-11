@@ -28,64 +28,67 @@ import { Icon } from "astro-icon/components";
 <style>
   /* COVER PAGE STYLES */
   .notebook-cover {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #51733F, #3F5C31);
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transform-origin: 0% 50%; /* Precise left edge for book opening */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #51733F, #3F5C31);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transform-origin: 0% 50%; /* Precise left edge for book opening */
+  transform: perspective(1800px) rotateY(0deg);
+  box-shadow: 
+    5px 0 25px rgba(0, 0, 0, 0.4),
+    inset 0 0 50px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  overflow: hidden;
+  transition: none; /* Remove transition to use animation instead */
+  will-change: transform, opacity;
+  animation: none !important; /* Initial state - no animation, with !important */
+}
+
+.notebook-cover.open {
+  animation-name: coverOpen !important;
+  animation-duration: 2.5s !important;
+  animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1.000) !important;
+  animation-fill-mode: forwards !important;
+  animation-play-state: running !important;
+  pointer-events: none;
+}
+
+/* Re-add specific animation for book opening effect */
+@keyframes coverOpen {
+  0% {
     transform: perspective(1800px) rotateY(0deg);
     box-shadow: 
       5px 0 25px rgba(0, 0, 0, 0.4),
       inset 0 0 50px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    overflow: hidden;
-    transition: none; /* Remove the transition to use animation instead */
-    will-change: transform, opacity;
-    animation: none; /* Initial state - no animation */
+    opacity: 1;
   }
-
-  .notebook-cover.open {
-    animation: coverOpen 2.5s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
-    pointer-events: none;
+  30% {
+    transform: perspective(1800px) rotateY(-30deg);
+    box-shadow: 
+      15px 0 35px rgba(0, 0, 0, 0.5),
+      inset 0 0 60px rgba(0, 0, 0, 0.3);
   }
-
-  /* Re-add specific animation for book opening effect */
-  @keyframes coverOpen {
-    0% {
-      transform: perspective(1800px) rotateY(0deg);
-      box-shadow: 
-        5px 0 25px rgba(0, 0, 0, 0.4),
-        inset 0 0 50px rgba(0, 0, 0, 0.2);
-      opacity: 1;
-    }
-    30% {
-      transform: perspective(1800px) rotateY(-30deg);
-      box-shadow: 
-        15px 0 35px rgba(0, 0, 0, 0.5),
-        inset 0 0 60px rgba(0, 0, 0, 0.3);
-    }
-    60% {
-      transform: perspective(1800px) rotateY(-60deg);
-      box-shadow: 
-        25px 0 45px rgba(0, 0, 0, 0.6),
-        inset 0 0 70px rgba(0, 0, 0, 0.4);
-    }
-    100% {
-      transform: perspective(1800px) rotateY(-100deg);
-      box-shadow: 
-        35px 0 55px rgba(0, 0, 0, 0.7),
-        inset 0 0 80px rgba(0, 0, 0, 0.5);
-      opacity: 0;
-    }
+  60% {
+    transform: perspective(1800px) rotateY(-60deg);
+    box-shadow: 
+      25px 0 45px rgba(0, 0, 0, 0.6),
+      inset 0 0 70px rgba(0, 0, 0, 0.4);
   }
-
+  100% {
+    transform: perspective(1800px) rotateY(-100deg);
+    box-shadow: 
+      35px 0 55px rgba(0, 0, 0, 0.7),
+      inset 0 0 80px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+  }
+}
   /* Cover texture */
   .notebook-cover::before {
     content: "";

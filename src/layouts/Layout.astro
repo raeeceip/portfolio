@@ -152,6 +152,11 @@ const metaImgUrl = metaImage;
           // Make sure cover is visible with proper styling
           coverPage.style.display = 'flex';
           if (notebookSpine) notebookSpine.style.display = 'block';
+          // Override any conflicting inline styles
+          coverPage.style.animationDuration = '2.5s !important';
+          coverPage.style.animationFillMode = 'forwards';
+          coverPage.style.transition = 'none';
+
           
           // Trigger the open animation after a short delay
           setTimeout(() => {
