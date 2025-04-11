@@ -471,13 +471,18 @@ div.recipe-container {
   overflow: hidden;
 }
 
-div.special-banner,
-.dark .special-banner,
-.dark div.special-banner {
+.dark .special-banner {
   background-color: #3A4D30 !important;
   color: white !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+html:not(.dark) .special-banner {
+  background-color: #f0f0f0 !important;
+  color: #3A4D30 !important;
+  border-color: #d0d0d0 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
 .special-banner h1,

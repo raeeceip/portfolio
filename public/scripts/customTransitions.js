@@ -5,7 +5,25 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Apply stored theme immediately to prevent flash
   applyStoredTheme();
+  
+  // Handle first visit cover page display
+  handleCoverPageDisplay();
 });
+
+// This function handles whether to show the cover page on first visit
+function handleCoverPageDisplay() {
+  const isFirstVisit = !localStorage.getItem('visited');
+  if (isFirstVisit) {
+    document.documentElement.classList.add('first-visit');
+    localStorage.setItem('visited', 'true');
+    
+    // Hide the cover page after user interaction
+    document.addEventListener('click', function hideCover() {
+      document.documentElement.classList.remove('first-visit');
+      document.removeEventListener('click', hideCover);
+    });
+  }
+}
 
 // This function will be called on page load to set the correct theme
 function applyStoredTheme() {
@@ -24,7 +42,7 @@ function applyStoredTheme() {
     theme = transitionTheme;
   }
   
-  // Apply the theme immediately
+  // Apply the theme immediately and forcefully
   document.documentElement.classList.remove('light', 'dark');
   document.documentElement.classList.add(theme);
   document.documentElement.dataset.theme = theme;
@@ -66,9 +84,6 @@ function initCustomTransitions() {
       // When user presses back/forward button
       const targetUrl = window.location.href;
       navigateWithTransition(targetUrl, true);
-      
-      // Prevent default navigation
-      event.preventDefault();
     }
   });
   
@@ -150,7 +165,7 @@ function navigateWithTransition(url, isHistoryNavigation = false) {
   document.body.classList.remove('page-transition-complete');
   document.body.classList.add('page-transition-start');
   
-  // Delay actual navigation to allow animation to complete - using much faster timing
+  // Make the transition super fast (100ms) for better performance
   setTimeout(() => {
     // Navigate to new page
     if (isHistoryNavigation) {
@@ -162,12 +177,12 @@ function navigateWithTransition(url, isHistoryNavigation = false) {
       history.pushState({ source: 'customTransition' }, '', url);
       window.location.href = url;
     }
-  }, 250); // Match this timing with CSS animation duration (much faster)
+  }, 100); // Even faster animation (reduced from 150ms)
 }
 
 // When page loads, handle incoming transitions
 window.addEventListener('load', () => {
-  // Apply stored theme from the transition
+  // Apply stored theme from the transition immediately
   applyStoredTheme();
   
   // Special handling for pagination
@@ -191,16 +206,16 @@ window.addEventListener('load', () => {
     sessionStorage.removeItem('pageParam');
   }
   
-  // Add a slight initial delay to ensure content is hidden during transition in
+  // Handle transition-in animations
   if (sessionStorage.getItem('isTransitioning') === 'true') {
     // Hide content initially
     document.body.style.opacity = '0';
     
-    // Delay showing content - much shorter delay for faster appearance
-    setTimeout(() => {
-      // Now fade in content quickly
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
+      // Now fade in content very quickly
       document.body.style.opacity = '1';
-      document.body.style.transition = 'opacity 150ms ease-in';
+      document.body.style.transition = 'opacity 80ms ease-in';
       
       // Play the incoming transition after content is visible
       document.body.classList.remove('page-transition-start');
@@ -214,7 +229,7 @@ window.addEventListener('load', () => {
       
       // Force theme application again to ensure consistency
       applyStoredTheme();
-    }, 20);
+    });
   } else {
     // Direct page load (no transition)
     document.body.classList.remove('page-transition-start');
@@ -222,11 +237,11 @@ window.addEventListener('load', () => {
     window.isTransitioning = false;
   }
   
-  // Hide the overlay if present
+  // Hide the overlay if present - do it immediately
   const overlay = document.getElementById('transition-overlay');
   if (overlay) {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       overlay.style.display = 'none';
-    }, 300); // After all transitions complete
+    });
   }
 });

@@ -1238,7 +1238,17 @@ pre, code, .token, .code-block, .code-inline {
 }
 
 .first-visit .cover-page {
-  transform: translateX(0);
+  display: flex;
+  animation: cover-page-reveal 1s ease-out forwards;
+}
+
+html.first-visit .cover-page {
+  display: flex;
+  animation: cover-page-reveal 1s ease-out forwards;
+}
+
+html:not(.first-visit) .cover-page {
+  display: none;
 }
 
 .cover-content {
@@ -1298,8 +1308,8 @@ p code, li code, td code {
 
 /* ===== BEAUTIFUL NOTEPAD TEAR-OFF TRANSITIONS ===== */
 body {
-  --page-transition-duration: 250ms; /* Much faster transition */
-  transition: opacity 150ms ease-in-out;
+  --page-transition-duration: 100ms; /* Ultra fast transition - reduced from 150ms */
+  transition: opacity 80ms ease-in-out; /* Reduced from 100ms */
 }
 
 #transition-overlay {
@@ -1312,7 +1322,7 @@ body {
   z-index: 9999;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 150ms ease-in-out;
+  transition: opacity 80ms ease-in-out; /* Reduced from 100ms */
 }
 
 body.page-transition-start #transition-overlay {
@@ -1335,7 +1345,29 @@ body.page-transition-complete footer {
   visibility: visible;
 }
 
-/* Middle tear animation that splits top and bottom with jagged edges */
+/* First visit cover page handling */
+html.first-visit .cover-page {
+  display: flex;
+  animation: cover-page-reveal 1s ease-out forwards;
+}
+
+html:not(.first-visit) .cover-page {
+  display: none;
+}
+
+/* Cover page animation */
+@keyframes cover-page-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Middle tear animation that splits top and bottom with jagged edges - ULTRA FAST */
 @keyframes tear-off-middle {
   0% {
     transform: scale(1);
@@ -1343,46 +1375,27 @@ body.page-transition-complete footer {
     clip-path: inset(0% 0% 0% 0%);
     filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.1));
   }
-  25% {
+  30% {
     transform: scale(0.98);
-    opacity: 0.9;
+    opacity: 0.7;
     clip-path: polygon(
-      0% 0%, 100% 0%, 100% 40%, 
-      95% 43%, 90% 40%, 85% 44%, 80% 41%, 
-      75% 45%, 70% 42%, 65% 44%, 60% 40%, 
-      55% 43%, 50% 40%, 45% 44%, 40% 41%,
-      35% 45%, 30% 42%, 25% 44%, 20% 40%,
-      15% 43%, 10% 40%, 5% 44%, 0% 40%,
-      0% 60%, 5% 56%, 10% 60%, 15% 57%, 
-      20% 60%, 25% 56%, 30% 58%, 35% 55%,
-      40% 59%, 45% 56%, 50% 60%, 55% 57%,
-      60% 60%, 65% 56%, 70% 58%, 75% 55%,
-      80% 59%, 85% 56%, 90% 60%, 95% 57%, 
-      100% 60%, 100% 100%, 0% 100%
+      0% 0%, 100% 0%, 100% 35%, 
+      95% 38%, 90% 35%, 85% 39%, 80% 36%, 
+      75% 40%, 70% 37%, 65% 39%, 60% 35%, 
+      55% 38%, 50% 35%, 45% 39%, 40% 36%,
+      35% 40%, 30% 37%, 25% 39%, 20% 35%,
+      15% 38%, 10% 35%, 5% 39%, 0% 35%,
+      0% 65%, 5% 61%, 10% 65%, 15% 62%, 
+      20% 65%, 25% 61%, 30% 63%, 35% 60%,
+      40% 64%, 45% 61%, 50% 65%, 55% 62%,
+      60% 65%, 65% 61%, 70% 63%, 75% 60%,
+      80% 64%, 85% 61%, 90% 65%, 95% 62%, 
+      100% 65%, 100% 100%, 0% 100%
     );
     filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.15));
   }
-  50% {
+  70% {
     transform: scale(0.95);
-    opacity: 0.7;
-    clip-path: polygon(
-      0% 0%, 100% 0%, 100% 30%, 
-      95% 33%, 90% 30%, 85% 34%, 80% 31%, 
-      75% 35%, 70% 32%, 65% 34%, 60% 30%, 
-      55% 33%, 50% 30%, 45% 34%, 40% 31%,
-      35% 35%, 30% 32%, 25% 34%, 20% 30%,
-      15% 33%, 10% 30%, 5% 34%, 0% 30%,
-      0% 70%, 5% 66%, 10% 70%, 15% 67%, 
-      20% 70%, 25% 66%, 30% 68%, 35% 65%,
-      40% 69%, 45% 66%, 50% 70%, 55% 67%,
-      60% 70%, 65% 66%, 70% 68%, 75% 65%,
-      80% 69%, 85% 66%, 90% 70%, 95% 67%, 
-      100% 70%, 100% 100%, 0% 100%
-    );
-    filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.2));
-  }
-  75% {
-    transform: scale(0.9);
     opacity: 0.4;
     clip-path: polygon(
       0% 0%, 100% 0%, 100% 20%, 
@@ -1398,52 +1411,52 @@ body.page-transition-complete footer {
       80% 79%, 85% 76%, 90% 80%, 95% 77%, 
       100% 80%, 100% 100%, 0% 100%
     );
-    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2));
   }
   100% {
-    transform: scale(0.85);
+    transform: scale(0.9);
     opacity: 0;
     clip-path: polygon(
-      0% 0%, 100% 0%, 100% 10%, 
-      95% 13%, 90% 10%, 85% 14%, 80% 11%, 
-      75% 15%, 70% 12%, 65% 14%, 60% 10%, 
-      55% 13%, 50% 10%, 45% 14%, 40% 11%,
-      35% 15%, 30% 12%, 25% 14%, 20% 10%,
-      15% 13%, 10% 10%, 5% 14%, 0% 10%,
-      0% 90%, 5% 86%, 10% 90%, 15% 87%, 
-      20% 90%, 25% 86%, 30% 88%, 35% 85%,
-      40% 89%, 45% 86%, 50% 90%, 55% 87%,
-      60% 90%, 65% 86%, 70% 88%, 75% 85%,
-      80% 89%, 85% 86%, 90% 90%, 95% 87%, 
-      100% 90%, 100% 100%, 0% 100%
+      0% 0%, 100% 0%, 100% 5%, 
+      95% 8%, 90% 5%, 85% 9%, 80% 6%, 
+      75% 10%, 70% 7%, 65% 9%, 60% 5%, 
+      55% 8%, 50% 5%, 45% 9%, 40% 6%,
+      35% 10%, 30% 7%, 25% 9%, 20% 5%,
+      15% 8%, 10% 5%, 5% 9%, 0% 5%,
+      0% 95%, 5% 91%, 10% 95%, 15% 92%, 
+      20% 95%, 25% 91%, 30% 93%, 35% 90%,
+      40% 94%, 45% 91%, 50% 95%, 55% 92%,
+      60% 95%, 65% 91%, 70% 93%, 75% 90%,
+      80% 94%, 85% 91%, 90% 95%, 95% 92%, 
+      100% 95%, 100% 100%, 0% 100%
     );
-    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 0 0px rgba(0, 0, 0, 0));
   }
 }
 
-/* Middle reveal animation that rejoins top and bottom with jagged edges */
+/* Middle reveal animation that rejoins top and bottom with jagged edges - ULTRA FAST */
 @keyframes reveal-middle {
   0% {
-    transform: scale(0.85);
+    transform: scale(0.9);
     opacity: 0;
     clip-path: polygon(
-      0% 0%, 100% 0%, 100% 10%, 
-      95% 13%, 90% 10%, 85% 14%, 80% 11%, 
-      75% 15%, 70% 12%, 65% 14%, 60% 10%, 
-      55% 13%, 50% 10%, 45% 14%, 40% 11%,
-      35% 15%, 30% 12%, 25% 14%, 20% 10%,
-      15% 13%, 10% 10%, 5% 14%, 0% 10%,
-      0% 90%, 5% 86%, 10% 90%, 15% 87%, 
-      20% 90%, 25% 86%, 30% 88%, 35% 85%,
-      40% 89%, 45% 86%, 50% 90%, 55% 87%,
-      60% 90%, 65% 86%, 70% 88%, 75% 85%,
-      80% 89%, 85% 86%, 90% 90%, 95% 87%, 
-      100% 90%, 100% 100%, 0% 100%
+      0% 0%, 100% 0%, 100% 5%, 
+      95% 8%, 90% 5%, 85% 9%, 80% 6%, 
+      75% 10%, 70% 7%, 65% 9%, 60% 5%, 
+      55% 8%, 50% 5%, 45% 9%, 40% 6%,
+      35% 10%, 30% 7%, 25% 9%, 20% 5%,
+      15% 8%, 10% 5%, 5% 9%, 0% 5%,
+      0% 95%, 5% 91%, 10% 95%, 15% 92%, 
+      20% 95%, 25% 91%, 30% 93%, 35% 90%,
+      40% 94%, 45% 91%, 50% 95%, 55% 92%,
+      60% 95%, 65% 91%, 70% 93%, 75% 90%,
+      80% 94%, 85% 91%, 90% 95%, 95% 92%, 
+      100% 95%, 100% 100%, 0% 100%
     );
-    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 0 0px rgba(0, 0, 0, 0));
   }
-  25% {
-    transform: scale(0.9);
+  30% {
+    transform: scale(0.95);
     opacity: 0.4;
     clip-path: polygon(
       0% 0%, 100% 0%, 100% 20%, 
@@ -1459,43 +1472,24 @@ body.page-transition-complete footer {
       80% 79%, 85% 76%, 90% 80%, 95% 77%, 
       100% 80%, 100% 100%, 0% 100%
     );
-    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2));
   }
-  50% {
-    transform: scale(0.95);
+  70% {
+    transform: scale(0.98);
     opacity: 0.7;
     clip-path: polygon(
-      0% 0%, 100% 0%, 100% 30%, 
-      95% 33%, 90% 30%, 85% 34%, 80% 31%, 
-      75% 35%, 70% 32%, 65% 34%, 60% 30%, 
-      55% 33%, 50% 30%, 45% 34%, 40% 31%,
-      35% 35%, 30% 32%, 25% 34%, 20% 30%,
-      15% 33%, 10% 30%, 5% 34%, 0% 30%,
-      0% 70%, 5% 66%, 10% 70%, 15% 67%, 
-      20% 70%, 25% 66%, 30% 68%, 35% 65%,
-      40% 69%, 45% 66%, 50% 70%, 55% 67%,
-      60% 70%, 65% 66%, 70% 68%, 75% 65%,
-      80% 69%, 85% 66%, 90% 70%, 95% 67%, 
-      100% 70%, 100% 100%, 0% 100%
-    );
-    filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.2));
-  }
-  75% {
-    transform: scale(0.98);
-    opacity: 0.9;
-    clip-path: polygon(
-      0% 0%, 100% 0%, 100% 40%, 
-      95% 43%, 90% 40%, 85% 44%, 80% 41%, 
-      75% 45%, 70% 42%, 65% 44%, 60% 40%, 
-      55% 43%, 50% 40%, 45% 44%, 40% 41%,
-      35% 45%, 30% 42%, 25% 44%, 20% 40%,
-      15% 43%, 10% 40%, 5% 44%, 0% 40%,
-      0% 60%, 5% 56%, 10% 60%, 15% 57%, 
-      20% 60%, 25% 56%, 30% 58%, 35% 55%,
-      40% 59%, 45% 56%, 50% 60%, 55% 57%,
-      60% 60%, 65% 56%, 70% 58%, 75% 55%,
-      80% 59%, 85% 56%, 90% 60%, 95% 57%, 
-      100% 60%, 100% 100%, 0% 100%
+      0% 0%, 100% 0%, 100% 35%, 
+      95% 38%, 90% 35%, 85% 39%, 80% 36%, 
+      75% 40%, 70% 37%, 65% 39%, 60% 35%, 
+      55% 38%, 50% 35%, 45% 39%, 40% 36%,
+      35% 40%, 30% 37%, 25% 39%, 20% 35%,
+      15% 38%, 10% 35%, 5% 39%, 0% 35%,
+      0% 65%, 5% 61%, 10% 65%, 15% 62%, 
+      20% 65%, 25% 61%, 30% 63%, 35% 60%,
+      40% 64%, 45% 61%, 50% 65%, 55% 62%,
+      60% 65%, 65% 61%, 70% 63%, 75% 60%,
+      80% 64%, 85% 61%, 90% 65%, 95% 62%, 
+      100% 65%, 100% 100%, 0% 100%
     );
     filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.15));
   }
@@ -1508,15 +1502,14 @@ body.page-transition-complete footer {
 }
 
 /* Dark mode compatibility */
-.dark body.page-transition-start,
-.dark body.page-transition-complete {
-  background-color: var(--color-bg-dark);
-  color: var(--color-text-dark);
+.dark body {
+  background-color: var(--color-bg-dark) !important;
+  color: var(--color-text-dark) !important;
 }
 
-/* Prevent content flash during transitions */
-html[data-theme] {
-  visibility: visible;
+.light body {
+  background-color: var(--color-bg-light) !important;
+  color: var(--color-text-light) !important;
 }
 
 /* Ensure theme is maintained throughout transition */
@@ -1537,64 +1530,21 @@ html[data-theme="light"] {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Notepad with torn edge effect - prioritizing beauty */
-.notebook-content {
-  position: relative;
-  backface-visibility: hidden;
-  will-change: transform, opacity, clip-path;
-  transform-origin: top center;
-  z-index: 1;
-  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
-  /* Improved shadow for better paper effect */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08), 0 0 4px rgba(0, 0, 0, 0.04);
+/* Prevent content flash during transitions */
+html[data-theme] {
+  visibility: visible;
 }
 
-/* When page transition starts */
-.page-transition-start .notebook-content {
-  animation: pageTearOff 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
-  transform-style: preserve-3d;
-}
-
-/* When page transition completes */
-.page-transition-complete .notebook-content {
-  animation: pageTearIn 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
-  transform-style: preserve-3d;
-}
-
-/* Paper texture for better realism */
-.notebook-content::before {
+/* Paper texture for the torn edges */
+.page-transition-start::before,
+.page-transition-complete::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%2351733f' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
-  opacity: 0.3;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
   z-index: -1;
-  pointer-events: none;
-}
-
-.dark .notebook-content::before {
-  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%2351733f' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-  opacity: 0.2;
-}
-
-/* Torn paper edge at bottom */
-.notebook-content::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background-repeat: repeat-x;
-  background-size: 20px 20px;
-  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q2 7 4 10 T8 9 T12 11 T16 8 T20 10 L20 20 L0 20 Z' fill='%23f9f4e7' /%3E%3C/svg%3E");
-  z-index: 2;
-  pointer-events: none;
-}
-
-.dark .notebook-content::after {
-  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q2 7 4 10 T8 9 T12 11 T16 8 T20 10 L20 20 L0 20 Z' fill='%232a3a20' /%3E%3C/svg%3E");
 }
