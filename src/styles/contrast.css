@@ -1,0 +1,518 @@
+/* 
+ * Consolidated Contrast and Notepad Styles
+ * This contains all styling for the handwritten notepad theme with improved contrast
+ */
+
+/* ===== FONT & BASE STYLES ===== */
+body, p, h1, h2, h3, h4, h5, h6, a, span:not(.token), li, button, input, textarea, label, div {
+  font-family: var(--handwriting-font) !important;
+}
+
+pre, code, .token, .code-block, .code-inline {
+  font-family: var(--code-font-family) !important;
+}
+
+/* Dark mode base */
+.dark {
+  --foreground-color: #ffffff;
+  color: #ffffff;
+}
+
+/* ===== RECIPE CONTAINERS & NOTES ===== */
+/* Recipe Container - Main styling */
+.recipe-container, 
+div.recipe-container,
+.dark .recipe-container,
+.dark div.recipe-container {
+  position: relative;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+/* Light mode styling */
+.recipe-container, 
+div.recipe-container {
+  background-color: #f5f5f5;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 5px 5px 0 rgba(81, 115, 63, 0.2);
+  color: #3A4D30;
+  background-image: 
+    repeating-linear-gradient(
+      rgba(0, 0, 0, 0.05) 0px,
+      rgba(0, 0, 0, 0.05) 1px,
+      transparent 1px,
+      transparent 28px
+    );
+  background-size: 100% 28px;
+}
+
+/* Dark mode styling */
+.dark .recipe-container,
+.dark div.recipe-container {
+  background-color: #3A4D30 !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3) !important;
+  color: white !important;
+  background-image: 
+    repeating-linear-gradient(
+      rgba(255, 255, 255, 0.05) 0px,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 28px
+    ) !important;
+}
+
+/* Recipe container elements */
+.recipe-title,
+.recipe-heading {
+  color: #3A4D30;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.3);
+}
+
+.dark .recipe-title,
+.dark .recipe-heading {
+  color: white !important;
+  border-bottom-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Recipe stain decorations */
+.recipe-stain {
+  position: absolute;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(165, 42, 42, 0.04) 0%,
+    rgba(165, 42, 42, 0.06) 50%,
+    rgba(165, 42, 42, 0) 70%
+  );
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.dark .recipe-stain {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(217, 119, 6, 0.1) 0%,
+    rgba(193, 105, 6, 0.08) 50%,
+    transparent 70%
+  );
+}
+
+/* Sticky note styling */
+.note-container {
+  position: relative;
+  background-color: #F9F4BE;
+  border-radius: 0.25rem;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+  transform: rotate(-1deg);
+}
+
+.dark .note-container {
+  background-color: #6A632D;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+/* ===== FEATURE CARDS ===== */
+/* Styled like sticky notes or stapled notes */
+.feature-card,
+.recipe-card,
+.note-card {
+  position: relative;
+  color: #3A4D30;
+  border-radius: 0.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #F9F4BE;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: visible;
+  transform: rotate(-0.5deg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:nth-child(odd),
+.recipe-card:nth-child(odd),
+.note-card:nth-child(odd) {
+  transform: rotate(0.5deg);
+}
+
+.feature-card:hover,
+.recipe-card:hover,
+.note-card:hover {
+  transform: translateY(-5px) rotate(0);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+/* Staple effect */
+.feature-card::before,
+.recipe-card::before,
+.note-card::before {
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  left: 1rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #a0a0a0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.feature-card::after,
+.recipe-card::after,
+.note-card::after {
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #a0a0a0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.dark .feature-card,
+.dark .recipe-card,
+.dark .note-card {
+  background-color: #6A632D;
+  color: white;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark .feature-card::before,
+.dark .feature-card::after,
+.dark .recipe-card::before,
+.dark .recipe-card::after,
+.dark .note-card::before,
+.dark .note-card::after {
+  background-color: #c0c0c0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+/* ===== PAGINATION ===== */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  position: relative;
+}
+
+.pagination-paper {
+  background-color: #f9f4e7;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  position: relative;
+  border-top: 3px solid #e5ddcb;
+  max-width: 90%;
+  margin: 0 auto;
+  
+  /* Add torn paper effect */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background-repeat: repeat-x;
+    background-size: 24px 12px;
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='12' viewBox='0 0 24 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0Q2 8 4 4T8 2T12 6T16 2T20 8T24 0v12H0z' fill='%23f9f4e7'/%3E%3C/svg%3E");
+  }
+}
+
+.pagination-info {
+  font-family: var(--font-handwriting);
+  font-size: 0.95rem;
+  color: #51733F;
+  min-width: 90px;
+}
+
+.pagination-nav {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.25rem;
+  background-color: #fff;
+  color: #51733F;
+  border: 1px solid rgba(81, 115, 63, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-family: var(--font-handwriting);
+  position: relative;
+  
+  /* Staple effect */
+  &::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 6px;
+    background-color: #888;
+    border-radius: 1px;
+    top: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.5;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  &:hover {
+    background-color: #f0ebe0;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #3A4D30;
+  }
+  
+  &.active {
+    background-color: #51733F;
+    color: white;
+    border-color: #3A4D30;
+    font-weight: bold;
+    transform: scale(1.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  }
+  
+  &.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background-color: #f9f4e7;
+    transform: none;
+    box-shadow: none;
+    
+    &::before {
+      opacity: 0.3;
+    }
+  }
+}
+
+/* Dark mode adjustments */
+.dark .pagination-paper {
+  background-color: #2a3a20;
+  border-color: #1e2a17;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  
+  &::after {
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='12' viewBox='0 0 24 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0Q2 8 4 4T8 2T12 6T16 2T20 8T24 0v12H0z' fill='%232a3a20'/%3E%3C/svg%3E");
+  }
+}
+
+.dark .pagination-info {
+  color: #a9c791;
+}
+
+.dark .page-btn {
+  background-color: #3A4D30;
+  color: #d9e5cc;
+  border-color: #4a5d40;
+  
+  &:hover {
+    background-color: #4a5d40;
+    color: white;
+  }
+  
+  &.active {
+    background-color: #a9c791;
+    color: #243018;
+    border-color: #a9c791;
+  }
+  
+  &.disabled {
+    background-color: #2a3a20;
+    color: #6a7c60;
+    border-color: #3a4d30;
+  }
+}
+
+@media (max-width: 768px) {
+  .pagination-paper {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+  
+  .pagination-info {
+    text-align: center;
+  }
+  
+  .page-btn {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== BLOG PAGE STYLING ===== */
+/* Blog content */
+.blog-content h1,
+.blog-content h2,
+.blog-content h3,
+.blog-content h4,
+.blog-content h5,
+.blog-content h6 {
+  color: #3A4D30;
+}
+
+.dark .blog-content h1,
+.dark .blog-content h2,
+.dark .blog-content h3,
+.dark .blog-content h4,
+.dark .blog-content h5,
+.dark .blog-content h6 {
+  color: #ffffff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.dark .blog-content p,
+.dark .blog-content li,
+.dark .blog-content blockquote {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.dark .blog-content a {
+  color: #b0d0ff;
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.dark .blog-content a:hover {
+  color: #ffffff;
+}
+
+.dark .blog-content blockquote {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .blog-content code:not(pre code) {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #e2e2e2;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Blog sidebar */
+.sidebar-nav {
+  background-color: #f5f5f5;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-image: 
+    repeating-linear-gradient(
+      transparent,
+      transparent 27px,
+      rgba(0, 0, 0, 0.05) 27px,
+      rgba(0, 0, 0, 0.05) 28px
+    );
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark .sidebar-nav {
+  background-color: #3A4D30;
+  border-color: rgba(255, 255, 255, 0.2);
+  background-image: 
+    repeating-linear-gradient(
+      transparent,
+      transparent 27px,
+      rgba(255, 255, 255, 0.05) 27px,
+      rgba(255, 255, 255, 0.05) 28px
+    );
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-heading {
+  color: #3A4D30;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.3);
+}
+
+.dark .sidebar-heading {
+  color: white;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+}
+
+.dark .sidebar-nav a {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.dark .sidebar-nav a:hover {
+  color: white;
+}
+
+/* ===== SPECIAL BANNER ===== */
+.special-banner {
+  position: relative;
+  background-color: #f5f5f5;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #3A4D30;
+  overflow: hidden;
+}
+
+div.special-banner,
+.dark .special-banner,
+.dark div.special-banner {
+  background-color: #3A4D30 !important;
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.special-banner h1,
+.special-banner h2,
+.special-banner h3,
+.special-banner h4,
+.special-banner h5,
+.special-banner h6 {
+  color: #3A4D30;
+}
+
+.dark .special-banner h1,
+.dark .special-banner h2,
+.dark .special-banner h3,
+.dark .special-banner h4,
+.dark .special-banner h5,
+.dark .special-banner h6 {
+  color: white !important;
+}
+
+/* ===== SPECIAL ELEMENTS ===== */
+/* Navbar */
+.dark .nav-link,
+.dark .nav-icon,
+.dark .site-logo {
+  color: white;
+}
+
+/* Fix light-on-light and dark-on-dark contrast issues */
+.dark .dark-bg {
+  background-color: #3A4D30;
+  color: white;
+}
+
+.light-bg {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #3A4D30;
+}

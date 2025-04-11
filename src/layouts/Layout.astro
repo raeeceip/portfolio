@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import "../styles/notebook.css"; // New stylesheet for notebook enhancements
+import "../styles/contrast.css"; // Consolidated contrast styles
 import NavBar from "@components/layout/NavBar.astro";
 import CoverPage from "@components/layout/CoverPage.astro";
 import Footer from "@components/layout/Footer.astro";
@@ -20,10 +21,12 @@ if (!title) title = "chiso";
 if (!desc) desc = "Learning, exploring and making software I'd use.";
 if (!metaImage) metaImage = "/images/meta.png";
 if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, javascript, rust, gleam, software, engineer";
+
+const metaImgUrl = metaImage;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -50,7 +53,18 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
     <meta name="twitter:url" content={`https://chiso.dev${Astro.url.pathname}`} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={desc} />
-    <meta property="twitter:image" content="https://chiso.dev/images/notebook-meta.png" />
+    <meta name="twitter:image" content="https://chiso.dev/images/notebook-meta.png" />
+    
+    <title>{title}</title>
+
+    <!-- Force light mode as default -->
+    <script is:inline>
+      // Force light mode as default
+      if (!localStorage.getItem("theme")) {
+        localStorage.setItem("theme", "light");
+        document.documentElement.classList.remove("dark");
+      }
+    </script>
 
     {!!pubDate ? <meta property="article:published_time" content={pubDate.toISOString()} /> : null}
     {tags?.map((tag) => <meta property="article:tag" content={tag} />)}
@@ -60,7 +74,31 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4414445126244161"
      crossorigin="anonymous"></script>
 
-    <!-- Section header click handling -->
+    <!-- Using data-astro-transition="none" to disable built-in transitions -->
+    <meta name="astro:transition" content="none" />
+    <script is:inline src="/scripts/notebook.js"></script>
+    <script is:inline>
+      // Cache the current theme to prevent flashing during transitions
+      const currentTheme = localStorage.getItem('theme') === 'dark' || 
+        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      
+      // Apply theme immediately to prevent flash during transitions
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(currentTheme);
+      
+      // Store theme in a data attribute for easier access during transitions
+      document.documentElement.dataset.theme = currentTheme;
+      
+      // Check if this is first load to show cover
+      const isFirstVisit = !localStorage.getItem('visited');
+      if (isFirstVisit) {
+        document.documentElement.classList.add('first-visit');
+        localStorage.setItem('visited', 'true');
+      }
+    </script>
+    <!-- Include our custom transitions script -->
+    <script is:inline src="/scripts/customTransitions.js"></script>
+    
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const headers = document.querySelectorAll("[data-section-header]");
@@ -79,15 +117,19 @@ if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, java
         }
       });
     </script>
-
-    <title>{title}</title>
+    
   </head>
   <body>
     <!-- Cover page component -->
-    <CoverPage />
+    <div id="cover-page" class="cover-page">
+      <div class="cover-content">
+        <h1>Chiso's Notebook</h1>
+        <p>Welcome to my digital journal</p>
+      </div>
+    </div>
     
     <!-- Enhanced notebook container for page transitions -->
-    <div class="notebook-container" id="notebook-container">
+    <div class="notebook-container" id="notebook-container" transition:animate="slide">
       <NavBar />
       <div class="notebook-content" id="notebook-content">
         <div class="page-corner-fold"></div>

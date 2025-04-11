@@ -14,15 +14,15 @@
 }
 
 .dark {
-	/* Prism Gruvbox Colors */
+	/* Prism Gruvbox Colors - Improved contrast for dark mode */
 	--fg0: #fbf1c7;
 	--fg1: #ebdbb2;
-	--fg4: #a89984;
+	--fg4: #bdb395; /* Lightened from #a89984 for better contrast */
 
 	--bg0: #1d2021;
 	--bg4: #7c6f64;
 
-	--red2: #ea6962;
+	--red2: #fb4934; /* Brightened from #ea6962 */
 	--green2: #b8bb26;
 	--yellow2: #fabd2f;
 	--purple2: #d3869b;

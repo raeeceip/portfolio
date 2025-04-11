@@ -6,6 +6,7 @@
 
 /* PrismJS Theme */
 @import url("./prism-gruvbox.css");
+@import url("./contrast.css");
 
 :root {
   --foreground-color: theme("colors.primary.text.light");
@@ -13,7 +14,7 @@
 
   --highlight-border-color: theme("colors.primary.300");
 
-  --body-font-family: "Source Sans 3", sans-serif;
+  --body-font-family: "Indie Flower", cursive;
   --code-font-family: "JetBrains Mono", monospace;
   --header-font-family: "Crimson Pro", serif;
   --handwriting-font: "Indie Flower", cursive;
@@ -40,7 +41,7 @@
   --recipe-tape-color: rgba(255, 255, 255, 0.6);
 
   &.dark {
-    --foreground-color: theme("colors.primary.text.dark");
+    --foreground-color: #ffffff;
     --background-color: theme("colors.secondary.dark");
 
     --highlight-border-color: theme("colors.primary.600");
@@ -52,14 +53,14 @@
       "colors.accent.300"
     ); /* Brighter accent in dark mode */
 
-    --notebook-line-color: rgba(255, 255, 255, 0.08);
-    --notebook-margin-color: rgba(255, 255, 255, 0.03);
+    --notebook-line-color: rgba(255, 255, 255, 0.15);
+    --notebook-margin-color: rgba(255, 255, 255, 0.08);
     --notebook-paper-color: #3a4d30;
     --notebook-holes-color: rgba(0, 0, 0, 0.3);
 
     /* Dark mode cookbook variables */
     --recipe-stain-color: rgba(165, 42, 42, 0.13);
-    --recipe-pencil-color: #aaa;
+    --recipe-pencil-color: #ffffff;
     --recipe-tape-color: rgba(255, 255, 255, 0.2);
   }
 }
@@ -117,8 +118,19 @@ html {
     2px 0 5px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   border-radius: 0;
+  perspective: 1500px;
+  transform-style: preserve-3d;
+  overflow-x: hidden;
+}
 
-  /* Paper texture */
+/* Paper texture */
+.notebook-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-image: linear-gradient(
       90deg,
       rgba(81, 115, 63, 0.03) 1px,
@@ -163,10 +175,10 @@ html {
     2px 0 5px rgba(0, 0, 0, 0.1);
   background-image: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.03) 1px,
+      rgba(255, 255, 255, 0.05) 1px,
       transparent 1px
     ),
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(transparent 3px, #3a4d30 3px),
     linear-gradient(90deg, transparent 3px, #3a4d30 3px);
   background-size:
@@ -731,7 +743,7 @@ article.blog-content {
     }
 
     .dark & {
-      background: rgba(58, 77, 48, 0.1);
+      background: rgba(30, 40, 25, 0.8);
       border-color: theme("colors.primary.600");
       box-shadow:
         3px 3px 8px rgba(0, 0, 0, 0.2),
@@ -1076,6 +1088,88 @@ article.blog-content {
   animation: pencil-wobble 1.5s ease-in-out;
 }
 
+/* Remove forced handwritten font from all elements to preserve original styling */
+body {
+  font-family: var(--body-font-family);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--header-font-family);
+}
+
+.handwritten {
+  font-family: var(--handwriting-font);
+}
+
+/* Fix dark mode contrast without changing original styling */
+.dark {
+  color-scheme: dark;
+}
+
+/* Clear the aggressive overrides */
+.dark p, 
+.dark h1, 
+.dark h2, 
+.dark h3, 
+.dark h4, 
+.dark h5, 
+.dark h6, 
+.dark a, 
+.dark span:not(.token), 
+.dark li, 
+.dark button {
+  color: inherit;
+}
+
+.dark .blog-content p,
+.dark .blog-content li,
+.dark .blog-content h1,
+.dark .blog-content h2,
+.dark .blog-content h3,
+.dark .blog-content h4,
+.dark .blog-content h5,
+.dark .blog-content h6,
+.dark .blog-content span:not(.token) {
+  color: inherit;
+}
+
+/* Only code elements should use monospace */
+pre, code, .token, .code-block, .code-inline {
+  font-family: var(--code-font-family) !important;
+}
+
+/* Dark mode improvements */
+.dark {
+  --foreground-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.dark p, 
+.dark h1, 
+.dark h2, 
+.dark h3, 
+.dark h4, 
+.dark h5, 
+.dark h6, 
+.dark a, 
+.dark span:not(.token), 
+.dark li, 
+.dark button {
+  color: #ffffff !important;
+}
+
+.dark .blog-content p,
+.dark .blog-content li,
+.dark .blog-content h1,
+.dark .blog-content h2,
+.dark .blog-content h3,
+.dark .blog-content h4,
+.dark .blog-content h5,
+.dark .blog-content h6,
+.dark .blog-content span:not(.token) {
+  color: #ffffff !important;
+}
+
 /* ====== DARK MODE FIXES ====== */
 /* Add to the end of global.css */
 
@@ -1124,4 +1218,260 @@ article.blog-content {
 .dark .note-card {
   background-color: #2a3a20 !important; /* Match the dark mode background */
   border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== COVER PAGE ===== */
+.cover-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #3A4D30;
+  color: white;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(-100%);
+  transition: transform 0.5s ease-in-out;
+}
+
+.first-visit .cover-page {
+  transform: translateX(0);
+}
+
+.cover-content {
+  text-align: center;
+  padding: 2rem;
+}
+
+.cover-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.cover-content p {
+  font-size: 1.5rem;
+}
+
+/* Only show the cover on first visit */
+:not(.first-visit) .cover-page {
+  display: none;
+}
+
+/* Special handwriting font for code blocks */
+pre, code {
+  font-family: 'Indie Flower', 'Patrick Hand', 'Comic Sans MS', monospace !important;
+  background-color: #f6f2e8 !important;
+  color: #3c4043 !important;
+  border: 1px dashed #c4bdaa !important;
+  border-radius: 5px !important;
+  padding: 0.5em !important;
+  font-size: 0.9em !important;
+  line-height: 1.5 !important;
+  font-weight: 500 !important;
+}
+
+.dark pre, .dark code {
+  background-color: #2d3a23 !important;
+  color: #e5e7eb !important;
+  border-color: #51733F !important;
+}
+
+/* Different tone for inline code vs code blocks */
+p code, li code, td code {
+  font-family: 'Patrick Hand SC', 'Comic Sans MS', monospace !important;
+  font-size: 0.95em !important;
+  background-color: #f0ebe0 !important;
+  color: #5c6547 !important;
+  padding: 0.15em 0.4em !important;
+  border-radius: 3px !important;
+  border: 1px dotted #c4bdaa !important;
+}
+
+.dark p code, .dark li code, .dark td code {
+  background-color: #364527 !important;
+  color: #d1d5db !important;
+  border-color: #51733F !important;
+}
+
+/* ===== BEAUTIFUL NOTEPAD TEAR-OFF TRANSITIONS ===== */
+body {
+  --page-transition-duration: 450ms; /* Faster transition */
+  transition: opacity 200ms ease-in-out;
+}
+
+#transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+}
+
+body.page-transition-start #transition-overlay {
+  opacity: 1;
+}
+
+body.page-transition-start {
+  animation: tear-off-middle var(--page-transition-duration) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+body.page-transition-complete {
+  animation: reveal-middle var(--page-transition-duration) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Ensure content is visible after transitions complete */
+body.page-transition-complete main,
+body.page-transition-complete header,
+body.page-transition-complete footer {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Middle tear animation that splits top and bottom */
+@keyframes tear-off-middle {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    clip-path: inset(0% 0% 0% 0%);
+  }
+  25% {
+    transform: scale(0.98);
+    opacity: 0.9;
+    clip-path: inset(5% 0% 5% 0%);
+  }
+  50% {
+    transform: scale(0.95);
+    opacity: 0.7;
+    clip-path: inset(15% 0% 15% 0%);
+  }
+  75% {
+    transform: scale(0.9);
+    opacity: 0.4;
+    clip-path: inset(30% 0% 30% 0%);
+  }
+  100% {
+    transform: scale(0.85);
+    opacity: 0;
+    clip-path: inset(50% 0% 50% 0%);
+  }
+}
+
+/* Middle reveal animation that rejoins top and bottom */
+@keyframes reveal-middle {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+    clip-path: inset(50% 0% 50% 0%);
+  }
+  25% {
+    transform: scale(0.9);
+    opacity: 0.4;
+    clip-path: inset(30% 0% 30% 0%);
+  }
+  50% {
+    transform: scale(0.95);
+    opacity: 0.7;
+    clip-path: inset(15% 0% 15% 0%);
+  }
+  75% {
+    transform: scale(0.98);
+    opacity: 0.9;
+    clip-path: inset(5% 0% 5% 0%);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    clip-path: inset(0% 0% 0% 0%);
+  }
+}
+
+/* Dark mode compatibility */
+.dark body.page-transition-start,
+.dark body.page-transition-complete {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-dark);
+}
+
+/* Prevent content flash during transitions */
+html[data-theme] {
+  visibility: visible;
+}
+
+/* Ensure theme is maintained throughout transition */
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* Notepad with torn edge effect - prioritizing beauty */
+.notebook-content {
+  position: relative;
+  backface-visibility: hidden;
+  will-change: transform, opacity, clip-path;
+  transform-origin: top center;
+  z-index: 1;
+  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+  /* Improved shadow for better paper effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08), 0 0 4px rgba(0, 0, 0, 0.04);
+}
+
+/* When page transition starts */
+.page-transition-start .notebook-content {
+  animation: pageTearOff 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+  transform-style: preserve-3d;
+}
+
+/* When page transition completes */
+.page-transition-complete .notebook-content {
+  animation: pageTearIn 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+  transform-style: preserve-3d;
+}
+
+/* Paper texture for better realism */
+.notebook-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%2351733f' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+  opacity: 0.3;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.dark .notebook-content::before {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%2351733f' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  opacity: 0.2;
+}
+
+/* Torn paper edge at bottom */
+.notebook-content::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background-repeat: repeat-x;
+  background-size: 20px 20px;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q2 7 4 10 T8 9 T12 11 T16 8 T20 10 L20 20 L0 20 Z' fill='%23f9f4e7' /%3E%3C/svg%3E");
+  z-index: 2;
+  pointer-events: none;
+}
+
+.dark .notebook-content::after {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q2 7 4 10 T8 9 T12 11 T16 8 T20 10 L20 20 L0 20 Z' fill='%232a3a20' /%3E%3C/svg%3E");
 }

@@ -34,7 +34,7 @@ import { Icon } from "astro-icon/components";
   }
   
   .dark .nav-container {
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
   
@@ -93,11 +93,11 @@ import { Icon } from "astro-icon/components";
   }
   
   .dark .nav-icon {
-    color: theme("colors.primary.400");
+    /* color: white; - Removed as it's defined in contrast.css */
   }
   
   .dark .nav-link {
-    color: theme("colors.primary.300");
+    /* color: white; - Removed as it's defined in contrast.css */
   }
   
   .nav-link::after {
@@ -339,35 +339,37 @@ import { Icon } from "astro-icon/components";
     themeColor.setAttribute("content", isDarkMode ? "#3A4D30" : "#51733F");
   }
 
-  const persistedDarkModeFlag = (localStorage.getItem("theme") ?? "") === "dark";
-  const prefersDarkMode = !("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-  // @fixes: so that we don't have to tap twice to switch to light mode on first visit if the device prefers dark mode
-  if (prefersDarkMode && !(localStorage.getItem("theme") ?? "")) {
-    localStorage.setItem("theme", JSON.stringify("dark"));
+  // Force light mode as default
+  if (!localStorage.getItem("theme")) {
+    localStorage.setItem("theme", "light");
   }
+  
+  // Only use dark mode if explicitly set in localStorage
+  const persistedDarkModeFlag = localStorage.getItem("theme") === "dark";
+  
+  // Set the theme on page load - force light mode by default
+  handleThemeChange(persistedDarkModeFlag);
 
-  // Set the theme on page load
-  handleThemeChange(persistedDarkModeFlag || prefersDarkMode);
-
-  // Initialize Alpine store for theme
+  // Initialize Alpine.js theme store
   document.addEventListener("alpine:init", () => {
     Alpine.store("theme", {
-      mode: persistedDarkModeFlag || prefersDarkMode ? "dark" : "light",
-
-      setMode(value) {
-        this.mode = value;
-        localStorage.setItem("theme", value);
-        handleThemeChange(value === "dark");
-      },
-
+      mode: persistedDarkModeFlag ? "dark" : "light",
       enableDarkMode() {
-        this.setMode("dark");
+        localStorage.setItem("theme", "dark");
+        this.mode = "dark";
+        handleThemeChange(true);
       },
-
       enableLightMode() {
-        this.setMode("light");
+        localStorage.setItem("theme", "light");
+        this.mode = "light";
+        handleThemeChange(false);
       },
+      init() {
+        // Force light mode as default on initial load
+        if (!localStorage.getItem("theme") || localStorage.getItem("theme") !== "dark") {
+          this.enableLightMode();
+        }
+      }
     });
   });
 </script>

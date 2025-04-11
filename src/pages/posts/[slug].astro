@@ -33,6 +33,7 @@ let {
 const { Content, headings } = await post.render();
 
 const metaUrl = image ? image : getMetaUrl(title, date);
+const minuteReadTime = Math.ceil(post.body.length / 1500);
 ---
 
 <style>
@@ -64,9 +65,9 @@ const metaUrl = image ? image : getMetaUrl(title, date);
   }
   
   .dark .recipe-container {
-    background-color: rgba(58, 77, 48, 0.2);
-    border-color: theme("colors.secondary.700");
-    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.2);
+    background-color: #3A4D30;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
     background-image: 
       repeating-linear-gradient(
         rgba(255, 255, 255, 0.05) 0px,
@@ -74,6 +75,18 @@ const metaUrl = image ? image : getMetaUrl(title, date);
         transparent 1px,
         transparent 28px
       );
+    color: white;
+  }
+  
+  .dark .recipe-title {
+    color: white;
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .dark .recipe-date,
+  .dark .recipe-meta,
+  .dark .recipe-content {
+    color: white;
   }
   
   .recipe-date {
@@ -137,6 +150,30 @@ const metaUrl = image ? image : getMetaUrl(title, date);
     background-color: theme("colors.primary.600");
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
+  
+  .recipe-stain {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: theme("colors.primary.200");
+    opacity: 0.2;
+    transform: rotate(45deg);
+  }
+  
+  .stain-1 {
+    top: 10%;
+    left: 20%;
+  }
+  
+  .stain-2 {
+    bottom: 10%;
+    right: 20%;
+  }
+  
+  .dark .recipe-stain {
+    background-color: theme("colors.primary.800");
+  }
 </style>
 
 <Layout {title} {desc} metaImage={metaUrl} {keywords} {tags} pubDate={date}>
@@ -161,6 +198,14 @@ const metaUrl = image ? image : getMetaUrl(title, date);
           <div class="recipe-label">Recipe Notes</div>
           
           <h1 class="recipe-title text-3xl md:text-4xl font-bold leading-tight tracking-normal mb-6">{title}</h1>
+          
+          <div class="flex items-center mb-4 recipe-meta">
+            <Icon name="tabler:clock" class="w-5 h-5 mr-1 text-primary-500 dark:text-primary-300" />
+            <span class="text-primary-600 dark:text-primary-300">{minuteReadTime} minute read</span>
+          </div>
+          
+          <div class="recipe-stain stain-1"></div>
+          <div class="recipe-stain stain-2"></div>
           
           {image && (
             <img src={image} alt={title} class="w-full h-auto my-6 rounded-lg shadow-lg" />

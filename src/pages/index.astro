@@ -68,6 +68,7 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
       );
     background-size: 100% 26px;
     padding-top: 26px;
+    color: #3A4D30;
   }
   
   .feature-card::before {
@@ -91,11 +92,11 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
   
   .dark .feature-card {
     border-color: theme("colors.secondary.700");
-    background-color: rgba(58, 77, 48, 0.3);
+    background-color: #3A4D30;
     background-image: 
       repeating-linear-gradient(
-        rgba(255, 255, 255, 0.03) 0px,
-        rgba(255, 255, 255, 0.03) 1px,
+        rgba(255, 255, 255, 0.05) 0px,
+        rgba(255, 255, 255, 0.05) 1px,
         transparent 1px,
         transparent 26px
       );
@@ -223,7 +224,6 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
   
   .special-banner {
     background-color: theme("colors.secondary.50");
-    color: theme("colors.primary.800");
     padding: 2rem;
     border-radius: 0.5rem;
     margin: 3rem 0;
@@ -236,8 +236,7 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
   }
   
   .dark .special-banner {
-    background-color: rgba(58, 77, 48, 0.2);
-    color: theme("colors.secondary.100");
+    background-color: #3A4D30;
     box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.3);
     border-color: theme("colors.secondary.700");
     border-left-color: theme("colors.primary.600");
@@ -270,7 +269,7 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
   }
   
   .dark .special-banner h3 {
-    color: theme("colors.primary.400");
+    color: var(--primary-color);
   }
   
   .fork-knife {
