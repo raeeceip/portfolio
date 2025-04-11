@@ -46,12 +46,23 @@ import { Icon } from "astro-icon/components";
       inset 0 0 50px rgba(0, 0, 0, 0.2);
     text-align: center;
     overflow: hidden;
-    transition: transform 4s cubic-bezier(0.645, 0.045, 0.355, 1.000), opacity 3.5s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    transition: transform 2.5s cubic-bezier(0.645, 0.045, 0.355, 1.000), opacity 2s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    will-change: transform, opacity;
   }
 
   .notebook-cover.open {
     transform: perspective(1800px) rotateY(-100deg);
     opacity: 0;
+  }
+
+  /* Re-add specific animation for book opening effect */
+  @keyframes coverOpen {
+    0% {
+      transform: perspective(1800px) rotateY(0deg);
+    }
+    100% {
+      transform: perspective(1800px) rotateY(-100deg);
+    }
   }
 
   /* Cover texture */

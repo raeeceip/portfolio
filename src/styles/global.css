@@ -1604,32 +1604,34 @@ html[data-theme] {
   z-index: -1;
 }
 
-/* Speed up all transitions for better performance */
+/* Speed up all transitions for better performance except cover page */
 * {
-  transition-duration: 0.15s !important; /* Make all animations even faster by default */
+  transition-duration: 0.1s !important; /* Make all animations very fast by default */
 }
 
-/* Exceptions for animations that should remain slow */
+/* Exception for the cover page which should remain slow and dramatic */
 .notebook-cover {
-  transition-duration: 4s !important; /* Keep the slow transition only for the cover */
+  transition-duration: 2.5s !important; /* Keep the slow transition only for the cover */
+  transition-property: transform, opacity !important;
+  contain: layout style paint; /* Performance improvement */
 }
 
 .notebook-cover.open {
-  transition-duration: 4s !important;
+  transition-duration: 2.5s !important;
+  transition-property: transform, opacity !important;
 }
 
-/* Add content-visibility to improve page load performance */
-img, .feature-card, section {
+/* Improve performance for critical page elements */
+img, video {
   content-visibility: auto;
   contain-intrinsic-size: auto;
 }
 
-/* Fix any remaining animations that might be too slow */
-.feature-card:hover {
-  transition-duration: 0.15s !important;
-  transform: translateY(-3px) rotate(0.5deg);
+a, button, .feature-card, input, textarea {
+  transition-duration: 0.1s !important;
 }
 
-a, button {
-  transition-duration: 0.1s !important;
+/* Optimize elements that appear later */
+footer, [id="contact"], [id^="section-"] {
+  content-visibility: auto;
 }
