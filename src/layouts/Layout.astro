@@ -138,7 +138,7 @@ const metaImgUrl = metaImage;
     </div>
     
     <script is:inline>
-      // Improved cover page animation script
+      // Improved cover page animation script with faster content delivery
       document.addEventListener('DOMContentLoaded', function() {
         const coverPage = document.getElementById('notebook-cover');
         if (!coverPage) return;
@@ -154,7 +154,7 @@ const metaImgUrl = metaImage;
           // Display the cover for first-time visitors
           coverPage.style.display = 'flex';
           
-          // After a longer delay, trigger the animation
+          // After a shorter delay, trigger the animation to improve perceived performance
           setTimeout(function() {
             coverPage.classList.add('open');
             
@@ -162,7 +162,7 @@ const metaImgUrl = metaImage;
             setTimeout(function() {
               coverPage.style.display = 'none';
             }, 4000); // Match the longer transition time (4s)
-          }, 5000); // Even longer delay to appreciate the cover
+          }, 1500); // Shorter initial delay for better perceived performance
         }
       });
       

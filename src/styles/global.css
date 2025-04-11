@@ -1606,15 +1606,30 @@ html[data-theme] {
 
 /* Speed up all transitions for better performance */
 * {
-  transition-duration: 0.2s !important; /* Make all animations faster by default */
+  transition-duration: 0.15s !important; /* Make all animations even faster by default */
 }
 
-/* Exception for the cover page which should remain slow and dramatic */
+/* Exceptions for animations that should remain slow */
 .notebook-cover {
   transition-duration: 4s !important; /* Keep the slow transition only for the cover */
 }
 
-/* Another exception for the cover page opening animation */
 .notebook-cover.open {
   transition-duration: 4s !important;
+}
+
+/* Add content-visibility to improve page load performance */
+img, .feature-card, section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto;
+}
+
+/* Fix any remaining animations that might be too slow */
+.feature-card:hover {
+  transition-duration: 0.15s !important;
+  transform: translateY(-3px) rotate(0.5deg);
+}
+
+a, button {
+  transition-duration: 0.1s !important;
 }
