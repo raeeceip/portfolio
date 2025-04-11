@@ -24,10 +24,13 @@ function applyStoredTheme() {
     theme = transitionTheme;
   }
   
-  // Apply the theme
+  // Apply the theme immediately
   document.documentElement.classList.remove('light', 'dark');
   document.documentElement.classList.add(theme);
   document.documentElement.dataset.theme = theme;
+  
+  // Ensure we update the localStorage for consistency
+  localStorage.setItem('theme', theme);
 }
 
 function initCustomTransitions() {
@@ -56,6 +59,18 @@ function initCustomTransitions() {
   
   // We'll use this to store the current URL for comparison
   let currentUrl = window.location.href;
+  
+  // Fix for back/forward navigation - handle popstate events properly
+  window.addEventListener('popstate', (event) => {
+    if (!window.isTransitioning) {
+      // When user presses back/forward button
+      const targetUrl = window.location.href;
+      navigateWithTransition(targetUrl, true);
+      
+      // Prevent default navigation
+      event.preventDefault();
+    }
+  });
   
   // Intercept all link clicks
   document.addEventListener('click', (event) => {
@@ -99,15 +114,6 @@ function initCustomTransitions() {
       console.error("Navigation error:", e);
     }
   });
-  
-  // Handle back/forward navigation
-  window.addEventListener('popstate', (event) => {
-    if (!window.isTransitioning) {
-      // If the user presses the back button, do the transition
-      const newUrl = window.location.href;
-      navigateWithTransition(newUrl, true);
-    }
-  });
 }
 
 function navigateWithTransition(url, isHistoryNavigation = false) {
@@ -137,20 +143,26 @@ function navigateWithTransition(url, isHistoryNavigation = false) {
     sessionStorage.setItem('pageParam', pageParam);
   }
   
+  // Store navigation type in session
+  sessionStorage.setItem('isHistoryNavigation', isHistoryNavigation ? 'true' : 'false');
+  
   // Start tear-off animation
   document.body.classList.remove('page-transition-complete');
   document.body.classList.add('page-transition-start');
   
-  // Delay actual navigation to allow animation to complete - using faster timing now
+  // Delay actual navigation to allow animation to complete - using much faster timing
   setTimeout(() => {
     // Navigate to new page
     if (isHistoryNavigation) {
-      // For back/forward navigation, we don't push a new state
+      // For back/forward navigation, we replace the current history entry
       window.location.replace(url);
     } else {
+      // For normal navigation, we add a new history entry
+      // Use history API to properly track state for back button
+      history.pushState({ source: 'customTransition' }, '', url);
       window.location.href = url;
     }
-  }, 450); // Match this timing with CSS animation duration
+  }, 250); // Match this timing with CSS animation duration (much faster)
 }
 
 // When page loads, handle incoming transitions
@@ -161,6 +173,8 @@ window.addEventListener('load', () => {
   // Special handling for pagination
   const pageParam = sessionStorage.getItem('pageParam');
   const currentUrl = new URL(window.location.href);
+  const isHistoryNavigation = sessionStorage.getItem('isHistoryNavigation') === 'true';
+  
   if (pageParam && !currentUrl.searchParams.has('page') && currentUrl.pathname === '/blog') {
     // If we're on the blog page and should have a page parameter but don't,
     // this is likely due to a navigation issue - add it now
@@ -170,6 +184,7 @@ window.addEventListener('load', () => {
     window.isTransitioning = true;
     window.location.replace(currentUrl.toString());
     sessionStorage.removeItem('pageParam');
+    sessionStorage.removeItem('isHistoryNavigation');
     return;
   } else if (pageParam) {
     // We successfully navigated with the page param
@@ -181,11 +196,11 @@ window.addEventListener('load', () => {
     // Hide content initially
     document.body.style.opacity = '0';
     
-    // Delay showing content until animation starts
+    // Delay showing content - much shorter delay for faster appearance
     setTimeout(() => {
-      // Now fade in content
+      // Now fade in content quickly
       document.body.style.opacity = '1';
-      document.body.style.transition = 'opacity 300ms ease-in';
+      document.body.style.transition = 'opacity 150ms ease-in';
       
       // Play the incoming transition after content is visible
       document.body.classList.remove('page-transition-start');
@@ -195,7 +210,11 @@ window.addEventListener('load', () => {
       window.isTransitioning = false;
       sessionStorage.removeItem('isTransitioning');
       sessionStorage.removeItem('fromUrl');
-    }, 50);
+      sessionStorage.removeItem('isHistoryNavigation');
+      
+      // Force theme application again to ensure consistency
+      applyStoredTheme();
+    }, 20);
   } else {
     // Direct page load (no transition)
     document.body.classList.remove('page-transition-start');
@@ -208,6 +227,6 @@ window.addEventListener('load', () => {
   if (overlay) {
     setTimeout(() => {
       overlay.style.display = 'none';
-    }, 650); // After all transitions complete
+    }, 300); // After all transitions complete
   }
 });
