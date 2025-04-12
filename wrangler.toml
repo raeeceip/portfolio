@@ -1,5 +1,5 @@
 # Cloudflare Pages configuration for Chiso's Cookbook
-name = "chisos-cookbook"
+name = "portfolio"
 compatibility_date = "2023-12-01"
 
 [build]
@@ -10,7 +10,7 @@ output_directory = "dist"
 bucket = "./dist"
 
 [env.production]
-name = "chisos-cookbook"
+name = "portfolio"
 
 [env.preview]
-name = "chisos-cookbook-preview"
+name = "portfolio-preview"
