@@ -1,0 +1,121 @@
+---
+import Layout from "@layouts/Layout.astro";
+import GithubProjects from "@components/interactive/GithubProjects.astro";
+import PageMetrics from "@components/interactive/PageMetrics.astro";
+
+// Set your GitHub username
+const githubUsername = "raeeceip";
+
+const title = "Recipe Collection | Chiso's Cookbook";
+const description = "A collection of coding recipes I've created over the years - projects that showcase my software development journey.";
+---
+
+<Layout title={title} desc={description}>
+  <main>
+    <div class="notebook-page">
+      <h1 class="page-title">My Recipe Collection</h1>
+      <p class="page-intro">
+        Welcome to my cookbook's recipe collection! Here you'll find a collection of code recipes I've crafted over the years.
+        Each project represents different techniques and ingredients I've experimented with.
+      </p>
+      
+      <PageMetrics postSlug="/recipes" />
+      
+      <GithubProjects 
+        username={githubUsername} 
+        limit={8} 
+        featured={true}
+        title="Featured Recipes" 
+      />
+      
+      <div class="notebook-note">
+        <h3>Chef's Note</h3>
+        <p>
+          These projects are like recipes in my coding cookbook - each one represents something I've learned or a problem I've solved.
+          Feel free to browse through them, and if you find something interesting, you can always check out the source code or try the live demo!
+        </p>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .notebook-page {
+    position: relative;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .page-title {
+    color: #51733F;
+    font-family: var(--header-font-family);
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .page-title::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: rgba(81, 115, 63, 0.3);
+  }
+  
+  .page-intro {
+    font-family: var(--handwriting-font);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    line-height: 1.6;
+  }
+  
+  .notebook-note {
+    margin-top: 3rem;
+    padding: 1.5rem;
+    background-color: rgba(255, 252, 232, 0.7);
+    border-left: 3px solid #51733F;
+    border-radius: 4px;
+    position: relative;
+    transform: rotate(-0.5deg);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .notebook-note h3 {
+    margin-top: 0;
+    color: #51733F;
+    font-family: var(--header-font-family);
+    margin-bottom: 0.5rem;
+  }
+  
+  .notebook-note p {
+    font-family: var(--handwriting-font);
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+  
+  .dark .notebook-note {
+    background-color: rgba(74, 85, 104, 0.2);
+    border-left-color: #a0d468;
+  }
+  
+  .dark .page-title {
+    color: #a0d468;
+  }
+  
+  .dark .page-title::after {
+    background-color: rgba(160, 212, 104, 0.3);
+  }
+  
+  .dark .notebook-note h3 {
+    color: #a0d468;
+  }
+  
+  @media (max-width: 768px) {
+    .notebook-page {
+      padding: 1rem;
+    }
+  }
+</style>
