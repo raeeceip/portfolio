@@ -1,0 +1,9 @@
+[build]
+command = "npm run build"
+output_directory = "dist"
+environment_variables = { NODE_VERSION = "22.9.0", NPM_VERSION = "10.8.3" }
+
+[build.environment]
+NODE_VERSION = "22.9.0"
+NPM_FLAGS = "--no-package-lock"
+USE_NPM = "true"
