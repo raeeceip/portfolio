@@ -435,84 +435,100 @@ function getPaginationUrl(pageNum: number) {
       @apply dark:bg-secondary-800;
     }
   }
+  
+  /* Make the notebook page fill width on desktop while maintaining the notebook aesthetic */
+  .container-full {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .full-width {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 0;
+  }
+  
+  /* Enhanced notebook styling for desktop */
+  @media (min-width: 1024px) {
+    .notebook-page {
+      min-height: calc(100vh - 100px);
+    }
+  }
 </style>
 
 <Layout title="Recipe Journal">
-  <main class="handwritten container px-4 md:px-0">
+  <main class="handwritten container-full px-2 md:px-4 max-w-none">
     <SiteHeader />
-
-    <div class="notebook-page mt-8 relative">
-      <div class="recipe-tab">
-        <Icon name="tabler:book" class="tab-icon" />
-        <span>Journal</span>
-      </div>
-      
-      <div class="flex flex-col md:flex-row gap-6 md:gap-10">
-        <aside class="md:w-72 lg:w-80 flex-shrink-0 order-1 md:order-1">
-          <div class="sticky top-4 sticky-note sidebar-nav">
-            <h2 class="sticky-note-title sidebar-heading">Journal Index</h2>
-            <ul class="year-nav">
-              {years.map((year) => (
-                <li>
-                  <a href={`/blog?year=${year}`} class="year-link">
-                    {year} Entries ({postsByYear[year].length})
-                  </a>
-                </li>
-              ))}
-            </ul>
-            
-            <div class="subscribe-box">
-              <div class="sidebar-heading mb-2">Subscribe:</div>
-              <div class="flex flex-col">
-                <a href="/rss.xml" class="feed-link">
-                  <Icon name="tabler:rss" class="w-4 h-4" />
-                  <span>RSS Feed</span>
-                </a>
-                <a href="/feed.json" class="feed-link">
-                  <Icon name="tabler:json" class="w-4 h-4" />
-                  <span>JSON Feed</span>
-                </a>
+    
+    <div class="notebook-page full-width pt-8 pb-12 px-3 md:px-8">
+      <div class="flex flex-col lg:flex-row lg:justify-between gap-8">
+        <!-- Sidebar for recipe index/categories - cookbook-style sidebar -->
+        <aside class="recipe-index lg:w-1/4 xl:w-1/5 lg:sticky lg:top-4 lg:self-start px-2 py-4 bg-opacity-70 rounded-lg">
+          <div class="recipe-tab flex items-center">
+            <Icon name="tabler:book" class="w-5 h-5 mr-2" />
+            <span>Index</span>
+          </div>
+          
+          <h3 class="text-xl font-medium mb-4 text-primary-700 dark:text-primary-300 handwritten-title border-b border-primary-200 dark:border-primary-800 pb-2">
+            Recipe Journal
+          </h3>
+          
+          <!-- Years as recipe chapters -->
+          <div class="recipe-chapters space-y-4">
+            {years.map(year => (
+              <div class="recipe-chapter">
+                <h4 class="text-lg font-medium mb-2 flex items-center">
+                  <span class="recipe-year handwritten-title">{year}</span>
+                  <span class="recipe-count text-sm ml-2">({postsByYear[year].length})</span>
+                </h4>
+                <ul class="space-y-1 pl-3">
+                  {postsByYear[year].map(post => (
+                    <li>
+                      <a 
+                        href={`/posts/${post.slug}`} 
+                        class="recipe-link flex items-start hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
+                      >
+                        <span class="recipe-bullet">•</span>
+                        <span class="recipe-name truncate">{post.data.title}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            ))}
           </div>
         </aside>
         
-        <div class="md:flex-1 order-2 md:order-2">
-          <div class="title-section">
-            <h2 class="recipe-title">My Recipe Journal</h2>
-            
-            <!-- prettier-ignore -->
-            <p class="mt-4 mb-2 leading-relaxed font-handwriting text-lg text-primary-700 dark:text-primary-300">
-              I write about things that interest me - from coding techniques to software architecture and design patterns. Feel free to explore by year or subscribe for fresh content!
-            </p>
-            
-            <!-- Current page indicator -->
-            <p class="text-sm font-handwriting text-primary-600 dark:text-primary-400">
-              Showing {initialPosts.length} of {totalPosts} recipes
-            </p>
+        <!-- Main content - cookbook-style recipe list -->
+        <div class="recipe-content lg:w-3/4 xl:w-4/5">
+          <h2 class="recipe-title mb-8 handwritten-title">Recipe Collection</h2>
+          
+          <p class="recipe-intro text-lg mb-6">
+            Welcome to my cookbook journal! Here you'll find a collection of articles, thoughts, and guides 
+            I've written over time. Each "recipe" represents a different learning experience or insight.
+          </p>
+          
+          <div class="posts-container space-y-8">
+            {initialPosts.map(post => (
+              <ArticleListItem post={post} />
+            ))}
           </div>
           
-          <!-- Current page posts -->
-          <ul class="space-y-6 mt-8 posts-container">
-            {initialPosts.map((post, index) => (
-              <li class={index % 4 === 1 ? "transform rotate-0.5deg" : index % 4 === 3 ? "transform -rotate-0.5deg" : ""}>
-                <ArticleListItem post={post} />
-              </li>
-            ))}
-          </ul>
-          
           {hasMorePosts && (
-            <button id="load-more-button" class="load-more-button">
-              <span>Load More Recipes</span>
-              <Icon name="tabler:book-download" class="ml-2 inline-block" />
-            </button>
+            <div class="load-more-container mt-8 text-center">
+              <button 
+                id="load-more-button"
+                class="load-more-button handwritten-button"
+              >
+                <span>Load More Recipes</span>
+                <Icon name="tabler:book-download" class="inline-block ml-2 h-5 w-5" />
+              </button>
+            </div>
           )}
         </div>
       </div>
-      
-      <!-- Recipe stains -->
-      <div class="recipe-stain stain-1"></div>
-      <div class="recipe-stain stain-2"></div>
     </div>
   </main>
 </Layout>

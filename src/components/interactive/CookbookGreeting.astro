@@ -1,0 +1,235 @@
+---
+// CookbookGreeting.astro - Personalized cookbook welcome message
+// Uses subtle animations and the lighter color scheme with paper textures you prefer
+import { Icon } from "astro-icon/components";
+---
+
+<div class="cookbook-greeting">
+  <div class="greeting-paper">
+    <div class="greeting-content">
+      <h2 class="greeting-title">Welcome to My Cookbook</h2>
+      <p class="greeting-message" id="greeting-message">Loading your personalized greeting...</p>
+      
+      <div class="cookbook-decoration">
+        <Icon name="tabler:chef-hat" class="cookbook-icon" />
+      </div>
+    </div>
+    
+    <div class="greeting-corner top-left"></div>
+    <div class="greeting-corner top-right"></div>
+    <div class="greeting-corner bottom-left"></div>
+    <div class="greeting-corner bottom-right"></div>
+  </div>
+</div>
+
+<style>
+  .cookbook-greeting {
+    margin: 2rem 0;
+    position: relative;
+    perspective: 1000px;
+  }
+  
+  .greeting-paper {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    position: relative;
+    transform: rotate(-1deg);
+    box-shadow: 
+      0 3px 10px rgba(0, 0, 0, 0.1),
+      0 0 30px rgba(81, 115, 63, 0.05);
+    overflow: hidden;
+    
+    /* Paper texture with ruled lines */
+    background-image: 
+      linear-gradient(#f9f9f9 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 0, 0, 0.03) 1px, transparent 1px);
+    background-size: 100% 25px, 25px 100%;
+    background-position: 0 0;
+    transition: transform 0.3s ease-out;
+  }
+  
+  .greeting-paper:hover {
+    transform: rotate(-0.5deg) translateY(-3px);
+    box-shadow: 
+      0 5px 15px rgba(0, 0, 0, 0.1),
+      0 0 30px rgba(81, 115, 63, 0.1);
+  }
+  
+  /* Dark mode styling with your preferred lighter slate gray */
+  .dark .greeting-paper {
+    background-color: #4a5568;
+    box-shadow: 
+      0 3px 10px rgba(0, 0, 0, 0.2),
+      0 0 30px rgba(160, 212, 104, 0.05);
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(160, 212, 104, 0.05) 1px, transparent 1px);
+  }
+  
+  .dark .greeting-paper:hover {
+    box-shadow: 
+      0 5px 15px rgba(0, 0, 0, 0.3),
+      0 0 30px rgba(160, 212, 104, 0.1);
+  }
+  
+  .greeting-content {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .greeting-title {
+    font-family: var(--header-font-family);
+    font-size: 1.75rem;
+    color: #51733F;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .dark .greeting-title {
+    color: #a0d468;
+  }
+  
+  .greeting-message {
+    font-family: var(--handwriting-font);
+    font-size: 1.2rem;
+    line-height: 1.5;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .cookbook-decoration {
+    position: absolute;
+    bottom: -15px;
+    right: 20px;
+    opacity: 0.15;
+    transform: rotate(15deg);
+  }
+  
+  .cookbook-icon {
+    width: 60px;
+    height: 60px;
+    color: #51733F;
+  }
+  
+  .dark .cookbook-icon {
+    color: #a0d468;
+  }
+  
+  /* Decorative corners */
+  .greeting-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(81, 115, 63, 0.15);
+    z-index: 1;
+  }
+  
+  .top-left {
+    top: 0;
+    left: 0;
+    border-radius: 0 0 100% 0;
+  }
+  
+  .top-right {
+    top: 0;
+    right: 0;
+    border-radius: 0 0 0 100%;
+  }
+  
+  .bottom-left {
+    bottom: 0;
+    left: 0;
+    border-radius: 0 100% 0 0;
+  }
+  
+  .bottom-right {
+    bottom: 0;
+    right: 0;
+    border-radius: 100% 0 0 0;
+  }
+  
+  .dark .greeting-corner {
+    background-color: rgba(160, 212, 104, 0.15);
+  }
+  
+  /* Animation for the greeting text */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Subtle animation for paper when loaded */
+  @keyframes paperAppear {
+    from {
+      opacity: 0;
+      transform: rotate(-3deg) translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: rotate(-1deg) translateY(0);
+    }
+  }
+  
+  .greeting-paper {
+    animation: paperAppear 0.8s ease-out forwards;
+  }
+  
+  .greeting-message {
+    animation: fadeIn 1s ease-out 0.3s forwards;
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const greetingMessage = document.getElementById('greeting-message');
+  
+  // Get current hour
+  const currentHour = new Date().getHours();
+  
+  // Different greeting based on time of day
+  let timeGreeting = '';
+  if (currentHour < 12) {
+    timeGreeting = 'Good morning';
+  } else if (currentHour < 18) {
+    timeGreeting = 'Good afternoon';
+  } else {
+    timeGreeting = 'Good evening';
+  }
+  
+  // Get the returning visitor status
+  const hasVisitedBefore = localStorage.getItem('chisos_cookbook_visited');
+  const lastVisit = localStorage.getItem('chisos_cookbook_last_visit');
+  
+  let personalizedGreeting = '';
+  
+  if (hasVisitedBefore) {
+    const daysSinceLastVisit = lastVisit ? Math.floor((Date.now() - parseInt(lastVisit)) / (1000 * 60 * 60 * 24)) : 0;
+    
+    if (daysSinceLastVisit < 1) {
+      personalizedGreeting = `${timeGreeting}! Welcome back to my cookbook. Glad to see you again today!`;
+    } else if (daysSinceLastVisit === 1) {
+      personalizedGreeting = `${timeGreeting}! Welcome back after a day away. Hope you find some new recipes to enjoy!`;
+    } else {
+      personalizedGreeting = `${timeGreeting}! Welcome back after ${daysSinceLastVisit} days. I've added some new recipes for you to explore!`;
+    }
+  } else {
+    personalizedGreeting = `${timeGreeting}! Welcome to my cookbook portfolio. Feel free to explore my collection of software development recipes!`;
+  }
+  
+  // Update the greeting
+  if (greetingMessage) {
+    greetingMessage.textContent = personalizedGreeting;
+  }
+  
+  // Store current visit time
+  localStorage.setItem('chisos_cookbook_last_visit', Date.now().toString());
+});
+</script>

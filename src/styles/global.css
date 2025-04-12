@@ -43,9 +43,9 @@
   --cursive-font: "Caveat", cursive;
   --alt-font-family: "Source Sans 3", sans-serif;
 
-  /* Increased font sizes across the board */
-  --body-font-size: 1.2rem; /* Increased from 1rem */
-  --body-line-height: 1.6; /* Adjusted for better readability with larger fonts */
+  /* Reduced font sizes across the board */
+  --body-font-size: 1.1rem; /* Reduced from 1.2rem */
+  --body-line-height: 1.5; /* Slightly tightened line height */
   --body-letter-spacing: theme("letterSpacing.tight");
 
   /* Theme variables */

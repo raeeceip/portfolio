@@ -1,0 +1,367 @@
+---
+// PageNotes Component - Allows users to add "cookbook notes" to posts
+// This implements the cookbook aesthetic where readers can add their own notes in the margins
+
+export interface Props {
+  postSlug: string;
+}
+
+const { postSlug } = Astro.props;
+const storageKey = `cookbook_notes_${postSlug}`;
+---
+
+<div class="cookbook-notes-container">
+  <div class="cookbook-notes-header">
+    <h3 class="notes-title">Your Recipe Notes</h3>
+    <p class="notes-subtitle">Add your own thoughts to this recipe</p>
+  </div>
+  
+  <div class="notes-content" id="notes-content">
+    <!-- Notes will be dynamically inserted here -->
+    <div class="empty-notes-message">
+      <p>No notes yet. Add your first note!</p>
+    </div>
+  </div>
+  
+  <div class="notes-form">
+    <textarea 
+      id="new-note" 
+      class="notes-textarea" 
+      placeholder="Write your note here..."
+      aria-label="Add a new note to this recipe"
+      rows="3"
+    ></textarea>
+    
+    <div class="notes-buttons">
+      <button id="add-note-button" class="add-note-button">
+        <span>Add Note</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M8 9h8"></path>
+          <path d="M8 13h6"></path>
+          <path d="M13 18l-5 0a2 2 0 0 1 -2 -2l0 -11a2 2 0 0 1 2 -2l6 0a2 2 0 0 1 2 2l0 8"></path>
+          <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+          <path d="M17 14v6"></path>
+          <path d="M14 17h6"></path>
+        </svg>
+      </button>
+      
+      <button id="clear-notes-button" class="clear-notes-button">
+        <span>Clear All</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M4 7h16"></path>
+          <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+          <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+          <path d="M10 12l4 4m0 -4l-4 4"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cookbook-notes-container {
+    background-color: rgba(255, 252, 232, 0.7);
+    border-left: 3px solid #51733F;
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    position: relative;
+    transform: rotate(-0.5deg);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .dark .cookbook-notes-container {
+    background-color: rgba(74, 85, 104, 0.2);
+    border-left-color: #a0d468;
+  }
+  
+  .cookbook-notes-header {
+    margin-bottom: 1rem;
+    border-bottom: 1px dashed rgba(81, 115, 63, 0.3);
+    padding-bottom: 0.75rem;
+  }
+  
+  .notes-title {
+    font-family: var(--header-font-family);
+    font-size: 1.25rem;
+    margin: 0;
+    color: #51733F;
+  }
+  
+  .dark .notes-title {
+    color: #a0d468;
+  }
+  
+  .notes-subtitle {
+    font-family: var(--handwriting-font);
+    font-size: 0.9rem;
+    margin: 0.25rem 0 0;
+    opacity: 0.8;
+  }
+  
+  .notes-content {
+    min-height: 100px;
+    margin-bottom: 1rem;
+  }
+  
+  .empty-notes-message {
+    font-family: var(--handwriting-font);
+    font-style: italic;
+    opacity: 0.7;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .note-item {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 3px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    position: relative;
+    font-family: var(--handwriting-font);
+    line-height: 1.4;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+  
+  .dark .note-item {
+    background-color: rgba(74, 85, 104, 0.3);
+  }
+  
+  .note-date {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    text-align: right;
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+  
+  .delete-note {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+  
+  .delete-note:hover {
+    opacity: 1;
+  }
+  
+  .notes-form {
+    margin-top: 1rem;
+  }
+  
+  .notes-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 3px;
+    border: 1px solid rgba(81, 115, 63, 0.3);
+    background-color: rgba(255, 255, 255, 0.8);
+    resize: vertical;
+    font-family: var(--handwriting-font);
+    font-size: 1rem;
+  }
+  
+  .dark .notes-textarea {
+    background-color: rgba(74, 85, 104, 0.2);
+    border-color: rgba(160, 212, 104, 0.3);
+    color: #f3f4f6;
+  }
+  
+  .notes-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+  }
+  
+  .add-note-button, .clear-notes-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 3px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--handwriting-font);
+    transition: all 0.2s;
+  }
+  
+  .add-note-button {
+    background-color: #51733F;
+    color: white;
+  }
+  
+  .add-note-button:hover {
+    background-color: #3F5C31;
+  }
+  
+  .clear-notes-button {
+    background-color: #f8f8f8;
+    color: #666;
+  }
+  
+  .clear-notes-button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .dark .add-note-button {
+    background-color: #a0d468;
+    color: #2d3748;
+  }
+  
+  .dark .add-note-button:hover {
+    background-color: #8cc152;
+  }
+  
+  .dark .clear-notes-button {
+    background-color: #4a5568;
+    color: #f3f4f6;
+  }
+  
+  .dark .clear-notes-button:hover {
+    background-color: #2d3748;
+  }
+  
+  .icon {
+    width: 1rem;
+    height: 1rem;
+  }
+</style>
+
+<script define:vars={{ storageKey }}>
+document.addEventListener('DOMContentLoaded', function() {
+  const notesContainer = document.getElementById('notes-content');
+  const newNoteField = document.getElementById('new-note');
+  const addNoteButton = document.getElementById('add-note-button');
+  const clearNotesButton = document.getElementById('clear-notes-button');
+  const emptyMessage = document.querySelector('.empty-notes-message');
+  
+  // Load existing notes
+  function loadNotes() {
+    const savedNotes = localStorage.getItem(storageKey);
+    if (savedNotes) {
+      const notes = JSON.parse(savedNotes);
+      
+      if (notes.length > 0) {
+        emptyMessage.style.display = 'none';
+        
+        // Clear existing notes display
+        const existingNotes = notesContainer.querySelectorAll('.note-item');
+        existingNotes.forEach(note => note.remove());
+        
+        // Add each note to the display
+        notes.forEach((note, index) => {
+          addNoteToDisplay(note.text, note.date, index);
+        });
+      } else {
+        emptyMessage.style.display = 'block';
+      }
+    }
+  }
+  
+  // Add a note to the display
+  function addNoteToDisplay(text, date, index) {
+    const noteElement = document.createElement('div');
+    noteElement.className = 'note-item';
+    noteElement.dataset.index = index;
+    
+    const noteText = document.createElement('div');
+    noteText.className = 'note-text';
+    noteText.textContent = text;
+    noteElement.appendChild(noteText);
+    
+    const noteDate = document.createElement('div');
+    noteDate.className = 'note-date';
+    noteDate.textContent = new Date(date).toLocaleDateString();
+    noteElement.appendChild(noteDate);
+    
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'delete-note';
+    deleteButton.innerHTML = '×';
+    deleteButton.setAttribute('aria-label', 'Delete note');
+    deleteButton.onclick = function() {
+      deleteNote(index);
+    };
+    noteElement.appendChild(deleteButton);
+    
+    notesContainer.appendChild(noteElement);
+  }
+  
+  // Add a new note
+  function addNote() {
+    const noteText = newNoteField.value.trim();
+    if (noteText === '') return;
+    
+    // Get existing notes or create empty array
+    const savedNotes = localStorage.getItem(storageKey);
+    const notes = savedNotes ? JSON.parse(savedNotes) : [];
+    
+    // Add new note
+    const newNote = {
+      text: noteText,
+      date: new Date().toISOString()
+    };
+    notes.push(newNote);
+    
+    // Save to localStorage
+    localStorage.setItem(storageKey, JSON.stringify(notes));
+    
+    // Update display
+    if (notes.length === 1) {
+      emptyMessage.style.display = 'none';
+    }
+    
+    addNoteToDisplay(newNote.text, newNote.date, notes.length - 1);
+    
+    // Clear input field
+    newNoteField.value = '';
+  }
+  
+  // Delete a note
+  function deleteNote(index) {
+    // Get existing notes
+    const savedNotes = localStorage.getItem(storageKey);
+    if (!savedNotes) return;
+    
+    const notes = JSON.parse(savedNotes);
+    
+    // Remove the note at the specified index
+    notes.splice(index, 1);
+    
+    // Save updated notes
+    localStorage.setItem(storageKey, JSON.stringify(notes));
+    
+    // Reload notes display
+    loadNotes();
+  }
+  
+  // Clear all notes
+  function clearAllNotes() {
+    if (confirm('Are you sure you want to clear all your notes for this recipe?')) {
+      localStorage.removeItem(storageKey);
+      loadNotes();
+    }
+  }
+  
+  // Event listeners
+  addNoteButton.addEventListener('click', addNote);
+  
+  newNoteField.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      addNote();
+    }
+  });
+  
+  clearNotesButton.addEventListener('click', clearAllNotes);
+  
+  // Load notes on page load
+  loadNotes();
+});
+</script>

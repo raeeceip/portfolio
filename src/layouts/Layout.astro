@@ -36,6 +36,16 @@ const metaImgUrl = metaImage;
     <meta name="keywords" content={keywords} />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
+    <!-- Font preconnect for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Cookbook-specific fonts with display swap -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Chiso's Notebook" />
@@ -53,10 +63,16 @@ const metaImgUrl = metaImage;
     <meta name="twitter:url" content={`https://chiso.dev${Astro.url.pathname}`} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={desc} />
-    <meta name="twitter:image" content="https://chiso.dev/images/notebook-meta.png" />
+    <meta name="twitter:image" content={metaImgUrl} />
     
     <title>{title}</title>
 
+    <!-- Preload critical cookbook assets -->
+    <link rel="preload" href="/images/paper-texture.png" as="image" />
+
+    <!-- Cookbook Animation Script -->
+    <script src="/scripts/cover-animation.js" defer></script>
+    
     <!-- Force light mode as default -->
     <script is:inline>
       // Force light mode as default
