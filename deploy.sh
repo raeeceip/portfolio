@@ -27,9 +27,9 @@ cp public/service-worker.js dist/service-worker.js
 # Note: This requires Cloudflare Wrangler to be authenticated
 if command -v wrangler &> /dev/null; then
     echo "🚀 Deploying to Cloudflare Pages..."
-    echo "Note: If this is your first deployment, you'll need to run: wrangler pages project create chisos-cookbook"
+    echo "Note: If this is your first deployment, you'll need to run: wrangler pages project create portfolio"
     echo "Starting deployment..."
-    wrangler pages deploy dist --project-name=chisos-cookbook
+    wrangler pages deploy dist --project-name=portfolio
 else
     echo "⚠️ Wrangler not found or not authenticated. Please deploy manually:"
     echo "1. Go to https://dash.cloudflare.com/pages"
