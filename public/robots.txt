@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Allow crawling of all content
+Sitemap: https://chiso.dev/sitemap.xml
+
+# Optimize crawling performance
+Crawl-delay: 5

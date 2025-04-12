@@ -9,7 +9,11 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "generate-blog": "ts-node src/lib/generate-post.ts"
+    "generate-blog": "ts-node src/lib/generate-post.ts",
+    "build:cloudflare": "astro build && npm run optimize:assets && npm run copy:deployment-files",
+    "optimize:assets": "find ./dist/images -type f \\( -name \"*.jpg\" -o -name \"*.jpeg\" -o -name \"*.png\" \\) -exec sh -c 'echo \"Optimizing $1...\"' sh {} \\;",
+    "copy:deployment-files": "cp public/_headers dist/ && cp public/_redirects dist/ && cp public/service-worker.js dist/",
+    "deploy": "npm run build:cloudflare && wrangler pages deploy dist --project-name=portfolio"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^4.3.2",
