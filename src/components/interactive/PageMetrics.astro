@@ -1,0 +1,471 @@
+---
+// PageMetrics.astro - Displays page views and allows visitors to add notes
+// Maintains the cookbook aesthetic with a handwritten stats feel
+const { postSlug } = Astro.props;
+---
+
+<div class="page-metrics-container">
+  <div class="page-views" data-post-slug={postSlug}>
+    <div class="view-count">
+      <span class="view-icon">👁️</span>
+      <span class="count-text">Loading views...</span>
+    </div>
+  </div>
+  
+  {postSlug && (
+    <div class="recipe-notes-toggle">
+      <button id="toggle-notes" class="notes-button">
+        <span class="notes-icon">📝</span>
+        <span class="notes-text">Add your notes</span>
+      </button>
+    </div>
+  )}
+</div>
+
+<!-- Notes Panel (hidden by default) -->
+<div id="notes-panel" class="recipe-notes-panel">
+  <div class="notes-header">
+    <h3>Your Recipe Notes</h3>
+    <button id="close-notes" class="close-notes">✕</button>
+  </div>
+  
+  <div class="notes-content">
+    <div id="existing-notes" class="existing-notes">
+      <!-- Notes will be loaded here -->
+      <p class="empty-notes-message">No notes yet. Be the first to add your thoughts!</p>
+    </div>
+    
+    <div class="add-note-form">
+      <textarea id="note-content" placeholder="Write your notes here... (Tips, modifications, thoughts, etc.)"></textarea>
+      <div class="note-actions">
+        <label class="public-note-toggle">
+          <input type="checkbox" id="note-is-public"> 
+          <span>Share with others</span>
+        </label>
+        <button id="save-note" class="save-note-btn">Save Note</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Container styling */
+  .page-metrics-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0;
+    padding: 0.5rem 1rem;
+    font-family: var(--handwriting-font);
+    border-bottom: 1px dashed var(--notebook-line-color);
+  }
+  
+  /* Page views styling */
+  .page-views {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #666;
+    transform: rotate(-1deg);
+  }
+  
+  .view-icon {
+    margin-right: 0.5rem;
+  }
+  
+  /* Notes button styling */
+  .notes-button {
+    background: none;
+    border: 1px dashed #51733F;
+    border-radius: 4px;
+    padding: 0.3rem 0.8rem;
+    font-family: var(--handwriting-font);
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #51733F;
+    background-color: rgba(81, 115, 63, 0.08);
+    transform: rotate(1deg);
+    transition: all 0.2s ease;
+  }
+  
+  .notes-button:hover {
+    background-color: rgba(81, 115, 63, 0.15);
+    transform: rotate(0.5deg) scale(1.05);
+  }
+  
+  .notes-icon {
+    margin-right: 0.5rem;
+  }
+  
+  /* Notes panel styling */
+  .recipe-notes-panel {
+    position: fixed;
+    right: -350px;
+    top: 0;
+    width: 330px;
+    height: 100%;
+    background-color: var(--notebook-paper-color);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: right 0.3s ease;
+    
+    /* Notebook paper styling */
+    background-image: 
+      /* Horizontal ruled lines */
+      repeating-linear-gradient(
+        transparent 0px,
+        transparent 24px,
+        var(--notebook-line-color) 25px
+      ),
+      /* Vertical margin line */
+      linear-gradient(
+        to right,
+        var(--notebook-margin-color) 0px,
+        var(--notebook-margin-color) 30px,
+        transparent 30px
+      );
+    background-size: 100% 25px, 100% 100%;
+    padding: 1rem;
+    border-left: 1px solid #ddd;
+    overflow-y: auto;
+  }
+  
+  .recipe-notes-panel.open {
+    right: 0;
+  }
+  
+  .notes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid rgba(81, 115, 63, 0.3);
+    padding-bottom: 0.5rem;
+  }
+  
+  .notes-header h3 {
+    font-family: var(--header-font-family);
+    color: #51733F;
+    margin: 0;
+    padding-left: 2rem;
+  }
+  
+  .close-notes {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #666;
+  }
+  
+  .notes-content {
+    padding-left: 2rem;
+  }
+  
+  .existing-notes {
+    margin-bottom: 1.5rem;
+  }
+  
+  .empty-notes-message {
+    font-style: italic;
+    color: #888;
+  }
+  
+  .add-note-form textarea {
+    width: 100%;
+    height: 120px;
+    border: 1px dashed #51733F;
+    border-radius: 4px;
+    padding: 0.5rem;
+    font-family: var(--handwriting-font);
+    background-color: rgba(255, 255, 255, 0.7);
+    resize: vertical;
+  }
+  
+  .note-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+  }
+  
+  .public-note-toggle {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: #666;
+  }
+  
+  .public-note-toggle input {
+    margin-right: 0.5rem;
+  }
+  
+  .save-note-btn {
+    background-color: #51733F;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4rem 1rem;
+    font-family: var(--handwriting-font);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .save-note-btn:hover {
+    background-color: #3F5C31;
+  }
+  
+  /* Existing note styling */
+  .note-item {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-left: 3px solid #51733F;
+  }
+  
+  .note-content {
+    font-family: var(--handwriting-font);
+    margin: 0.5rem 0;
+  }
+  
+  .note-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #888;
+  }
+  
+  .dark .recipe-notes-panel {
+    background-color: #2d3748;
+    color: #e2e8f0;
+    background-image: 
+      repeating-linear-gradient(
+        transparent 0px,
+        transparent 24px,
+        rgba(255, 255, 255, 0.05) 25px
+      ),
+      linear-gradient(
+        to right,
+        rgba(255, 0, 0, 0.1) 0px,
+        rgba(255, 0, 0, 0.1) 30px,
+        transparent 30px
+      );
+  }
+  
+  .dark .add-note-form textarea {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-color: #4a5568;
+    color: #e2e8f0;
+  }
+  
+  .dark .note-item {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-left-color: #4a5568;
+  }
+  
+  .dark .save-note-btn {
+    background-color: #4a5568;
+  }
+  
+  .dark .save-note-btn:hover {
+    background-color: #2d3748;
+  }
+  
+  @media (max-width: 768px) {
+    .recipe-notes-panel {
+      width: 280px;
+    }
+  }
+</style>
+
+<script>
+  // Generate a persistent user ID for notes
+  function generateUserId() {
+    let userId = localStorage.getItem('cookbook_user_id');
+    if (!userId) {
+      userId = 'user_' + Math.random().toString(36).substring(2, 15);
+      localStorage.setItem('cookbook_user_id', userId);
+    }
+    return userId;
+  }
+  
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    // Get page slug
+    const pageViewsElement = document.querySelector('.page-views');
+    const postSlug = pageViewsElement?.getAttribute('data-post-slug') || window.location.pathname;
+    
+    // Track page view
+    trackPageView(postSlug);
+    
+    // Setup notes functionality if available
+    const toggleNotesButton = document.getElementById('toggle-notes');
+    if (toggleNotesButton && postSlug) {
+      setupNotesPanel(postSlug);
+    }
+  });
+  
+  // Track page view
+  async function trackPageView(path) {
+    try {
+      // First increment the view count
+      await fetch(`/api/pageview`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      // Then get the updated count
+      const response = await fetch(`/api/pageview?path=${encodeURIComponent(path)}`);
+      const data = await response.json();
+      
+      // Update the view count display
+      const countElement = document.querySelector('.count-text');
+      if (countElement) {
+        countElement.textContent = data.formatted;
+      }
+    } catch (error) {
+      console.error('Error tracking page view:', error);
+    }
+  }
+  
+  // Setup notes panel functionality
+  function setupNotesPanel(postSlug) {
+    const toggleButton = document.getElementById('toggle-notes');
+    const closeButton = document.getElementById('close-notes');
+    const notesPanel = document.getElementById('notes-panel');
+    const saveNoteButton = document.getElementById('save-note');
+    const userId = generateUserId();
+    
+    // Toggle notes panel
+    toggleButton.addEventListener('click', () => {
+      notesPanel.classList.add('open');
+      loadNotes(postSlug, userId);
+    });
+    
+    // Close notes panel
+    closeButton.addEventListener('click', () => {
+      notesPanel.classList.remove('open');
+    });
+    
+    // Save note
+    saveNoteButton.addEventListener('click', async () => {
+      const noteContent = document.getElementById('note-content').value.trim();
+      const isPublic = document.getElementById('note-is-public').checked;
+      
+      if (!noteContent) {
+        alert('Please write something before saving your note.');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/api/notes?slug=${encodeURIComponent(postSlug)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: userId,
+            note_content: noteContent,
+            is_public: isPublic
+          })
+        });
+        
+        if (response.ok) {
+          // Clear textarea and reload notes
+          document.getElementById('note-content').value = '';
+          loadNotes(postSlug, userId);
+        } else {
+          alert('Failed to save your note. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error saving note:', error);
+        alert('An error occurred while saving your note.');
+      }
+    });
+  }
+  
+  // Load notes for a post
+  async function loadNotes(postSlug, userId) {
+    const notesContainer = document.getElementById('existing-notes');
+    const emptyMessage = notesContainer.querySelector('.empty-notes-message');
+    
+    try {
+      // Get user's personal notes
+      const response = await fetch(`/api/notes?slug=${encodeURIComponent(postSlug)}&user_id=${encodeURIComponent(userId)}`);
+      const data = await response.json();
+      
+      // Clear previous notes
+      if (emptyMessage) {
+        notesContainer.innerHTML = '';
+      }
+      
+      if (data.notes.length === 0) {
+        notesContainer.innerHTML = '<p class="empty-notes-message">No notes yet. Write your first note about this recipe!</p>';
+        return;
+      }
+      
+      // Render notes
+      data.notes.forEach(note => {
+        const noteDate = new Date(note.created_at).toLocaleDateString();
+        const noteElement = document.createElement('div');
+        noteElement.className = 'note-item';
+        noteElement.innerHTML = `
+          <div class="note-content">${escapeHTML(note.note_content)}</div>
+          <div class="note-meta">
+            <span>Added on ${noteDate}</span>
+            <button class="delete-note" data-note-id="${note.id}">Delete</button>
+          </div>
+        `;
+        notesContainer.appendChild(noteElement);
+      });
+      
+      // Add delete functionality
+      document.querySelectorAll('.delete-note').forEach(button => {
+        button.addEventListener('click', async () => {
+          const noteId = button.getAttribute('data-note-id');
+          deleteNote(postSlug, noteId, userId);
+        });
+      });
+    } catch (error) {
+      console.error('Error loading notes:', error);
+      notesContainer.innerHTML = '<p class="empty-notes-message">Failed to load notes. Please try again.</p>';
+    }
+  }
+  
+  // Delete a note
+  async function deleteNote(postSlug, noteId, userId) {
+    if (!confirm('Are you sure you want to delete this note?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/notes?slug=${encodeURIComponent(postSlug)}&id=${noteId}&user_id=${encodeURIComponent(userId)}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        // Reload notes after deletion
+        loadNotes(postSlug, userId);
+      } else {
+        alert('Failed to delete your note. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      alert('An error occurred while deleting your note.');
+    }
+  }
+  
+  // Helper to escape HTML
+  function escapeHTML(str) {
+    return str.replace(/[&<>'"]/g, 
+      tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag]));
+  }
+</script>

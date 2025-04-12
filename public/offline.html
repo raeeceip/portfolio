@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - Chiso's Cookbook</title>
+  <style>
+    :root {
+      --color-bg-light: #f5f3ee;
+      --color-text-light: #333333;
+      --notebook-paper-color: #ffffff;
+      --notebook-line-color: rgba(0, 0, 0, 0.07);
+      --notebook-margin-color: rgba(255, 0, 0, 0.1);
+    }
+    
+    body {
+      font-family: "Caveat", "Indie Flower", "Comic Sans MS", cursive;
+      background-color: var(--color-bg-light);
+      color: var(--color-text-light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      /* Paper texture background */
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px);
+      background-size: 26px 26px, 26px 26px;
+    }
+    
+    .offline-container {
+      max-width: 600px;
+      padding: 2rem;
+      background-color: var(--notebook-paper-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transform: rotate(-1deg);
+      position: relative;
+      
+      /* Notebook paper styling */
+      background-image: 
+        /* Horizontal ruled lines */
+        repeating-linear-gradient(
+          transparent 0px,
+          transparent 24px,
+          var(--notebook-line-color) 25px
+        ),
+        /* Vertical margin line */
+        linear-gradient(
+          to right,
+          var(--notebook-margin-color) 0px,
+          var(--notebook-margin-color) 30px,
+          transparent 30px
+        );
+      background-size: 100% 25px, 100% 100%;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      color: #51733F;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      margin-top: 0;
+      font-weight: normal;
+      transform: rotate(1deg);
+      padding-left: 1.5rem;
+    }
+    
+    p {
+      font-size: 1.3rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      padding-left: 2rem;
+    }
+    
+    .chef-icon {
+      font-size: 3rem;
+      display: block;
+      text-align: center;
+      margin: 1rem 0;
+    }
+    
+    .page-corner-fold {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 50px 50px 0;
+      border-color: transparent #e0dcd0 transparent transparent;
+      box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .return-button {
+      display: inline-block;
+      margin-top: 1rem;
+      margin-left: 2rem;
+      padding: 0.5rem 1.5rem;
+      background-color: #51733F;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 1.2rem;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transform: rotate(1deg);
+    }
+    
+    .return-button:hover {
+      background-color: #3F5C31;
+    }
+    
+    .recipe-tip {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: rgba(81, 115, 63, 0.1);
+      border-left: 3px solid #51733F;
+      font-style: italic;
+      transform: rotate(0.5deg);
+      margin-left: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-container">
+    <div class="page-corner-fold"></div>
+    <h1>You're Offline</h1>
+    <p>Oh no! It looks like you've lost connection to the internet. This page from Chiso's Cookbook isn't available offline yet.</p>
+    
+    <div class="chef-icon">👨‍🍳</div>
+    
+    <p>Don't worry though! Many of the recipes and pages you've previously visited should still be available. Try navigating back or checking out some of the pages you've already viewed.</p>
+    
+    <div class="recipe-tip">
+      <strong>Chef's Tip:</strong> Sometimes the best recipes come from working with the ingredients you already have. Try exploring the cached pages while you wait for your connection to return.
+    </div>
+    
+    <a href="/" class="return-button">Return to Home</a>
+  </div>
+</body>
+</html>

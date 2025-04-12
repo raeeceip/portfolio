@@ -1,0 +1,16 @@
+# Cloudflare Pages configuration for Chiso's Cookbook
+name = "chisos-cookbook"
+compatibility_date = "2023-12-01"
+
+[build]
+command = "npm run build"
+output_directory = "dist"
+
+[site]
+bucket = "./dist"
+
+[env.production]
+name = "chisos-cookbook"
+
+[env.preview]
+name = "chisos-cookbook-preview"
