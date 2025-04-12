@@ -2,13 +2,16 @@
 import Show from "./Show.astro"
 import { slugify } from "@lib/utils";
 export interface Props {
-  data: string[];
+  data?: string[];
+  tags?: string[];
 }
 
-let { data: tags } = Astro.props;
+// Accept either 'data' or 'tags' prop to make the component more flexible
+const { data, tags: propTags } = Astro.props;
+const tags = data || propTags || [];
 
 ---
-<Show when={tags && tags.length > 0 }>
+<Show when={tags && tags.length > 0}>
     <div class="flex gap-2 flex-wrap">
       {tags.map((tag) => (
         <!-- prettier-ignore -->
@@ -20,27 +23,38 @@ let { data: tags } = Astro.props;
 <style>
   .recipe-tag {
     display: inline-block;
-    background-color: theme("colors.primary.50");
-    color: theme("colors.primary.700");
+    background-color: rgba(81, 115, 63, 0.15);
+    color: var(--primary-color, #51733F);
     font-size: theme("fontSize.xs");
     padding: theme("spacing[0.5]") theme("spacing.2");
-    border-radius: theme("borderRadius.sm");
-    border: 1px dashed theme("colors.primary.200");
-    user-select: none;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-    font-family: var(--handwriting-font);
+    border-radius: theme("borderRadius.full");
     text-decoration: none;
-    
-    &:hover {
-      background-color: theme("colors.primary.100");
-      transform: rotate(-1deg);
-    }
-    
-    @apply dark:bg-primary-900/30 dark:text-primary-300 dark:border-primary-800;
-    
-    .dark &:hover {
-      @apply dark:bg-primary-800/40;
-    }
+    font-weight: theme("fontWeight.medium");
+    transition: all 0.2s ease;
+    margin-right: theme("spacing.1");
+    margin-bottom: theme("spacing.1");
+    border: 1px dashed var(--primary-color, #51733F);
+    text-transform: lowercase;
+    font-family: var(--handwriting-font);
+    position: relative;
+    z-index: 1;
+  }
+  
+  .recipe-tag:hover {
+    background-color: rgba(81, 115, 63, 0.25);
+    color: var(--primary-color-dark, #3c5a2d);
+    transform: translateY(-1px) rotate(-1deg);
+  }
+  
+  /* Dark mode specific styling with better contrast */
+  :global(.dark) .recipe-tag {
+    background-color: rgba(169, 199, 111, 0.15);
+    color: var(--primary-color-light, #a9c76f);
+    border-color: var(--primary-color-light, #a9c76f);
+  }
+  
+  :global(.dark) .recipe-tag:hover {
+    background-color: rgba(169, 199, 111, 0.25);
+    color: var(--primary-color-light, #a9c76f);
   }
 </style>

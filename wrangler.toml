@@ -1,12 +1,14 @@
 # Cloudflare Pages configuration for Chiso's Cookbook
 name = "portfolio"
 compatibility_date = "2023-12-01"
+pages_build_output_dir = "dist"
 
 # Pages-specific configuration
 [pages]
 build_output_directory = "dist"
 compatibility_date = "2023-12-01"
 
+# Environment-specific configurations
 [env.production]
 name = "portfolio" 
 

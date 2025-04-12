@@ -70,6 +70,9 @@ const storageKey = `cookbook_notes_${postSlug}`;
     position: relative;
     transform: rotate(-0.5deg);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   
   .dark .cookbook-notes-container {
@@ -88,6 +91,7 @@ const storageKey = `cookbook_notes_${postSlug}`;
     font-size: 1.25rem;
     margin: 0;
     color: #51733F;
+    word-break: break-word;
   }
   
   .dark .notes-title {
@@ -104,6 +108,7 @@ const storageKey = `cookbook_notes_${postSlug}`;
   .notes-content {
     min-height: 100px;
     margin-bottom: 1rem;
+    width: 100%;
   }
   
   .empty-notes-message {
@@ -123,6 +128,7 @@ const storageKey = `cookbook_notes_${postSlug}`;
     font-family: var(--handwriting-font);
     line-height: 1.4;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    word-break: break-word;
   }
   
   .dark .note-item {
@@ -155,6 +161,7 @@ const storageKey = `cookbook_notes_${postSlug}`;
   
   .notes-form {
     margin-top: 1rem;
+    width: 100%;
   }
   
   .notes-textarea {
@@ -166,6 +173,7 @@ const storageKey = `cookbook_notes_${postSlug}`;
     resize: vertical;
     font-family: var(--handwriting-font);
     font-size: 1rem;
+    max-width: 100%;
   }
   
   .dark .notes-textarea {
@@ -178,6 +186,8 @@ const storageKey = `cookbook_notes_${postSlug}`;
     display: flex;
     justify-content: space-between;
     margin-top: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
   
   .add-note-button, .clear-notes-button {
@@ -190,6 +200,29 @@ const storageKey = `cookbook_notes_${postSlug}`;
     cursor: pointer;
     font-family: var(--handwriting-font);
     transition: all 0.2s;
+    white-space: nowrap;
+  }
+  
+  /* Mobile adjustments */
+  @media (max-width: 480px) {
+    .cookbook-notes-container {
+      padding: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .notes-buttons {
+      flex-direction: column;
+      width: 100%;
+    }
+    
+    .add-note-button, .clear-notes-button {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .note-item {
+      padding-right: 2rem; /* Make space for the delete button */
+    }
   }
   
   .add-note-button {
@@ -231,6 +264,7 @@ const storageKey = `cookbook_notes_${postSlug}`;
   .icon {
     width: 1rem;
     height: 1rem;
+    flex-shrink: 0;
   }
 </style>
 

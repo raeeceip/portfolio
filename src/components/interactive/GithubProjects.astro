@@ -22,10 +22,9 @@ const {
     <h2>{title}</h2>
     <div class="recipe-filters">
       <button class="filter-btn active" data-filter="all">All Recipes</button>
-      <button class="filter-btn" data-filter="javascript">JavaScript</button>
+      <button class="filter-btn" data-filter="go">Golang</button>
       <button class="filter-btn" data-filter="typescript">TypeScript</button>
-      <button class="filter-btn" data-filter="go">Go</button>
-      <button class="filter-btn" data-filter="python">Python</button>
+      <button class="filter-btn" data-filter="ruby">Ruby</button>
       <button class="filter-btn" data-filter="other">Other</button>
     </div>
   </div>
@@ -49,103 +48,291 @@ const {
 <style>
   .github-recipes-container {
     margin: 2rem 0;
-    position: relative;
+    max-width: 100%;
+    overflow-x: hidden;
   }
-  
+
   .recipes-header {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(81, 115, 63, 0.2);
-    padding-left: 2rem;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px dashed var(--color-primary-200);
+    padding-bottom: 1rem;
+  }
+  
+  @media (min-width: 768px) {
+    .recipes-header {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
   }
   
   .recipes-header h2 {
-    margin-bottom: 1rem;
-    color: var(--color-text-light);
     font-family: var(--header-font-family);
-    transform: rotate(-1deg);
+    font-size: 1.75rem;
+    color: var(--color-primary-600);
+    margin: 0;
   }
   
   .dark .recipes-header h2 {
-    color: var(--color-text-dark);
+    color: var(--color-primary-400);
   }
   
   .recipe-filters {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
   }
   
   .filter-btn {
-    background: none;
-    border: 1px dashed rgba(81, 115, 63, 0.4);
+    background-color: transparent;
+    border: 1px dashed var(--color-primary-200);
+    padding: 0.4rem 0.8rem;
     border-radius: 20px;
-    padding: 0.3rem 0.8rem;
     font-family: var(--handwriting-font);
     font-size: 0.9rem;
+    color: var(--color-secondary-600);
     cursor: pointer;
-    color: #666;
-    background-color: rgba(255, 255, 255, 0.5);
-    transition: all 0.2s ease;
+    transition: all 0.2s;
+    white-space: nowrap;
   }
   
   .filter-btn:hover, .filter-btn.active {
-    background-color: rgba(81, 115, 63, 0.15);
-    color: #51733F;
-    border-color: #51733F;
-    transform: scale(1.05);
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-700);
   }
   
   .dark .filter-btn {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: #ccc;
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--color-primary-700);
+    color: var(--color-secondary-400);
   }
   
   .dark .filter-btn:hover, .dark .filter-btn.active {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.3);
+    background-color: var(--color-primary-900);
+    color: var(--color-primary-300);
   }
   
-  .loading-indicator {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 1rem 2rem;
-    background-color: rgba(255, 255, 255, 0.9);
+  .github-recipes-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  @media (min-width: 640px) {
+    .github-recipes-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .github-recipes-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .recipe-card {
+    position: relative;
+    background-color: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: var(--handwriting-font);
+    padding: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    
+    /* Paper texture */
+    background-image: 
+      repeating-linear-gradient(
+        rgba(122, 158, 159, 0.02) 0px,
+        rgba(122, 158, 159, 0.02) 1px,
+        transparent 1px,
+        transparent 25px
+      );
+    
+    transform: rotate(-0.5deg);
+    border: 1px solid var(--color-primary-100);
+  }
+  
+  .recipe-card:hover {
+    transform: translateY(-5px) rotate(-0.5deg);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark .recipe-card {
+    background-color: var(--color-secondary-800);
+    border-color: var(--color-primary-800);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    
+    /* Dark mode paper texture */
+    background-image: 
+      repeating-linear-gradient(
+        rgba(160, 212, 104, 0.03) 0px,
+        rgba(160, 212, 104, 0.03) 1px,
+        transparent 1px,
+        transparent 25px
+      );
+  }
+  
+  .dark .recipe-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .recipe-card-header {
+    margin-bottom: 1rem;
+  }
+  
+  .recipe-title {
+    font-family: var(--header-font-family);
+    font-size: 1.25rem;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary-700);
+    word-break: break-word;
+  }
+  
+  .recipe-title a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  
+  .dark .recipe-title {
+    color: var(--color-primary-300);
+  }
+  
+  .recipe-description {
+    font-size: 0.95rem;
+    color: var(--color-secondary-600);
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-family: var(--body-font-family);
+  }
+  
+  .dark .recipe-description {
+    color: var(--color-secondary-400);
+  }
+  
+  .recipe-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--color-primary-200);
+    font-size: 0.85rem;
+    color: var(--color-secondary-500);
+  }
+  
+  .dark .recipe-stats {
+    border-top-color: var(--color-primary-800);
+    color: var(--color-secondary-500);
+  }
+  
+  .recipe-stat {
     display: flex;
     align-items: center;
+    gap: 0.35rem;
+  }
+  
+  .recipe-stat svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  .recipe-languages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1rem;
+  }
+  
+  .language-tag {
+    font-family: var(--handwriting-font);
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    background-color: rgba(81, 115, 63, 0.1);
+    color: var(--color-primary-700);
+    white-space: nowrap;
+  }
+  
+  .dark .language-tag {
+    background-color: rgba(160, 212, 104, 0.1);
+    color: var(--color-primary-300);
+  }
+  
+  /* Language-specific styling */
+  .language-tag[data-lang="go"] {
+    background-color: rgba(0, 173, 216, 0.1);
+    color: #00add8;
+  }
+  
+  .language-tag[data-lang="typescript"] {
+    background-color: rgba(0, 122, 204, 0.1);
+    color: #007acc;
+  }
+  
+  .language-tag[data-lang="ruby"] {
+    background-color: rgba(170, 0, 0, 0.1);
+    color: #CC342D;
+  }
+  
+  .dark .language-tag[data-lang="go"] {
+    background-color: rgba(0, 173, 216, 0.2);
+    color: #29b6f6;
+  }
+  
+  .dark .language-tag[data-lang="typescript"] {
+    background-color: rgba(0, 122, 204, 0.2);
+    color: #42a5f5;
+  }
+  
+  .dark .language-tag[data-lang="ruby"] {
+    background-color: rgba(170, 0, 0, 0.2);
+    color: #ef5350;
+  }
+  
+  /* Loading indicator */
+  .loading-indicator {
+    display: flex;
     justify-content: center;
-    z-index: 10;
-    border: 1px dashed #51733F;
+    padding: 2rem 0;
   }
   
   .cookbook-loading {
     display: flex;
     align-items: center;
+    gap: 0.75rem;
+    font-family: var(--handwriting-font);
+    color: var(--color-secondary-600);
+  }
+  
+  .dark .cookbook-loading {
+    color: var(--color-secondary-400);
   }
   
   .dots {
     display: flex;
-    margin-left: 8px;
+    gap: 0.25rem;
   }
   
   .dot {
-    width: 6px;
-    height: 6px;
+    width: 0.5rem;
+    height: 0.5rem;
     border-radius: 50%;
-    background-color: #51733F;
-    margin: 0 2px;
-    animation: dot-pulse 1.5s infinite ease-in-out;
+    background-color: var(--color-primary-500);
+    animation: dot-bounce 1.4s infinite ease-in-out;
+  }
+  
+  .dot:nth-child(1) {
+    animation-delay: 0s;
   }
   
   .dot:nth-child(2) {
@@ -156,218 +343,30 @@ const {
     animation-delay: 0.4s;
   }
   
-  @keyframes dot-pulse {
-    0%, 100% {
-      transform: scale(0.7);
-      opacity: 0.7;
+  @keyframes dot-bounce {
+    0%, 80%, 100% {
+      transform: scale(0.6);
+      opacity: 0.6;
     }
-    50% {
+    40% {
       transform: scale(1);
       opacity: 1;
     }
   }
   
-  .github-recipes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1rem;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  /* Error state */
+  .error-message {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-left: 3px solid #ef4444;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    color: #b91c1c;
+    font-family: var(--body-font-family);
   }
   
-  .github-recipes-grid.loaded {
-    opacity: 1;
-  }
-  
-  .recipe-card {
-    background-color: var(--notebook-paper-color);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    transform: rotate(var(--random-rotation, 0deg));
-    position: relative;
-    padding: 1.5rem;
-    
-    /* Notebook styling */
-    background-image: 
-      repeating-linear-gradient(
-        var(--notebook-paper-color) 0px,
-        var(--notebook-paper-color) 24px,
-        var(--notebook-line-color) 25px
-      );
-    background-size: 100% 25px;
-  }
-  
-  .recipe-card:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    transform: translateY(-5px) rotate(var(--random-rotation, 0deg));
-  }
-  
-  .recipe-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 30px;
-    width: 2px;
-    height: 100%;
-    background-color: rgba(255, 0, 0, 0.1);
-    z-index: 1;
-  }
-  
-  .recipe-card-header {
-    margin-bottom: 1rem;
-    position: relative;
-  }
-  
-  .recipe-name {
-    font-family: var(--header-font-family);
-    font-size: 1.4rem;
-    margin: 0;
-    padding-bottom: 0.5rem;
-    color: #51733F;
-    border-bottom: 2px dotted rgba(81, 115, 63, 0.3);
-  }
-  
-  .recipe-description {
-    font-family: var(--handwriting-font);
-    margin: 1rem 0;
-    line-height: 25px; /* Match the notebook line height */
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .recipe-stats {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1rem;
-    font-family: var(--handwriting-font);
-    font-size: 0.9rem;
-    color: #666;
-  }
-  
-  .recipe-stat {
-    display: flex;
-    align-items: center;
-  }
-  
-  .recipe-stat svg {
-    width: 16px;
-    height: 16px;
-    margin-right: 4px;
-  }
-  
-  .recipe-languages {
-    margin-top: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  
-  .language-tag {
-    font-family: var(--handwriting-font);
-    font-size: 0.8rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 20px;
-    background-color: rgba(81, 115, 63, 0.1);
-    color: #51733F;
-    position: relative;
-    z-index: 2;
-    border: 1px dashed rgba(81, 115, 63, 0.3);
-  }
-  
-  .recipe-links {
-    margin-top: 1.5rem;
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-  }
-  
-  .recipe-link {
-    font-family: var(--handwriting-font);
-    text-decoration: none;
-    color: #51733F;
-    background-color: rgba(81, 115, 63, 0.05);
-    padding: 0.3rem 0.8rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    transition: all 0.2s ease;
-    border: 1px dashed rgba(81, 115, 63, 0.3);
-  }
-  
-  .recipe-link:hover {
-    background-color: rgba(81, 115, 63, 0.1);
-    transform: translateY(-2px);
-  }
-  
-  .recipe-link svg {
-    width: 16px;
-    height: 16px;
-    margin-right: 4px;
-  }
-  
-  .dark .recipe-card {
-    background-color: #2d3748;
-    background-image: 
-      repeating-linear-gradient(
-        #2d3748 0px,
-        #2d3748 24px,
-        rgba(255, 255, 255, 0.05) 25px
-      );
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .dark .recipe-name {
-    color: #a0d468;
-  }
-  
-  .dark .recipe-description,
-  .dark .recipe-stats {
-    color: #cbd5e0;
-  }
-  
-  .dark .language-tag {
-    background-color: rgba(160, 212, 104, 0.1);
-    color: #a0d468;
-    border-color: rgba(160, 212, 104, 0.3);
-  }
-  
-  .dark .recipe-link {
-    color: #a0d468;
-    background-color: rgba(160, 212, 104, 0.05);
-    border-color: rgba(160, 212, 104, 0.3);
-  }
-  
-  .dark .recipe-link:hover {
-    background-color: rgba(160, 212, 104, 0.1);
-  }
-  
-  .dark .loading-indicator {
-    background-color: rgba(45, 55, 72, 0.9);
-    color: #cbd5e0;
-    border-color: #4a5568;
-  }
-  
-  .dark .dot {
-    background-color: #a0d468;
-  }
-  
-  @media (max-width: 768px) {
-    .recipes-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    
-    .github-recipes-grid {
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    }
+  .dark .error-message {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
   }
 </style>
 
@@ -381,19 +380,25 @@ const {
     const limit = parseInt(projectsGrid.getAttribute('data-limit') || '6');
     const featured = projectsGrid.getAttribute('data-featured') === 'true';
     
-    if (!username) {
-      console.error('GitHub username is required for the GithubProjects component');
-      return;
+    if (username) {
+      loadGithubProjects(username, limit, featured);
     }
     
-    // Initialize projects
-    loadGithubProjects(username, limit, featured);
-    
-    // Initialize filters
-    initializeFilters();
+    // Add event listeners to filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Remove active class from all buttons
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        
+        // Add active class to clicked button
+        btn.classList.add('active');
+        
+        // Filter repositories
+        filterRepositories(btn.getAttribute('data-filter'));
+      });
+    });
   });
   
-  // Load GitHub projects
   async function loadGithubProjects(username, limit, featured) {
     const projectsGrid = document.querySelector('.github-recipes-grid');
     const loadingIndicator = document.querySelector('.loading-indicator');
@@ -403,108 +408,142 @@ const {
       const response = await fetch(`/api/github?endpoint=users/${username}/repos?sort=updated&per_page=100`);
       let repos = await response.json();
       
-      // Check for API error
-      if (repos.error) {
-        throw new Error(repos.message || 'Failed to load GitHub repositories');
+      // Hide loading indicator
+      if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
       }
       
-      // Filter out forks unless specified
-      if (featured) {
-        repos = repos.filter(repo => !repo.fork);
-      }
-      
-      // Filter out repos without descriptions
-      repos = repos.filter(repo => repo.description);
-      
-      // Sort by stars and limit
-      repos = repos.sort((a, b) => b.stargazers_count - a.stargazers_count).slice(0, limit);
-      
-      // Create cards
-      if (repos.length === 0) {
-        projectsGrid.innerHTML = '<div class="no-recipes">No recipes found in the cookbook!</div>';
-      } else {
-        // Create cards with random slight rotations for notebook feel
-        const repoCards = repos.map(repo => {
-          // Generate random rotation between -2 and 2 degrees
-          const rotation = (Math.random() * 4 - 2).toFixed(1);
+      // Sort and filter repositories
+      if (repos && repos.length > 0) {
+        // Sort by stars and then by updated date
+        repos.sort((a, b) => {
+          // First by stars
+          if (b.stargazers_count !== a.stargazers_count) {
+            return b.stargazers_count - a.stargazers_count;
+          }
+          // Then by updated date
+          return new Date(b.updated_at) - new Date(a.updated_at);
+        });
+        
+        // Filter repositories based on featured flag
+        if (featured) {
+          repos = repos.filter(repo => 
+            !repo.fork && 
+            !repo.archived && 
+            !repo.name.includes('template') && 
+            !repo.name.includes('demo') &&
+            !repo.description?.includes('archived')
+          );
+        }
+        
+        // Prioritize Golang, TypeScript and Ruby repositories
+        repos = repos.sort((a, b) => {
+          const aLang = a.language?.toLowerCase() || '';
+          const bLang = b.language?.toLowerCase() || '';
           
-          // Get primary language (will fetch others later)
-          const language = repo.language || 'Unknown';
-          const languageClass = language.toLowerCase().replace(/\s+/g, '-');
+          const isPriorityA = aLang === 'go' || aLang === 'typescript' || aLang === 'ruby';
+          const isPriorityB = bLang === 'go' || bLang === 'typescript' || bLang === 'ruby';
           
-          return `
-            <div class="recipe-card" style="--random-rotation: ${rotation}deg" data-languages="${languageClass}">
-              <div class="recipe-card-header">
-                <h3 class="recipe-name">${escapeHTML(repo.name)}</h3>
-              </div>
-              <p class="recipe-description">${escapeHTML(repo.description)}</p>
-              <div class="recipe-stats">
-                <div class="recipe-stat" title="Stars">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                  </svg>
-                  <span>${repo.stargazers_count}</span>
+          if (isPriorityA && !isPriorityB) return -1;
+          if (!isPriorityA && isPriorityB) return 1;
+          return 0;
+        });
+        
+        // Limit the number of repositories
+        repos = repos.slice(0, limit);
+        
+        // Create repository cards
+        if (projectsGrid) {
+          projectsGrid.innerHTML = repos.map(repo => {
+            // Format date
+            const updatedDate = new Date(repo.updated_at).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            });
+            
+            const language = repo.language || 'Other';
+            const languageClass = language.toLowerCase().replace(/[^a-z0-9]/g, '');
+            
+            return `
+              <div class="recipe-card" data-repo="${repo.name}" data-lang="${languageClass}">
+                <div class="recipe-card-header">
+                  <h3 class="recipe-title">
+                    <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">
+                      ${repo.name}
+                    </a>
+                  </h3>
                 </div>
-                <div class="recipe-stat" title="Forks">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M7 18v-9.7c0-.61.25-1.2.7-1.63L12 2l4.3 4.67c.45.43.7 1.02.7 1.63V18"></path>
-                    <path d="M3 22h18"></path>
-                    <circle cx="12" cy="17" r="3"></circle>
-                  </svg>
-                  <span>${repo.forks_count}</span>
-                </div>
-              </div>
-              <div class="recipe-languages">
-                <span class="language-tag">${language}</span>
-              </div>
-              <div class="recipe-links">
-                <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="recipe-link">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-                  </svg>
-                  Code
-                </a>
-                ${repo.homepage ? `
-                  <a href="${repo.homepage}" target="_blank" rel="noopener noreferrer" class="recipe-link">
+                
+                <p class="recipe-description">
+                  ${repo.description || 'No description available.'}
+                </p>
+                
+                <div class="recipe-stats">
+                  <div class="recipe-stat">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="2" y1="12" x2="22" y2="12"></line>
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                      <path d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2z" />
                     </svg>
-                    Demo
-                  </a>
-                ` : ''}
+                    ${repo.stargazers_count}
+                  </div>
+                  
+                  <div class="recipe-stat">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+                    </svg>
+                    ${repo.forks_count}
+                  </div>
+                  
+                  <div class="recipe-stat">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    ${updatedDate}
+                  </div>
+                </div>
+                
+                <div class="recipe-languages">
+                  <span class="language-tag" data-lang="${languageClass}">${language}</span>
+                  <div class="languages-loader" data-repo="${repo.full_name}"></div>
+                </div>
               </div>
+            `;
+          }).join('');
+          
+          // Load additional languages for each repository
+          repos.forEach(repo => {
+            loadRepoLanguages(username, repo.name);
+          });
+        }
+      } else {
+        // Display error message
+        if (projectsGrid) {
+          projectsGrid.innerHTML = `
+            <div class="error-message">
+              <p>No recipes found. The chef might be taking a break or updating their cookbook.</p>
+              <p>Check back later or visit <a href="https://github.com/${username}" target="_blank" rel="noopener noreferrer">GitHub</a> directly.</p>
             </div>
           `;
-        }).join('');
-        
-        projectsGrid.innerHTML = repoCards;
-        
-        // Load additional languages for each repo and update the cards
-        repos.forEach(repo => {
-          loadRepoLanguages(username, repo.name);
-        });
+        }
       }
-      
-      // Show the grid and hide loading
-      projectsGrid.classList.add('loaded');
-      if (loadingIndicator) loadingIndicator.style.display = 'none';
-      
     } catch (error) {
       console.error('Error loading GitHub projects:', error);
       
       if (projectsGrid) {
         projectsGrid.innerHTML = `
           <div class="error-message">
-            <p>Unable to load GitHub recipes at this time. Please check back later!</p>
-            <p class="error-details">${error.message}</p>
+            <p>Error loading recipes from GitHub's kitchen.</p>
+            <p>Please try again later or visit <a href="https://github.com/${username}" target="_blank" rel="noopener noreferrer">GitHub</a> directly.</p>
           </div>
         `;
-        projectsGrid.classList.add('loaded');
       }
       
-      if (loadingIndicator) loadingIndicator.style.display = 'none';
+      if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
+      }
     }
   }
   
@@ -514,131 +553,42 @@ const {
       const response = await fetch(`/api/github?endpoint=repos/${username}/${repoName}/languages`);
       const languages = await response.json();
       
-      if (languages.error) return;
+      // Get loader element
+      const loaderElement = document.querySelector(`.languages-loader[data-repo="${username}/${repoName}"]`);
       
-      // Find the card for this repo
-      const repoCard = document.querySelector(`.recipe-card h3.recipe-name:contains('${repoName}')`).closest('.recipe-card');
-      if (!repoCard) return;
-      
-      // Get languages container
-      const languagesContainer = repoCard.querySelector('.recipe-languages');
-      if (!languagesContainer) return;
-      
-      // Clear existing languages
-      languagesContainer.innerHTML = '';
-      
-      // Get top 3 languages by bytes
-      const topLanguages = Object.entries(languages)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3);
+      if (loaderElement && languages) {
+        // Sort languages by usage
+        const sortedLanguages = Object.keys(languages)
+          .sort((a, b) => languages[b] - languages[a])
+          .filter(lang => lang.toLowerCase() !== repoName.split('/')[1].toLowerCase()) // Exclude main language
+          .slice(0, 2); // Limit to 2 additional languages
         
-      // Add languages as tags
-      topLanguages.forEach(([language, bytes]) => {
-        const languageClass = language.toLowerCase().replace(/\s+/g, '-');
-        languagesContainer.innerHTML += `<span class="language-tag" data-bytes="${bytes}">${language}</span>`;
+        // Create language tags HTML
+        const languageTags = sortedLanguages.map(lang => {
+          const langClass = lang.toLowerCase().replace(/[^a-z0-9]/g, '');
+          return `<span class="language-tag" data-lang="${langClass}">${lang}</span>`;
+        }).join('');
         
-        // Add this language to the card's dataset for filtering
-        const currentLanguages = repoCard.getAttribute('data-languages') || '';
-        if (!currentLanguages.includes(languageClass)) {
-          repoCard.setAttribute('data-languages', `${currentLanguages} ${languageClass}`);
-        }
-      });
-      
+        // Update loader element
+        loaderElement.innerHTML = languageTags;
+      }
     } catch (error) {
-      console.error(`Error loading languages for ${repoName}:`, error);
+      console.error(`Error loading languages for ${username}/${repoName}:`, error);
     }
   }
   
-  // Initialize language filters
-  function initializeFilters() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
+  // Filter repositories by language
+  function filterRepositories(filter) {
+    const allRepos = document.querySelectorAll('.recipe-card');
     
-    filterButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        // Update active button
-        filterButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-        
-        // Get filter value
-        const filter = button.getAttribute('data-filter');
-        
-        // Filter projects
-        filterProjects(filter);
-      });
-    });
-  }
-  
-  // Filter projects by language
-  function filterProjects(filter) {
-    const projects = document.querySelectorAll('.recipe-card');
-    
-    projects.forEach(project => {
-      if (filter === 'all') {
-        project.style.display = 'block';
-        return;
-      }
+    allRepos.forEach(repo => {
+      const repoLang = repo.getAttribute('data-lang');
       
-      const languages = project.getAttribute('data-languages') || '';
-      if (languages.includes(filter)) {
-        project.style.display = 'block';
+      if (filter === 'all' || (filter === 'other' && !['go', 'typescript', 'ruby'].includes(repoLang)) || filter === repoLang) {
+        repo.style.display = 'flex';
       } else {
-        project.style.display = 'none';
+        repo.style.display = 'none';
       }
     });
   }
-  
-  // Helper function to safely escape HTML
-  function escapeHTML(str) {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
-  
-  // Custom contains selector for case-insensitive matching
-  Element.prototype.matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
-  Element.prototype.closest = Element.prototype.closest || function (selector) {
-    let el = this;
-    while (el) {
-      if (el.matches(selector)) {
-        return el;
-      }
-      el = el.parentElement;
-    }
-    return null;
-  };
-  
-  // Case-insensitive :contains selector
-  const contains = function(element, text) {
-    return element.textContent.includes(text);
-  };
-  
-  // Add custom :contains selector to querySelector
-  if (!Element.prototype.querySelector.prototype) {
-    Element.prototype.querySelector.prototype = {};
-  }
-  
-  // Add a custom :contains handler to querySelector
-  // This is a simple implementation for our specific use case
-  const originalQuerySelector = Element.prototype.querySelector;
-  Element.prototype.querySelector = function(selector) {
-    if (selector.includes(':contains(')) {
-      const match = selector.match(/:contains\(['"](.*?)['"]\)/);
-      if (match) {
-        const text = match[1];
-        const cleanSelector = selector.replace(/:contains\(['"](.*?)['"]\)/, '');
-        
-        // First find elements matching the clean selector
-        const elements = Array.from(this.querySelectorAll(cleanSelector));
-        
-        // Then filter by text content
-        return elements.find(el => contains(el, text)) || null;
-      }
-    }
-    
-    // Otherwise, use the original
-    return originalQuerySelector.call(this, selector);
-  };
 </script>

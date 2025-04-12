@@ -2,225 +2,516 @@
 import "../styles/global.css";
 import "../styles/notebook.css"; // New stylesheet for notebook enhancements
 import "../styles/contrast.css"; // Consolidated contrast styles
-import NavBar from "@components/layout/NavBar.astro";
-import CoverPage from "@components/layout/CoverPage.astro";
-import Footer from "@components/layout/Footer.astro";
-import PrivacyBanner from "@components/items/PrivacyBanner.astro";
+import NavBar from "../components/layout/NavBar.astro";
+import CoverPage from "../components/layout/CoverPage.astro";
+import Footer from "../components/layout/Footer.astro";
+import PrivacyBanner from "../components/items/PrivacyBanner.astro";
+import { Icon } from "astro-icon/components";
 
 export interface Props {
   title: string;
-  desc?: string;
+  description?: string;
   keywords?: string;
-  metaImage?: string;
-  pubDate?: Date;
-  tags?: string[];
+  ogImage?: string;
+  articleDate?: Date;
+  articleModifiedDate?: Date;
+  type?: string;
+  twitterCard?: string;
+  canonicalUrl?: string;
+  analytics?: boolean;
 }
 
-let { title, desc, metaImage, keywords, tags = [], pubDate = null } = Astro.props;
-if (!title) title = "chiso";
-if (!desc) desc = "Learning, exploring and making software I'd use.";
-if (!metaImage) metaImage = "/images/meta.png";
-if (!keywords) keywords = "chiso, raeeceip, chiso, osasona, go, typescript, javascript, rust, gleam, software, engineer";
+// Default values first
+const {
+  title: propTitle,
+  description: propDescription,
+  keywords: propKeywords,
+  ogImage: propOgImage,
+  articleDate,
+  articleModifiedDate,
+  type = "website",
+  twitterCard = "summary_large_image",
+  canonicalUrl,
+  analytics: analyticsEnabled = true,
+} = Astro.props;
 
-const metaImgUrl = metaImage;
+// Get Astro site URL, or use chiso.dev as default
+const SITE_URL = import.meta.env.SITE || "https://chiso.dev";
+
+// Default social image (notebook-image.png)
+const DEFAULT_SOCIAL_IMAGE = "/images/notebook-image.png";
+
+// Create new variables with defaults rather than reassigning constants
+const title = propTitle || "Chiso's Developer Cookbook";
+const description = propDescription || "Software engineer specializing in Golang, TypeScript, and Ruby. This is my cookbook of code, projects, and tech recipes.";
+const ogImage = propOgImage || DEFAULT_SOCIAL_IMAGE;
+// Ensure keywords is always an array
+const keywords = Array.isArray(propKeywords) ? propKeywords : 
+                 (typeof propKeywords === 'string' ? propKeywords.split(',').map(k => k.trim()) : []);
+
+// Generate canonical URL
+const canonicalURL = new URL(canonicalUrl || Astro.url.pathname, SITE_URL).href;
+
+// Function to resolve social image URL
+const getSocialImageURL = (image) => {
+  if (!image) return new URL(DEFAULT_SOCIAL_IMAGE, SITE_URL).href;
+  if (image.startsWith("http")) return image;
+  return new URL(image, SITE_URL).href;
+};
+
+// Process the OG image
+const socialImageURL = getSocialImageURL(ogImage);
+
+// Generate structured data based on type
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": type === "article" ? "Article" : "WebSite",
+  "url": canonicalURL,
+  "name": title,
+  "description": description,
+  ...(type === "article" && {
+    "datePublished": articleDate || new Date().toISOString(),
+    "dateModified": articleModifiedDate || new Date().toISOString(),
+    "author": {
+      "@type": "Person",
+      "name": "Chisom Chibogu",
+      "url": SITE_URL
+    },
+    "image": socialImageURL
+  })
+};
+
+// Optional analytics code - can be configured or disabled
+const analyticsCode = `
+  <!-- Analytics code can go here -->
+`;
+
+// Get current URL for canonical link and OG URL - not dependent on any specific domain
+const baseUrl = Astro.site || new URL("https://chiso.dev/");
+
+// Generate a formatted date for meta tags if articleDate is provided
+const formattedPubDate = articleDate 
+  ? new Date(articleDate).toISOString()
+  : new Date().toISOString();
+
+// Ensure metaImage is an absolute URL
+const metaImgUrl = socialImageURL;
+
+// Generate dynamic keywords from tags plus any provided keywords
+const combinedKeywords = Array.isArray(keywords) ? keywords.join(", ") : typeof keywords === 'string' ? keywords : '';
+
+// Inject theme detection script to prevent flash of wrong theme
+const themeDetectionScript = `
+  // Detect theme preference on page load (before any rendering)
+  (function() {
+    function setTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+      
+      // Apply the theme immediately to prevent flash
+      document.documentElement.classList.toggle('dark', isDark);
+      document.documentElement.classList.toggle('light', !isDark);
+      
+      // Update the theme-color meta tag
+      const themeColor = document.querySelector('meta[name="theme-color"]');
+      if (themeColor) {
+        themeColor.setAttribute('content', isDark ? '#4a5568' : '#51733F');
+      }
+    }
+    
+    // Call immediately for immediate effect
+    setTheme();
+    
+    // Also set up listener for system preference changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+      // Only change theme if no saved preference exists
+      if (!localStorage.getItem('theme')) {
+        document.documentElement.classList.toggle('dark', e.matches);
+        document.documentElement.classList.toggle('light', !e.matches);
+      }
+    });
+  })();
+`;
+
+// Dynamic site name from browser URL or default to Chiso's Cookbook
+const siteName = typeof window !== 'undefined' 
+  ? window.location.hostname.split('.')[0] + "'s Cookbook" 
+  : "Chiso's Cookbook";
+
 ---
 
-<!doctype html>
-<html lang="en" class="light">
+<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden w-full">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
     <!-- Updated theme color to match notebook theme -->
     <meta name="theme-color" content="#51733F" />
-    <meta name="description" content={desc} />
-    <meta name="keywords" content={keywords} />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <!-- Basic meta tags -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {combinedKeywords && <meta name="keywords" content={combinedKeywords} />}
+    <link rel="canonical" href={canonicalURL} />
+    
+    <!-- Favicon and app icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/favicon.svg" color="#51733F" />
 
-    <!-- Font preconnect for faster loading -->
+    <!-- Fonts - Using system fonts with Google fonts as fallbacks -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap">
+    </noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap">
+    </noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap">
+    </noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap">
+    </noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+    </noscript>
     
-    <!-- Cookbook-specific fonts with display swap -->
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Inject theme detection script to prevent flash of wrong theme -->
+    <script is:inline>
+      // Detect theme preference on page load (before any rendering)
+      (function() {
+        function setTheme() {
+          const savedTheme = localStorage.getItem('theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+          
+          // Apply the theme immediately to prevent flash
+          document.documentElement.classList.toggle('dark', isDark);
+          document.documentElement.classList.toggle('light', !isDark);
+          
+          // Update the theme-color meta tag
+          const themeColor = document.querySelector('meta[name="theme-color"]');
+          if (themeColor) {
+            themeColor.setAttribute('content', isDark ? '#4a5568' : '#51733F');
+          }
+        }
+        
+        // Call immediately for immediate effect
+        setTheme();
+        
+        // Also set up listener for system preference changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+          // Only change theme if no saved preference exists
+          if (!localStorage.getItem('theme')) {
+            document.documentElement.classList.toggle('dark', e.matches);
+            document.documentElement.classList.toggle('light', !e.matches);
+          }
+        });
+      })();
+    </script>
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Chiso's Notebook" />
-    <meta property="og:url" content={`https://chiso.dev${Astro.url.pathname}`} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={desc} />
-    <meta property="og:image" content="https://chiso.dev/images/notebook-meta.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Chiso's cookbook page" />
-    
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImageURL} />
+    <meta property="og:site_name" content={siteName} />
+    {articleDate && <meta property="article:published_time" content={formattedPubDate} />}
+    {keywords && keywords.length > 0 && keywords.map((keyword) => (
+      <meta property="article:tag" content={keyword} />
+    ))}
+
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@gnchiso" />
-    <meta name="twitter:url" content={`https://chiso.dev${Astro.url.pathname}`} />
+    <meta name="twitter:card" content={twitterCard} />
+    <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={desc} />
-    <meta name="twitter:image" content={metaImgUrl} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImageURL} />
     
-    <title>{title}</title>
-
-    <!-- Preload critical cookbook assets -->
-    <link rel="preload" href="/images/paper-texture.png" as="image" />
-
-    <!-- Cookbook Animation Script -->
-    <script src="/scripts/cover-animation.js" defer></script>
+    <!-- Structure data for recipes (if this is a recipe/blog post) -->
+    {type === "article" && (
+      <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    )}
     
-    <!-- Force light mode as default -->
-    <script is:inline>
-      // Force light mode as default
-      if (!localStorage.getItem("theme")) {
-        localStorage.setItem("theme", "light");
-        document.documentElement.classList.remove("dark");
-      }
-    </script>
-
-    {!!pubDate ? <meta property="article:published_time" content={pubDate.toISOString()} /> : null}
-    {tags?.map((tag) => <meta property="article:tag" content={tag} />)}
-
-    <script src="/vendor/alpine-persist.js" defer is:inline></script>
-    <script src="/vendor/alpine.js" defer is:inline></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4414445126244161"
-     crossorigin="anonymous"></script>
-
-    <!-- Using data-astro-transition="none" to disable built-in transitions -->
-    <meta name="astro:transition" content="none" />
-    <script is:inline src="/scripts/notebook.js"></script>
-    <script is:inline>
-      // Cache the current theme to prevent flashing during transitions
-      const currentTheme = localStorage.getItem('theme') === 'dark' || 
-        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-      
-      // Apply theme immediately to prevent flash during transitions
-      document.documentElement.classList.remove('light', 'dark');
-      document.documentElement.classList.add(currentTheme);
-      
-      // Store theme in a data attribute for easier access during transitions
-      document.documentElement.dataset.theme = currentTheme;
-    </script>
-    <!-- Include our custom transitions script -->
-    <script is:inline src="/scripts/customTransitions.js"></script>
+    <!-- PWA manifest -->
+    <link rel="manifest" href="/manifest.json" />
     
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const headers = document.querySelectorAll("[data-section-header]");
-        if (headers?.length > 1) {
-          headers.forEach((header) => {
-            header?.addEventListener("click", () => {
-              const slug = header.id;
-              const url = window.location.protocol + "//" + window.location.host + window.location.pathname;
-              const hash = `#${slug}`;
-              const fullUrl = `${url}${hash}`;
-
-              navigator.clipboard.writeText(fullUrl);
-              window.location.hash = slug;
-            });
-          });
-        }
-      });
-    </script>
+    <!-- Performance Optimization -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <meta http-equiv="x-dns-prefetch-control" content="on">
     
-    <!-- Custom draggable feature cards script -->
-    <script src="/scripts/draggable.js" defer></script>
-    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#51733F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   </head>
-  <body>
+  <body class="overflow-x-hidden w-full">
     <!-- Cover Page Component - will be controlled by JS -->
     <CoverPage />
     
     <!-- Enhanced notebook container for page transitions -->
-    <div class="notebook-container" id="notebook-container" transition:animate="slide">
-      <NavBar />
-      <div class="notebook-content" id="notebook-content">
-        <div class="page-corner-fold"></div>
+    <div id="page-content" class="overflow-x-hidden w-full">
+      <div id="page-container" class="container mx-auto px-4 md:px-8">
+        <NavBar />
         <slot />
+        <Footer />
       </div>
-      <Footer />
-      <PrivacyBanner />
     </div>
     
-    <script is:inline>
-      // Cover page animation script - improved to only show once
+    <PrivacyBanner />
+    
+    <!-- Cover page animation - for first time visitors -->
+    <script>
       document.addEventListener('DOMContentLoaded', function() {
-        const coverPage = document.getElementById('notebook-cover');
-        const notebookSpine = document.getElementById('notebook-spine');
+        const coverPage = document.querySelector('.cover-page');
+        const pageContent = document.getElementById('page-content');
         
-        if (!coverPage) return;
-        
-        // Check for first-time visit
-        const isFirstVisit = !localStorage.getItem('visited');
-        
-        if (!isFirstVisit) {
-          // For returning visitors, immediately remove the cover
-          coverPage.remove();
-          if (notebookSpine) notebookSpine.remove();
-        } else {
-          // First-time visitor - mark as visited immediately
-          localStorage.setItem('visited', 'true');
-          
-          // Make sure cover is visible with proper styling
-          coverPage.style.display = 'flex';
-          if (notebookSpine) notebookSpine.style.display = 'block';
-          // Override any conflicting inline styles
-          coverPage.style.animationDuration = '2.5s !important';
-          coverPage.style.animationFillMode = 'forwards';
-          coverPage.style.transition = 'none';
-
-          
-          // Trigger the open animation after a short delay
-          setTimeout(() => {
-            // Add the open class to trigger animation via CSS transition
-            coverPage.classList.add('open');
+        if (coverPage && pageContent) {
+          // Check if this is first visit or not
+          if (!sessionStorage.getItem('visited')) {
+            // Mark as visited for session
+            sessionStorage.setItem('visited', 'true');
             
-            // After animation completes, completely remove the cover elements
-            // Duration matches the CSS animation time (2.5s) + small buffer
+            // Show cover and animate after delay 
+            coverPage.style.display = 'flex';
+            pageContent.style.opacity = '0';
+            
+            // Start animation after 2.5 seconds (slow dramatic animation)
             setTimeout(() => {
-              coverPage.remove();
-              if (notebookSpine) notebookSpine.remove();
-            }, 2700); 
-          }, 3000); // Display duration before animation starts - reduced from 10s
+              coverPage.classList.add('animate-open');
+              pageContent.style.opacity = '1';
+              
+              // Remove cover after animation
+              setTimeout(() => {
+                coverPage.style.display = 'none';
+              }, 1500);
+            }, 2500);
+          } else {
+            // Not first visit
+            coverPage.style.display = 'none';
+            pageContent.style.opacity = '1';
+          }
+        }
+      });
+    </script>
+    
+    <!-- Performance Optimizations and Lazy Loading -->
+    <script>
+      // Lazy loading implementation
+      document.addEventListener('DOMContentLoaded', function() {
+        // Use let instead of const since we'll be manipulating this array
+        let lazyImages: HTMLImageElement[] = Array.from(document.querySelectorAll("img.lazy")) as HTMLImageElement[];
+        
+        if ("IntersectionObserver" in window) {
+          let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting) {
+                let lazyImage = entry.target as HTMLImageElement;
+                lazyImage.src = lazyImage.dataset.src || '';
+                
+                if (lazyImage.dataset.srcset) {
+                  lazyImage.srcset = lazyImage.dataset.srcset;
+                }
+                
+                lazyImage.classList.remove("lazy");
+                lazyImageObserver.unobserve(lazyImage);
+              }
+            });
+          });
+          
+          lazyImages.forEach(function(lazyImage) {
+            lazyImageObserver.observe(lazyImage);
+          });
+        } else {
+          // Fallback for browsers without IntersectionObserver support
+          let active = false;
+          
+          const lazyLoad = function() {
+            if (active === false) {
+              active = true;
+              
+              setTimeout(function() {
+                // Create a new array of images that should remain lazy
+                const remainingLazyImages: HTMLImageElement[] = [];
+                
+                // Process each image
+                lazyImages.forEach(function(lazyImage) {
+                  if ((lazyImage.getBoundingClientRect().top <= window.innerHeight && 
+                      lazyImage.getBoundingClientRect().bottom >= 0) && 
+                      getComputedStyle(lazyImage).display !== "none") {
+                    
+                    // Load the image
+                    lazyImage.src = lazyImage.dataset.src || '';
+                    if (lazyImage.dataset.srcset) {
+                      lazyImage.srcset = lazyImage.dataset.srcset;
+                    }
+                    lazyImage.classList.remove("lazy");
+                    
+                    // This image is now loaded - don't add to remainingLazyImages
+                  } else {
+                    // This image is still lazy - keep it for future checks
+                    remainingLazyImages.push(lazyImage);
+                  }
+                });
+                
+                // Replace the lazyImages array with the new filtered array
+                lazyImages = remainingLazyImages;
+                
+                // If no more lazy images, remove event listeners
+                if (lazyImages.length === 0) {
+                  document.removeEventListener("scroll", lazyLoad);
+                  window.removeEventListener("resize", lazyLoad);
+                  window.removeEventListener("orientationchange", lazyLoad);
+                }
+                
+                active = false;
+              }, 200);
+            }
+          };
+          
+          document.addEventListener("scroll", lazyLoad);
+          window.addEventListener("resize", lazyLoad);
+          window.addEventListener("orientationchange", lazyLoad);
+          window.addEventListener("load", lazyLoad);
+        }
+        
+        // Defer non-critical scripts
+        const deferScripts = document.querySelectorAll('script[defer-load]');
+        deferScripts.forEach(script => {
+          const src = script.getAttribute('defer-src');
+          if (src) {
+            setTimeout(() => {
+              const newScript = document.createElement('script');
+              newScript.src = src;
+              document.body.appendChild(newScript);
+            }, 3000); // Load after 3 seconds
+          }
+        });
+      });
+      
+      // Add support for native lazy loading
+      document.addEventListener('DOMContentLoaded', function() {
+        if ('loading' in HTMLImageElement.prototype) {
+          const images = document.querySelectorAll('img[data-src]');
+          images.forEach(img => {
+            const imgElement = img as HTMLImageElement;
+            imgElement.src = imgElement.dataset.src || '';
+            if (imgElement.dataset.srcset) {
+              imgElement.srcset = imgElement.dataset.srcset;
+            }
+            imgElement.classList.add('native-lazy');
+          });
         }
       });
       
-      // Fast page transitions
-      document.addEventListener('astro:page-load', () => {
-        // For page transitions
-        const notebookContent = document.getElementById('notebook-content');
+      // Performance metrics tracking
+      if ('performance' in window && 'PerformanceObserver' in window) {
+        // FCP - First Contentful Paint
+        const fcpObserver = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            console.log('FCP:', entry.startTime, 'ms');
+          }
+        });
+        fcpObserver.observe({type: 'paint', buffered: true});
         
-        // Faster rip-through effect on page changes
-        if (notebookContent) {
-          notebookContent.classList.add('fast-transition');
-          setTimeout(() => {
-            notebookContent.classList.remove('fast-transition');
-          }, 300);
-        }
-      });
+        // LCP - Largest Contentful Paint
+        const lcpObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          const lastEntry = entries[entries.length - 1];
+          console.log('LCP:', lastEntry.startTime, 'ms');
+        });
+        lcpObserver.observe({type: 'largest-contentful-paint', buffered: true});
+        
+        // CLS - Cumulative Layout Shift
+        const clsObserver = new PerformanceObserver((list) => {
+          let cumulativeScore = 0;
+          for (const entry of list.getEntries()) {
+            if (!entry.hadRecentInput) {
+              cumulativeScore += entry.value;
+            }
+          }
+          console.log('CLS:', cumulativeScore);
+        });
+        clsObserver.observe({type: 'layout-shift', buffered: true});
+      }
     </script>
-    
-    <!-- Add notebook enhancements script -->
-    <script src="/scripts/notebook.js" defer></script>
-    
+
     <!-- Service Worker Registration -->
     <script>
-      // Register service worker for offline support and improved performance
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js')
-            .then(registration => {
-              console.log('Service Worker registered with scope:', registration.scope);
-            })
-            .catch(error => {
-              console.error('Service Worker registration failed:', error);
-            });
+          navigator.serviceWorker.register('/service-worker.js').then(registration => {
+            console.log('ServiceWorker registration successful');
+          }).catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
         });
       }
     </script>
+
+    <style is:global>
+      /* Optimization for image loading */
+      img.lazy {
+        opacity: 0;
+        transition: opacity 0.3s ease-in;
+      }
+      
+      img.lazy.loaded {
+        opacity: 1;
+      }
+      
+      /* Native lazy loading support */
+      img.native-lazy {
+        opacity: 0;
+        animation: fadeIn 0.5s ease-in forwards;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      /* Fix horizontal overflow on mobile */
+      html, body {
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100vw;
+        position: relative;
+      }
+      
+      /* Disable horizontal animation transforms on mobile */
+      @media (max-width: 640px) {
+        .recipe-card {
+          transform: none !important;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .recipe-card:hover {
+          transform: translateY(-3px) !important;
+        }
+        
+        /* Remove any rotation that might cause sway */
+        [class*="rotate-"] {
+          transform: none !important;
+        }
+      }
+    </style>
   </body>
 </html>

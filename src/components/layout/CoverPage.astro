@@ -2,7 +2,7 @@
 import { Icon } from "astro-icon/components";
 ---
 
-<div class="notebook-cover" id="notebook-cover">
+<div class="cover-page" id="cover-page">
   <div class="cover-frame">
     <div class="cover-icon">
       <Icon name="tabler:chef-hat" />
@@ -27,7 +27,7 @@ import { Icon } from "astro-icon/components";
 
 <style>
   /* COVER PAGE STYLES */
-  .notebook-cover {
+  .cover-page {
     position: fixed;
     top: 0;
     left: 0;
@@ -35,7 +35,7 @@ import { Icon } from "astro-icon/components";
     height: 100%;
     background: linear-gradient(135deg, #51733F, #3F5C31);
     z-index: 9999;
-    display: flex;
+    display: none; /* Hidden by default, shown via JS */
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -46,264 +46,65 @@ import { Icon } from "astro-icon/components";
       inset 0 0 50px rgba(0, 0, 0, 0.2);
     text-align: center;
     overflow: hidden;
-    transition: none; /* Remove transition to use animation instead */
     will-change: transform, opacity;
-    animation: none !important; /* Initial state - no animation, with !important */
   }
-
-  .notebook-cover.open {
-    animation-name: coverOpen !important;
-    animation-duration: 2.5s !important;
-    animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1.000) !important;
-    animation-fill-mode: forwards !important;
-    animation-play-state: running !important;
-    pointer-events: none;
+  
+  /* Animation class - added via JS */
+  .cover-page.animate-open {
+    animation: coverOpen 2.5s forwards;
   }
-
-  /* Re-add specific animation for book opening effect */
+  
+  /* Book opening animation */
   @keyframes coverOpen {
     0% {
       transform: perspective(1800px) rotateY(0deg);
-      box-shadow: 
-        5px 0 25px rgba(0, 0, 0, 0.4),
-        inset 0 0 50px rgba(0, 0, 0, 0.2);
       opacity: 1;
-    }
-    10% {
-      transform: perspective(1800px) rotateY(-10deg);
-      box-shadow: 
-        10px 0 30px rgba(0, 0, 0, 0.45),
-        inset 0 0 55px rgba(0, 0, 0, 0.25);
-    }
-    30% {
-      transform: perspective(1800px) rotateY(-30deg);
-      box-shadow: 
-        15px 0 35px rgba(0, 0, 0, 0.5),
-        inset 0 0 60px rgba(0, 0, 0, 0.3);
-    }
-    50% {
-      transform: perspective(1800px) rotateY(-50deg);
-      box-shadow: 
-        20px 0 40px rgba(0, 0, 0, 0.55),
-        inset 0 0 65px rgba(0, 0, 0, 0.35);
-    }
-    70% {
-      transform: perspective(1800px) rotateY(-70deg);
-      box-shadow: 
-        30px 0 50px rgba(0, 0, 0, 0.65),
-        inset 0 0 75px rgba(0, 0, 0, 0.45);
-      opacity: 0.6;
     }
     100% {
       transform: perspective(1800px) rotateY(-100deg);
-      box-shadow: 
-        35px 0 55px rgba(0, 0, 0, 0.7),
-        inset 0 0 80px rgba(0, 0, 0, 0.5);
       opacity: 0;
     }
   }
   
-  /* Cover texture */
-  .notebook-cover::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
-      radial-gradient(rgba(255, 255, 255, 0.05) 2px, transparent 2px);
-    background-size: 40px 40px, 20px 20px;
-    opacity: 0.8;
-    transform-origin: 0% 50%;
-    transition: transform 0.5s ease-out;
-  }
-
-  .notebook-cover.open::before {
-    transform: perspective(1800px) rotateY(-20deg);
-  }
-
-  /* Additional texture layer */
-  .notebook-cover::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%23ffffff' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
-    z-index: 1;
-    opacity: 0.7;
-  }
-
-  /* Notebook spine styling */
-  .notebook-spine {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 25px;
-    height: 100%;
-    background-color: #3F5C31;
-    z-index: 9998;
-    box-shadow: 
-      2px 0 10px rgba(0, 0, 0, 0.2),
-      inset -5px 0 10px rgba(0, 0, 0, 0.2);
-    animation: spineFade 5.5s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
-  }
-
-  @keyframes spineFade {
-    0%, 90% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-      visibility: hidden;
-    }
-  }
-
-  .notebook-spine::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 5px;
-    width: 15px;
-    height: 100%;
-    background-image: 
-      repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.2),
-        rgba(0, 0, 0, 0.2) 8px,
-        rgba(255, 255, 255, 0.15) 8px,
-        rgba(255, 255, 255, 0.15) 12px
-      );
-  }
-
-  /* Add binding holes to the spine */
-  .notebook-spine::after {
-    content: "";
-    position: absolute;
-    top: 10%;
-    left: 0;
-    width: 100%;
-    height: 80%;
-    background-image: 
-      radial-gradient(
-        circle at center,
-        rgba(0, 0, 0, 0.3) 2px,
-        transparent 2px
-      );
-    background-size: 100% 40px;
-    background-repeat: repeat-y;
-    opacity: 0.7;
-  }
-
-  /* Cover content styling */
+  /* Cover frame and elements */
   .cover-frame {
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-radius: 1rem;
-    padding: 3rem;
     position: relative;
-    transform: rotate(-3deg);
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.05));
+    width: 80%;
+    max-width: 500px;
+    height: 80%;
+    max-height: 700px;
+    background-color: #51733F;
+    border-radius: 5px;
+    padding: 2rem;
     box-shadow: 
-      0 0 30px rgba(0, 0, 0, 0.2),
-      inset 0 0 15px rgba(255, 255, 255, 0.1);
-    max-width: 550px;
-    width: 90%;
-    margin: 0 auto;
-    overflow: hidden;
-    z-index: 2;
-  }
-
-  /* Enhanced texture to the frame */
-  .cover-frame::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-    z-index: -1;
-    opacity: 0.5;
-  }
-
-  /* Cover icon styling */
-  .cover-icon {
-    position: absolute;
-    top: -2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, #5b8347, #4a6e39);
-    color: #fff;
-    width: 4rem;
-    height: 4rem;
+      0 0 0 10px rgba(255, 255, 255, 0.1),
+      inset 0 0 20px rgba(0, 0, 0, 0.2);
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 
-      0 5px 15px rgba(0, 0, 0, 0.3),
-      inset 0 0 10px rgba(255, 255, 255, 0.1);
-    z-index: 10;
-    animation: float 3s ease-in-out infinite;
+    align-items: center;
+    gap: 1.5rem;
   }
-
-  .cover-icon svg {
-    width: 2.5rem;
-    height: 2.5rem;
-    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+  
+  .cover-icon {
+    font-size: 4rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1rem;
   }
-
-  @keyframes float {
-    0%, 100% {
-      transform: translateX(-50%) translateY(0);
-    }
-    50% {
-      transform: translateX(-50%) translateY(-5px);
-    }
-  }
-
-  /* Improved cookbook badge */
+  
   .cookbook-badge {
-    position: absolute;
-    top: -1.5rem;
-    right: -1.5rem;
-    background: linear-gradient(135deg, #8B4513, #A0522D);
-    color: #FFF8DC;
-    font-family: var(--cursive-font);
-    padding: 0.85rem 1.35rem;
-    border-radius: 50%;
-    transform: rotate(15deg);
-    font-size: 0.9rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #51733F;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-family: var(--handwriting-font);
     font-weight: bold;
-    box-shadow: 
-      2px 2px 8px rgba(0, 0, 0, 0.3),
-      inset 0 0 5px rgba(255, 255, 255, 0.15);
-    z-index: 10;
-    border: 2px dashed rgba(255, 255, 255, 0.3);
-    letter-spacing: 0.05em;
-    animation: badgePulse 3s infinite alternate;
+    font-size: 1.2rem;
+    transform: rotate(-5deg);
+    margin-bottom: 1rem;
   }
-
-  @keyframes badgePulse {
-    0% {
-      transform: rotate(15deg) scale(1);
-      box-shadow: 
-        2px 2px 8px rgba(0, 0, 0, 0.3),
-        inset 0 0 5px rgba(255, 255, 255, 0.15);
-    }
-    100% {
-      transform: rotate(15deg) scale(1.05);
-      box-shadow: 
-        3px 3px 12px rgba(0, 0, 0, 0.4),
-        inset 0 0 8px rgba(255, 255, 255, 0.2);
-    }
-  }
-
-  /* Improved cookbook corners */
+  
+  /* Cookbook decorative patterns */
   .cookbook-corner {
     position: absolute;
     width: 35px;
@@ -435,7 +236,7 @@ import { Icon } from "astro-icon/components";
 
   /* Mobile responsiveness */
   @media (max-width: 768px) {
-    .notebook-cover {
+    .cover-page {
     animation: none;
   }
   

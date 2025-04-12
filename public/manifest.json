@@ -1,0 +1,36 @@
+{
+  "name": "Chiso's Cookbook Portfolio",
+  "short_name": "Chiso's Cookbook",
+  "description": "A cookbook-themed portfolio showcasing web development, programming recipes, and software engineering experiments.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#51733F",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "48x48 72x72 96x96 128x128 256x256 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "orientation": "portrait",
+  "categories": ["development", "portfolio", "cookbook"],
+  "shortcuts": [
+    {
+      "name": "Recipes",
+      "short_name": "Recipes",
+      "description": "View programming recipes",
+      "url": "/projects"
+    },
+    {
+      "name": "Blog",
+      "short_name": "Blog",
+      "description": "Read blog posts",
+      "url": "/posts"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "scope": "/"
+}

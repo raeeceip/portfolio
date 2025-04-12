@@ -122,28 +122,75 @@ import { Icon } from "astro-icon/components";
     opacity: 1;
   }
   
-  .site-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  .site-title {
     font-family: var(--handwriting-font);
-    font-weight: 700;
-    font-size: 1.2rem; /* Slightly larger logo font */
-    color: var(--primary-color);
-    position: relative;
-    margin-left: 2rem;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: var(--primary-color, #51733F);
+    text-decoration: none;
     transition: transform 0.3s ease;
   }
   
-  .site-logo:hover {
-    transform: translateY(-1px) rotate(1deg);
+  .site-title:hover {
+    transform: translateY(-2px);
+  }
+  
+  .dark .site-title {
+    color: var(--primary-color-light, #a9c76f);
+  }
+  
+  .theme-toggle-logo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--primary-color, #51733F);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .theme-toggle-logo:hover {
+    transform: translateY(-2px) rotate(-5deg);
+  }
+  
+  .logo-tooltip {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    font-style: italic;
+    white-space: nowrap;
+    color: var(--text-muted, #718096);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  .theme-toggle-logo:hover .logo-tooltip {
+    opacity: 0.8;
+  }
+  
+  .dark .theme-toggle-logo {
+    color: var(--primary-color-light, #a9c76f);
   }
   
   .logo-icon {
-    display: inline-block;
-    color: var(--primary-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--primary-color, #51733F);
   }
-
+  
+  .dark .logo-icon {
+    color: var(--primary-color-light, #a9c76f);
+  }
+  
   /* Mobile menu button */
   .mobile-menu-button {
     display: none;
@@ -158,9 +205,8 @@ import { Icon } from "astro-icon/components";
     transform: rotate(-1deg);
   }
   
-  /* Mobile navigation menu */
+  /* Mobile navigation */
   .mobile-nav {
-    display: none;
     position: fixed;
     top: 60px;
     left: 1rem;
@@ -175,6 +221,7 @@ import { Icon } from "astro-icon/components";
     transform: scale(0.95);
     opacity: 0;
     transition: all 0.2s ease-in-out;
+    display: none;
     
     /* Notebook paper lines */
     background-image: 
@@ -190,6 +237,8 @@ import { Icon } from "astro-icon/components";
   }
   
   .mobile-nav.open {
+    display: flex;
+    flex-direction: column;
     transform: scale(1);
     opacity: 1;
   }
@@ -208,13 +257,17 @@ import { Icon } from "astro-icon/components";
   /* Theme toggle button */
   .theme-toggle {
     background-color: transparent;
-    border: 1px dashed var(--primary-color);
-    color: var(--primary-color);
+    border: 1px dashed var(--primary-color, #51733F);
+    color: var(--primary-color, #51733F);
     padding: 0.5rem;
     border-radius: 0.25rem;
     transition: all 0.3s ease;
     transform: rotate(-1deg);
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .theme-toggle:hover {
@@ -222,8 +275,38 @@ import { Icon } from "astro-icon/components";
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
   }
   
-  [data-icon="tabler:moon"], [data-icon="tabler:sun"] {
-    font-size: 1.25rem;
+  .theme-toggle svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  /* Mobile theme toggle styling */
+  .mobile-theme-toggle {
+    margin-top: 1rem;
+    align-self: center;
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  html.light .light-icon {
+    display: none;
+  }
+  
+  html.light .dark-icon {
+    display: block;
+  }
+  
+  html.dark .light-icon {
+    display: block;
+  }
+  
+  html.dark .dark-icon {
+    display: none;
+  }
+  
+  html.dark .theme-toggle {
+    border-color: #a9c76f;
+    color: #a9c76f;
   }
   
   /* Media queries for responsive design */
@@ -240,23 +323,31 @@ import { Icon } from "astro-icon/components";
       display: block;
     }
     
-    .site-logo {
+    .site-title {
       margin-left: 1rem; /* Less margin on mobile */
     }
   }
 </style>
 
-<nav class="nav-container w-full py-3" x-data="{ mobileMenuOpen: false }">
+<nav class="nav-container w-full py-3">
   <div class="container mx-auto flex items-center justify-between px-3 md:px-6">
-    <a href="/" class="site-logo text-xl">
-      <span class="logo-icon"><Icon name="tabler:chef-hat" /></span>
-      <span>chiso</span>
-    </a>
+    <!-- Chef hat logo now toggles theme -->
+    <div class="flex items-center gap-4">
+      <a href="/" class="site-title text-xl">
+        <span>chiso</span>
+      </a>
+      
+      <!-- Separate chef hat for theme toggle -->
+      <button id="logo-theme-toggle" class="theme-toggle-logo" aria-label="Toggle dark mode">
+        <span class="logo-icon"><Icon name="tabler:chef-hat" /></span>
+        <span class="logo-tooltip">Change theme</span>
+      </button>
+    </div>
     
     <!-- Mobile menu button -->
     <button 
+      id="mobile-menu-toggle"
       class="mobile-menu-button" 
-      @click="mobileMenuOpen = !mobileMenuOpen"
       aria-label="Toggle mobile menu"
     >
       <Icon name="tabler:menu-2" />
@@ -287,89 +378,133 @@ import { Icon } from "astro-icon/components";
     </div>
 
     <!-- Mobile navigation menu -->
-    <div class="mobile-nav" :class="{ 'open': mobileMenuOpen }">
-      <a href="/" class="nav-link" @click="mobileMenuOpen = false">
+    <div id="mobile-nav" class="mobile-nav">
+      <a href="/" class="nav-link">
         <Icon name="tabler:home" class="nav-icon" />
         <span>Home</span>
       </a>
-      <a href="/blog" class="nav-link" @click="mobileMenuOpen = false">
+      <a href="/blog" class="nav-link">
         <Icon name="tabler:book" class="nav-icon" />
         <span>Recipe Journal</span>
       </a>
-      <a href="/notes" class="nav-link" @click="mobileMenuOpen = false">
+      <a href="/notes" class="nav-link">
         <Icon name="tabler:note" class="nav-icon" />
         <span>Quick Notes</span>
       </a>
-      <a href="/projects" class="nav-link" @click="mobileMenuOpen = false">
+      <a href="/projects" class="nav-link">
         <Icon name="tabler:books" class="nav-icon" />
         <span>Recipe Collection</span>
       </a>
-      <a href="/tools" class="nav-link" @click="mobileMenuOpen = false">
+      <a href="/tools" class="nav-link">
         <Icon name="tabler:tools" class="nav-icon" />
         <span>Kitchen Tools</span>
       </a>
+      
+      <!-- Theme toggle button in mobile menu -->
+      <button id="mobile-theme-toggle" class="theme-toggle mobile-theme-toggle">
+        <Icon name="tabler:moon" class="dark-icon" />
+        <Icon name="tabler:sun" class="light-icon" />
+      </button>
     </div>
 
-    <button
-      x-cloak
-      class="theme-toggle"
-      @click="$store.theme.mode === 'dark' ? $store.theme.enableLightMode() : $store.theme.enableDarkMode()"
-      aria-label="Toggle dark mode"
-    >
-      <template x-if="$store.theme.mode == 'light'">
-        <Icon name="tabler:moon" />
-      </template>
-
-      <template x-if="$store.theme.mode == 'dark'">
-        <Icon name="tabler:sun" />
-      </template>
-    </button>
   </div>
 </nav>
 
 <div class="h-16"></div> <!-- Spacer to account for fixed navbar -->
 
+<script>
+  // Simple mobile menu functionality without Alpine.js
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    
+    if (mobileMenuButton && mobileNav) {
+      mobileMenuButton.addEventListener('click', function() {
+        if (mobileNav.classList.contains('open')) {
+          mobileNav.classList.remove('open');
+        } else {
+          mobileNav.classList.add('open');
+        }
+      });
+      
+      // Close mobile menu when clicking on links
+      const mobileLinks = mobileNav.querySelectorAll('a');
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          mobileNav.classList.remove('open');
+        });
+      });
+    }
+  });
+</script>
+
 <script is:inline>
   // Theme handling
   function handleThemeChange(isDarkMode) {
     document.documentElement.classList.toggle("dark", isDarkMode);
-
-    // Update the theme-color meta for the appropriate colors in the browser
-    const themeColor = document.querySelector("meta[name=theme-color]");
-    themeColor.setAttribute("content", isDarkMode ? "#3A4D30" : "#51733F");
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+    
+    // Toggle aria-pressed state on the logo
+    const logoToggle = document.getElementById('logo-theme-toggle');
+    if (logoToggle) {
+      logoToggle.setAttribute('aria-pressed', isDarkMode ? 'true' : 'false');
+    }
   }
 
-  // Force light mode as default
-  if (!localStorage.getItem("theme")) {
-    localStorage.setItem("theme", "light");
-  }
-  
-  // Only use dark mode if explicitly set in localStorage
-  const persistedDarkModeFlag = localStorage.getItem("theme") === "dark";
-  
-  // Set the theme on page load - force light mode by default
-  handleThemeChange(persistedDarkModeFlag);
-
-  // Initialize Alpine.js theme store
-  document.addEventListener("alpine:init", () => {
-    Alpine.store("theme", {
-      mode: persistedDarkModeFlag ? "dark" : "light",
-      enableDarkMode() {
-        localStorage.setItem("theme", "dark");
-        this.mode = "dark";
-        handleThemeChange(true);
-      },
-      enableLightMode() {
-        localStorage.setItem("theme", "light");
-        this.mode = "light";
-        handleThemeChange(false);
-      },
-      init() {
-        // Force light mode as default on initial load
-        if (!localStorage.getItem("theme") || localStorage.getItem("theme") !== "dark") {
-          this.enableLightMode();
+  // Initialize theme on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    // Check for saved theme or prefer-color-scheme
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDarkMode = savedTheme === "dark" || (!savedTheme && prefersDark);
+    
+    // Set initial state
+    handleThemeChange(isDarkMode);
+    
+    // Add event listener to logo for theme toggle
+    const logoToggle = document.getElementById('logo-theme-toggle');
+    if (logoToggle) {
+      logoToggle.setAttribute('role', 'button');
+      logoToggle.setAttribute('aria-pressed', isDarkMode ? 'true' : 'false');
+      logoToggle.setAttribute('tabindex', '0');
+      logoToggle.setAttribute('aria-label', 'Toggle dark mode');
+      
+      logoToggle.addEventListener('click', function() {
+        const currentMode = document.documentElement.classList.contains('dark');
+        handleThemeChange(!currentMode);
+      });
+      
+      // Also allow keyboard activation with Enter key
+      logoToggle.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const currentMode = document.documentElement.classList.contains('dark');
+          handleThemeChange(!currentMode);
         }
-      }
-    });
+      });
+    }
+    
+    // Handle mobile theme toggle
+    const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+    if (mobileThemeToggle) {
+      mobileThemeToggle.addEventListener('click', function() {
+        const currentMode = document.documentElement.classList.contains('dark');
+        handleThemeChange(!currentMode);
+      });
+    }
+    
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener('click', function() {
+        mobileMenu.classList.toggle('open');
+        mobileMenuButton.setAttribute(
+          'aria-expanded',
+          mobileMenu.classList.contains('open').toString()
+        );
+      });
+    }
   });
 </script>

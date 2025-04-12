@@ -6,9 +6,17 @@ import ProjectListItem from "@components/items/ProjectListItem.astro";
 import { getCollection } from "astro:content";
 
 const projects = (await getCollection("projects"))?.[0]?.data;
+
+// SEO metadata
+const title = "Recipe Collection | Chiso's Cookbook";
+const description = "Explore a collection of programming recipes and technical projects created by Chisom - including web apps, developer tools, and experiments.";
 ---
 
-<Layout title="Recipe Collection">
+<Layout 
+  title={title} 
+  description={description}
+  keywords="programming projects, recipe collection, code portfolio, developer projects, web development, tech experiments"
+>
   <main class="container">
     <SiteHeader />
 
@@ -23,13 +31,13 @@ const projects = (await getCollection("projects"))?.[0]?.data;
 
       <!-- prettier-ignore -->
       <p class="leading-relaxed mb-8">
-        During my free time and outside my day job, I work on a ton of side projects sometimes in different tools/languages and for various reasons; mainly to explore and learn new and old things. I am very interested in making developer tools and trying out new (to me) technologies to see things from a different perspective and fill in the blanks for things I may not know from working with my usual stack. Here are some of the things I have handpicked but you can find a lot more of them on my <a href="https://github.com/raeeceip" target="_blank">GitHub</a>.
+        During my free time and outside my day job, I work on a ton of side projects sometimes in different tools/languages and for various reasons; mainly to explore and learn new and old things. I am very interested in making developer tools and trying out new (to me) technologies to see things from a different perspective and fill in the blanks for things I may not know from working with my usual stack. Here are some of the things I have handpicked but you can find a lot more of them on my <a href="https://github.com/raeeceip" target="_blank" rel="noopener noreferrer">GitHub</a>.
       </p>
 
-      <div class="mt-10 space-y-8">
+      <div class="mt-10 space-y-8" id="recipe-collection">
         {projects.map((project, index) => (
           <div class={index % 3 === 1 ? "transform rotate-0.5deg" : index % 3 === 2 ? "transform -rotate-0.5deg" : ""}>
-            <ProjectListItem project={project} />
+            <ProjectListItem project={project} index={index} />
           </div>
         ))}
       </div>
@@ -40,3 +48,273 @@ const projects = (await getCollection("projects"))?.[0]?.data;
     </div>
   </main>
 </Layout>
+
+<script>
+  // Initialize lazy loading for project images
+  document.addEventListener('DOMContentLoaded', function() {
+    const lazyImages = document.querySelectorAll('img.lazy');
+    
+    if ("IntersectionObserver" in window) {
+      const imageObserver = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            const lazyImage = entry.target;
+            lazyImage.src = lazyImage.dataset.src;
+            lazyImage.classList.add("loaded");
+            imageObserver.unobserve(lazyImage);
+          }
+        });
+      });
+      
+      lazyImages.forEach(function(lazyImage) {
+        imageObserver.observe(lazyImage);
+      });
+    } else {
+      // Fallback for browsers without IntersectionObserver
+      let active = false;
+      
+      const lazyLoad = function() {
+        if (active === false) {
+          active = true;
+          
+          setTimeout(function() {
+            lazyImages.forEach(function(lazyImage) {
+              if ((lazyImage.getBoundingClientRect().top <= window.innerHeight && 
+                  lazyImage.getBoundingClientRect().bottom >= 0) && 
+                  getComputedStyle(lazyImage).display !== "none") {
+                lazyImage.src = lazyImage.dataset.src;
+                lazyImage.classList.add("loaded");
+              }
+            });
+            
+            active = false;
+          }, 200);
+        }
+      };
+      
+      document.addEventListener("scroll", lazyLoad);
+      window.addEventListener("resize", lazyLoad);
+      window.addEventListener("orientationchange", lazyLoad);
+      lazyLoad();
+    }
+    
+    // Add minimal dragging functionality to recipe cards
+    const recipeCards = document.querySelectorAll('.recipe-card');
+    recipeCards.forEach(card => {
+      let isDragging = false;
+      let startPosX, startPosY;
+      let startTransformX = 0, startTransformY = 0;
+      
+      card.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        startPosX = e.clientX;
+        startPosY = e.clientY;
+        
+        // Extract current transform values if they exist
+        const currentTransform = window.getComputedStyle(card).transform;
+        if (currentTransform && currentTransform !== 'none') {
+          const values = currentTransform.split('(')[1].split(')')[0].split(',');
+          startTransformX = parseInt(values[4]) || 0;
+          startTransformY = parseInt(values[5]) || 0;
+        }
+        
+        card.style.cursor = 'grabbing';
+        card.style.zIndex = '10';
+        card.style.transition = 'none';
+      });
+      
+      document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        
+        const diffX = e.clientX - startPosX;
+        const diffY = e.clientY - startPosY;
+        
+        // Limit movement to a small area for subtle effect
+        const maxMove = 20;
+        const moveX = Math.max(-maxMove, Math.min(maxMove, diffX));
+        const moveY = Math.max(-maxMove, Math.min(maxMove, diffY));
+        
+        card.style.transform = `translate(${startTransformX + moveX}px, ${startTransformY + moveY}px)`;
+      });
+      
+      document.addEventListener('mouseup', function() {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        card.style.cursor = 'grab';
+        card.style.zIndex = '1';
+        card.style.transition = 'transform 0.3s ease';
+        
+        // Return to original position with smooth animation
+        setTimeout(() => {
+          card.style.transform = '';
+        }, 100);
+      });
+      
+      // Touch support for mobile
+      card.addEventListener('touchstart', function(e) {
+        isDragging = true;
+        startPosX = e.touches[0].clientX;
+        startPosY = e.touches[0].clientY;
+        
+        card.style.zIndex = '10';
+        card.style.transition = 'none';
+        e.preventDefault();
+      });
+      
+      document.addEventListener('touchmove', function(e) {
+        if (!isDragging) return;
+        
+        const diffX = e.touches[0].clientX - startPosX;
+        const diffY = e.touches[0].clientY - startPosY;
+        
+        // Limit movement to a small area for subtle effect
+        const maxMove = 20;
+        const moveX = Math.max(-maxMove, Math.min(maxMove, diffX));
+        const moveY = Math.max(-maxMove, Math.min(maxMove, diffY));
+        
+        card.style.transform = `translate(${moveX}px, ${moveY}px)`;
+      });
+      
+      document.addEventListener('touchend', function() {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        card.style.zIndex = '1';
+        card.style.transition = 'transform 0.5s ease';
+        
+        // Return to original position with smooth animation
+        setTimeout(() => {
+          card.style.transform = '';
+        }, 100);
+      });
+    });
+  });
+</script>
+
+<style>
+  .recipe-title {
+    font-family: var(--header-font-family);
+    color: var(--primary-color, #51733F);
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+    font-weight: 700;
+  }
+
+  .recipe-title::after {
+    content: "";
+    position: absolute;
+    bottom: -0.5rem;
+    left: 25%;
+    width: 50%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--primary-color, #51733F),
+      transparent
+    );
+  }
+  
+  .recipe-tab {
+    position: absolute;
+    top: -2rem;
+    left: 2rem;
+    background-color: var(--primary-color, #51733F);
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    font-family: var(--header-font-family);
+    font-weight: 600;
+    font-size: 1rem;
+    transform: rotate(-2deg);
+    z-index: 1;
+  }
+  
+  .recipe-note {
+    font-family: var(--handwriting-font);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    line-height: 1.4;
+  }
+  
+  .dark .recipe-tab {
+    background-color: var(--primary-color-light, #a9c76f);
+    color: var(--primary-color-dark, #3c5a2d);
+  }
+  
+  .notebook-page {
+    background-color: var(--notebook-paper-color, #fff);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 3rem 2rem;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 4rem;
+  }
+  
+  .dark .notebook-page {
+    background-color: var(--notebook-paper-color-dark, #4a5568);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Coffee stain effect */
+  .notebook-page::before {
+    content: "";
+    position: absolute;
+    top: 10%;
+    right: 15%;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(139, 69, 19, 0.08) 0%,
+      rgba(139, 69, 19, 0.05) 50%,
+      rgba(139, 69, 19, 0.01) 80%,
+      rgba(139, 69, 19, 0) 100%
+    );
+    pointer-events: none;
+  }
+  
+  /* Spiral notebook effect */
+  .notebook-page::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1rem;
+    width: 1px;
+    background-image: repeating-linear-gradient(
+      0deg,
+      var(--primary-color, #51733F) 0px,
+      var(--primary-color, #51733F) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+  }
+  
+  @media (max-width: 768px) {
+    .notebook-page {
+      padding: 2rem 1rem;
+    }
+    
+    .recipe-title {
+      font-size: 1.75rem;
+    }
+    
+    .recipe-tab {
+      left: 1rem;
+      padding: 0.4rem 1rem;
+      font-size: 0.9rem;
+    }
+    
+    .notebook-page::after {
+      left: 0.5rem;
+    }
+  }
+</style>

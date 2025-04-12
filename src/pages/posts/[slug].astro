@@ -1,24 +1,34 @@
 ---
-import Layout from "@layouts/Layout.astro";
-import { Icon } from "astro-icon/components";
+import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import { getMetaUrl } from "../../lib/utils";
+import Tags from "../../components/misc/Tags.astro";
+import PageNotes from "../../components/interactive/PageNotes.astro";
+import { Icon } from "astro-icon/components";
 
-import Tags from "@components/misc/Tags.astro";
-import PageNotes from "@components/interactive/PageNotes.astro";
+import Code from "../../components/mdx/Code.astro";
+import H1 from "../../components/mdx/H1.astro";
+import H2 from "../../components/mdx/H2.astro";
+import H3 from "../../components/mdx/H3.astro";
 
-import TableOfContents from "@components/layout/TableOfContents.astro";
-import Code from "@components/mdx/Code.astro";
-import H1 from "@components/mdx/H1.astro";
-import H2 from "@components/mdx/H2.astro";
-import H3 from "@components/mdx/H3.astro";
-import { getMetaUrl } from "@lib/utils";
+// Format date helper function
+function formatDate(date: Date): string {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
-  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
 }
 
-let { post } = Astro.props;
+const { post } = Astro.props;
 
 if (!post) {
   return new Response(null, {
@@ -28,246 +38,1039 @@ if (!post) {
 }
 
 let {
-  data: { title, description: desc, tags, keywords, date, image },
+  data: { title, description: desc, tags = [], keywords = "", date, image },
   slug,
 } = post;
+
+// Get the rendered content and headings
 const { Content, headings } = await post.render();
+
+// Format headings for table of contents
+const tableOfContents = headings && headings.map ? headings.map((heading) => {
+  return {
+    depth: heading.depth,
+    slug: heading.slug,
+    text: heading.text
+  };
+}) : [];
 
 const metaUrl = image ? image : getMetaUrl(title, date);
 const minuteReadTime = Math.ceil(post.body.length / 1500);
+
+// Convert tags for meta keywords if needed
+const keywordsArray = keywords ? 
+  (typeof keywords === 'string' ? keywords.split(',').map(k => k.trim()) : keywords) : 
+  tags;
+
 ---
 
-<style>
-  [data-icon] {
-    display: inline-block;
-  }
-
-  .container-full {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .recipe-container {
-    position: relative;
-    background-color: theme("colors.secondary.100");
-    padding: 2rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid theme("colors.primary.100");
-    margin-bottom: 2rem;
-  }
-  
-  .dark .recipe-container {
-    background-color: theme("colors.secondary.900");
-    border-color: theme("colors.primary.900");
-  }
-  
-  .recipe-title {
-    font-family: var(--header-font-family);
-    font-size: 2.5rem;
-    color: theme("colors.primary.700");
-    margin-bottom: 1rem;
-    line-height: 1.2;
-    position: relative;
-  }
-  
-  .dark .recipe-title {
-    color: theme("colors.primary.300");
-  }
-  
-  .recipe-title::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 80px;
-    height: 2px;
-    background-color: theme("colors.primary.500");
-  }
-  
-  .recipe-info {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin: 1.5rem 0;
-    font-size: 0.95rem;
-    color: theme("colors.secondary.600");
-  }
-  
-  .recipe-info-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .tags-container {
-    margin: 1.5rem 0;
-  }
-  
-  /* Notebook paper styling for the recipe content */
-  .recipe-content {
-    position: relative;
-    background-color: var(--notebook-paper-color);
-    border-radius: 0.5rem;
-    padding: 2rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    font-family: var(--body-font-family);
-    line-height: 1.6;
+<Layout 
+  title={title}
+  description={desc}
+  keywords={keywordsArray}
+  ogImage={metaUrl}
+  articleDate={date}
+  articleModifiedDate={date}
+  type="article"
+  twitterCard="summary_large_image"
+>
+  <div class="post-header">
+    <div class="post-meta">
+      <time datetime={date.toISOString()}>
+        {formatDate(date)}
+      </time>
+      <span class="meta-separator">•</span>
+      <span>{minuteReadTime} min read</span>
+    </div>
+    <h1 class="post-title handwritten-title">{title}</h1>
     
-    /* Notebook paper background */
-    background-image: 
-      linear-gradient(
-        transparent 0px,
-        transparent 24px,
-        var(--notebook-line-color) 25px
-      ),
-      linear-gradient(
-        90deg,
-        var(--notebook-margin-color),
-        var(--notebook-margin-color) 30px,
-        transparent 30px
-      );
-    background-size: 100% 25px, 100% 100%;
-    background-repeat: repeat;
+    {tags && tags.length > 0 && (
+      <div class="post-tags">
+        <Tags tags={tags} />
+      </div>
+    )}
+  </div>
+  
+  <div class="post-grid-container">
+    <!-- Sidebar with Table of Contents -->
+    <aside class="hidden lg:block sidebar-container">
+      <div class="recipe-note">
+        <h4 class="recipe-note-title">Contents</h4>
+        {tableOfContents && tableOfContents.map && tableOfContents.map((item, i) => (
+          <div class="toc-item" style={`margin-left: ${(item.depth - 1) * 1}rem;`}>
+            <a href={`#${item.slug}`} class="text-lg font-medium text-primary-600 dark:text-primary-300">{item.text}</a>
+          </div>
+        ))}
+      </div>
+      
+      <!-- Recipe Notes - Side version -->
+      <div class="recipe-notes-sidebar">
+        <h4 class="recipe-note-title">Recipe Notes</h4>
+        <p class="text-sm italic mb-2">Add your thoughts to this recipe!</p>
+        <div id="side-notes-content" class="side-notes-content">
+          <!-- Notes will be dynamically inserted here -->
+          <div class="empty-notes-message text-sm">
+            <p>No notes yet. Add your first note!</p>
+          </div>
+        </div>
+        <textarea id="side-new-note" class="side-note-input" placeholder="Add a note..."></textarea>
+        <button id="side-add-note-button" class="side-note-button">Add Note</button>
+      </div>
+    </aside>
+    
+    <!-- Main content area -->
+    <main class="post-content-container">
+      <!-- Blog post proper content -->
+      <article class="post-content-wrapper">
+        <!-- Mobile table of contents -->
+        <div class="block lg:hidden mb-8">
+          <div class="recipe-note">
+            <h4 class="recipe-note-title">Contents</h4>
+            {tableOfContents && tableOfContents.map && tableOfContents.map((item, i) => (
+              <div class="toc-item" style={`margin-left: ${(item.depth - 1) * 1}rem;`}>
+                <a href={`#${item.slug}`} class="text-lg font-medium text-primary-600 dark:text-primary-300">{item.text}</a>
+              </div>
+            ))}
+          </div>
+          
+          <!-- Mobile notes section (smaller version) -->
+          <div class="recipe-note mt-4">
+            <h4 class="recipe-note-title">Recipe Notes</h4>
+            <div id="mobile-notes-content" class="mobile-notes-content">
+              <div class="empty-notes-message text-sm">
+                <p>No notes yet. Add your first note!</p>
+              </div>
+            </div>
+            <textarea id="mobile-new-note" class="side-note-input" placeholder="Add a note..."></textarea>
+            <button id="mobile-add-note-button" class="side-note-button">Add Note</button>
+          </div>
+        </div>
+      
+        <!-- The actual post content -->
+        <div class="post-content">
+          <Content components={{ 
+            pre: Code,
+            h1: H1,
+            h2: H2,
+            h3: H3
+          }} />
+        </div>
+      </article>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  /* Post layout */
+  .post-grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
   }
   
-  .dark .recipe-content {
-    --notebook-paper-color: theme("colors.secondary.800");
-    --notebook-line-color: rgba(255, 255, 255, 0.07);
-    --notebook-margin-color: rgba(160, 212, 104, 0.07);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  .sidebar-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  /* Make the table of contents and cooking info sticky on large screens */
-  @media (min-width: 1280px) {
-    .sidebar-container {
-      position: sticky;
-      top: 2rem;
+  @media (min-width: 1024px) {
+    .post-grid-container {
+      grid-template-columns: 250px 1fr;
     }
   }
   
-  /* Cookbook-style sticky note for recipe info */
-  .recipe-note {
-    background-color: rgba(255, 252, 232, 0.7);
-    border-left: 3px solid theme("colors.primary.600");
-    border-radius: 0.25rem;
-    padding: 1rem;
-    transform: rotate(-1deg);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    font-family: var(--handwriting-font);
+  /* Post header */
+  .post-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    position: relative;
   }
   
-  .dark .recipe-note {
-    background-color: rgba(74, 85, 104, 0.2);
-    border-left-color: theme("colors.primary.500");
+  .post-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+    height: 2px;
+    background-image: 
+      linear-gradient(
+        to right,
+        transparent,
+        var(--primary-color, #51733F),
+        transparent
+      );
+  }
+  
+  .post-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 1rem 0;
+    transform: rotate(-1deg);
+  }
+  
+  .post-meta {
+    color: var(--text-muted, #718096);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .meta-separator {
+    margin: 0 0.5rem;
+  }
+  
+  .post-tags {
+    margin: 1rem 0;
+  }
+  
+  /* Sidebar */
+  .sidebar-container {
+    position: sticky;
+    top: 5rem;
+    align-self: start;
+  }
+  
+  /* Content container */
+  .post-content-container {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  /* Recipe note (Table of Contents) */
+  .recipe-note {
+    background-color: var(--notebook-paper-color, #fff);
+    border: 1px dashed rgba(81, 115, 63, 0.4);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    background-image: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 1px,
+        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 1px,
+        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 2px,
+        transparent 2px,
+        transparent 24px
+      );
+  }
+  
+  .recipe-note::before,
+  .post-content::before,
+  .recipe-notes-sidebar::before {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(139, 69, 19, 0.15) 0%,
+      rgba(139, 69, 19, 0.08) 50%,
+      rgba(139, 69, 19, 0.01) 80%,
+      rgba(139, 69, 19, 0) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .recipe-note::before {
+    top: -15px;
+    right: -10px;
+    width: 80px;
+    height: 70px;
+    transform: rotate(20deg);
+  }
+  
+  .post-content::before {
+    bottom: 40px;
+    left: -20px;
+    width: 120px;
+    height: 100px;
+    transform: rotate(-15deg);
+    opacity: 0.3;
+  }
+  
+  .recipe-notes-sidebar::before {
+    bottom: -15px;
+    right: 10px;
+    width: 70px;
+    height: 60px;
+    transform: rotate(40deg);
+  }
+  
+  /* Add a second coffee stain for more authenticity */
+  .post-content::after {
+    content: "";
+    position: absolute;
+    top: 30%;
+    right: -15px;
+    width: 60px;
+    height: 50px;
+    border-radius: 50%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(139, 69, 19, 0.1) 0%,
+      rgba(139, 69, 19, 0.05) 60%,
+      rgba(139, 69, 19, 0) 100%
+    );
+    transform: rotate(15deg) scale(1, 0.8);
+    pointer-events: none;
+    z-index: 1;
   }
   
   .recipe-note-title {
-    font-family: var(--header-font-family);
     font-size: 1.25rem;
+    color: var(--primary-color, #51733F);
     margin-bottom: 0.75rem;
-    color: theme("colors.primary.700");
+    border-bottom: 1px dashed var(--primary-color, #51733F);
+    padding-bottom: 0.5rem;
+    font-weight: 600;
+    font-family: var(--handwriting-font);
+    transform: rotate(-1deg);
   }
   
-  .dark .recipe-note-title {
-    color: theme("colors.primary.300");
+  .toc-item {
+    margin: 0.5rem 0;
+    transform: rotate(-0.5deg);
   }
   
-  /* Full-width blog post container on desktop */
-  @media (min-width: 1024px) {
-    .blog-fullwidth {
-      max-width: 100%;
-      margin: 0;
+  .toc-item a {
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 1rem;
+    color: var(--text-color, #2d3748);
+  }
+  
+  .toc-item a:hover {
+    color: var(--primary-color, #51733F);
+    text-decoration: underline;
+    text-decoration-style: dashed;
+  }
+  
+  .dark .toc-item a {
+    color: var(--text-color-dark, #e2e8f0);
+  }
+  
+  .dark .toc-item a:hover {
+    color: var(--primary-color-light, #a9c76f);
+  }
+  
+  /* Add notebook paper styling to blog post content */
+  .post-content {
+    padding: 2rem;
+    background-color: var(--notebook-paper-color, #fff);
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: relative;
+    
+    /* Notebook paper styling */
+    background-image: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 1px,
+        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 1px,
+        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 2px,
+        transparent 2px,
+        transparent 24px
+      );
+    background-size: 100% 24px;
+    
+    border: 1px dashed rgba(81, 115, 63, 0.4);
+  }
+  
+  /* Improved blog post content styling for better readability */
+  .post-content {
+    font-family: var(--alt-font-family, 'Source Sans 3', sans-serif);
+    line-height: 1.7;
+  }
+  
+  /* Better line spacing for paragraphs and lists */
+  .post-content p {
+    margin-bottom: 1.8rem;
+    font-size: 1.05rem;
+    color: var(--text-color, #2d3748);
+    max-width: 68ch;
+  }
+  
+  /* Proper paragraph spacing for better readability */
+  .post-content p + p {
+    margin-top: -0.5rem; /* Reduce gap between consecutive paragraphs */
+  }
+  
+  /* Add more space before headings for better content separation */
+  .post-content p + h2,
+  .post-content p + h3,
+  .post-content ul + h2,
+  .post-content ul + h3,
+  .post-content ol + h2,
+  .post-content ol + h3 {
+    margin-top: 3.5rem;
+  }
+  
+  .post-content h1, 
+  .post-content h2, 
+  .post-content h3,
+  .post-content h4 {
+    font-family: var(--header-font-family, 'Crimson Pro', serif);
+    color: var(--primary-color, #51733F);
+    margin-top: 2.5rem;
+    margin-bottom: 1.2rem;
+    line-height: 1.3;
+    font-weight: 600;
+    position: relative;
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+  
+  /* Semantic decoration for headings */
+  .post-content h2::after {
+    content: "";
+    display: block;
+    width: 100%;
+    max-width: 100px;
+    height: 3px;
+    background: linear-gradient(to right, var(--primary-color, #51733F), transparent);
+    margin-top: 0.5rem;
+    border-radius: 3px;
+  }
+  
+  .post-content h1 {
+    font-size: 2.25rem;
+    border-bottom: 2px dashed rgba(81, 115, 63, 0.3);
+    padding-bottom: 0.5rem;
+  }
+  
+  .post-content h2 {
+    font-size: 1.8rem;
+  }
+  
+  .post-content h3 {
+    font-size: 1.5rem;
+  }
+  
+  .post-content h4 {
+    font-size: 1.25rem;
+  }
+  
+  /* Strong emphasis for important content */
+  .post-content strong {
+    color: var(--primary-color-dark, #3c5a2d);
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 1px;
+    border-bottom: 2px dotted var(--primary-color, #51733F);
+  }
+  
+  /* Semantic emphasis for important terms */
+  .post-content em {
+    font-style: italic;
+    color: var(--primary-color-dark, #3c5a2d);
+  }
+  
+  .post-content ul,
+  .post-content ol {
+    margin: 1.5rem 0 2rem 1.5rem;
+    padding-left: 1rem;
+  }
+  
+  .post-content li {
+    margin-bottom: 0.75rem;
+    position: relative;
+    max-width: 65ch;
+  }
+  
+  /* Better bullet styling */
+  .post-content ul li::before {
+    content: "•";
+    color: var(--primary-color, #51733F);
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+    font-weight: bold;
+  }
+  
+  /* Numbered lists styling */
+  .post-content ol {
+    counter-reset: item;
+    list-style-type: none;
+  }
+  
+  .post-content ol li {
+    counter-increment: item;
+  }
+  
+  .post-content ol li::before {
+    content: counter(item) ".";
+    color: var(--primary-color, #51733F);
+    font-weight: bold;
+    display: inline-block;
+    width: 1.5em;
+    margin-left: -1.5em;
+  }
+  
+  /* Improved link styling with semantic underlines */
+  .post-content a {
+    color: var(--primary-color, #51733F);
+    text-decoration: none;
+    background-image: linear-gradient(transparent calc(100% - 2px), var(--primary-color, #51733F) 2px);
+    background-size: 0% 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.3s ease;
+    padding-bottom: 2px;
+    font-weight: 500;
+  }
+  
+  .post-content a:hover {
+    color: var(--primary-color-dark, #3c5a2d);
+    background-size: 100% 100%;
+  }
+  
+  .post-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 2rem auto;
+    border: 1px dashed rgba(81, 115, 63, 0.4);
+    padding: 0.5rem;
+    background-color: #fff;
+    display: block; /* Center images */
+  }
+  
+  /* Caption for images */
+  .post-content img + em {
+    display: block;
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+    color: var(--text-muted, #718096);
+  }
+  
+  /* Improved code styling with better readability */
+  .post-content code:not(pre code) {
+    font-family: var(--code-font-family, 'JetBrains Mono', monospace);
+    background-color: rgba(81, 115, 63, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+    color: var(--primary-color-dark, #3c5a2d);
+    border: 1px dashed rgba(81, 115, 63, 0.3);
+    white-space: nowrap;
+  }
+  
+  /* Fix code block overflow with horizontal scrolling */
+  .post-content pre {
+    margin: 1.8rem 0;
+    padding: 1.2rem;
+    border-radius: 0.5rem;
+    background-color: #2d2d2d;
+    overflow-x: auto;
+    border: 1px dashed rgba(81, 115, 63, 0.4);
+    max-width: 100%;
+    position: relative;
+  }
+  
+  /* Add "Copy" button to code blocks */
+  .post-content pre::after {
+    content: "Copy";
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.7rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  .post-content pre:hover::after {
+    opacity: 1;
+  }
+  
+  .post-content pre code {
+    font-family: var(--code-font-family, 'JetBrains Mono', monospace);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    display: block;
+    white-space: pre;
+    word-wrap: normal;
+    padding-bottom: 0.5rem; /* Add bottom padding for scrollbar */
+  }
+  
+  /* Add line numbers to code blocks */
+  .post-content pre code {
+    counter-reset: line;
+  }
+  
+  .post-content pre code > .line::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 1.5rem;
+    margin-right: 1rem;
+    text-align: right;
+    color: rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Horizontal rule styling */
+  .post-content hr {
+    border: none;
+    height: 2px;
+    background-image: linear-gradient(to right, transparent, var(--primary-color, #51733F), transparent);
+    margin: 3rem auto;
+    width: 80%;
+    opacity: 0.5;
+  }
+  
+  /* Blockquote styling for chef tips */
+  .post-content blockquote {
+    margin: 2.5rem 0;
+    padding: 1.8rem 1.5rem 1.2rem;
+    border-left: 4px solid #f6e05e;
+    background-color: rgba(246, 224, 94, 0.1);
+    position: relative;
+    border-radius: 0.25rem;
+    font-family: var(--handwriting-font);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+    max-width: 95%;
+  }
+  
+  .post-content blockquote::before {
+    content: "Chef's Tip";
+    position: absolute;
+    top: -12px;
+    left: 1rem;
+    background-color: #f6e05e;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #744210;
+    font-family: var(--handwriting-font);
+    transform: rotate(-2deg);
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .post-content blockquote p {
+    margin: 0.5rem 0;
+    font-style: italic;
+  }
+  
+  /* Highlight important sections with a note box */
+  .post-content .important-note {
+    background-color: rgba(81, 115, 63, 0.1);
+    border-left: 4px solid var(--primary-color, #51733F);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 0.25rem;
+    position: relative;
+  }
+  
+  .post-content .important-note::before {
+    content: "Important";
+    position: absolute;
+    top: -10px;
+    left: 1rem;
+    background-color: var(--primary-color, #51733F);
+    color: white;
+    padding: 0.2rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+  
+  /* Dark mode styles for content */
+  .dark .post-content p,
+  .dark .post-content li {
+    color: var(--text-color-dark, #e2e8f0);
+  }
+  
+  .dark .post-content h1,
+  .dark .post-content h2,
+  .dark .post-content h3,
+  .dark .post-content h4 {
+    color: var(--primary-color-light, #a9c76f);
+  }
+  
+  .dark .post-content h2::after {
+    background: linear-gradient(to right, var(--primary-color-light, #a9c76f), transparent);
+  }
+  
+  .dark .post-content a {
+    color: var(--primary-color-light, #a9c76f);
+    background-image: linear-gradient(transparent calc(100% - 2px), var(--primary-color-light, #a9c76f) 2px);
+  }
+  
+  .dark .post-content a:hover {
+    color: #c0e075;
+  }
+  
+  .dark .post-content strong {
+    color: var(--primary-color-light, #a9c76f);
+    border-bottom-color: var(--primary-color-light, #a9c76f);
+  }
+  
+  .dark .post-content em {
+    color: var(--primary-color-light, #a9c76f);
+  }
+  
+  .dark .post-content code:not(pre code) {
+    background-color: rgba(169, 199, 111, 0.1);
+    color: var(--primary-color-light, #a9c76f);
+    border-color: rgba(169, 199, 111, 0.3);
+  }
+  
+  .dark .post-content pre {
+    background-color: #1a1a1a;
+  }
+  
+  .dark .post-content hr {
+    background-image: linear-gradient(to right, transparent, var(--primary-color-light, #a9c76f), transparent);
+  }
+  
+  .dark .post-content img {
+    background-color: #2d3748;
+    border-color: rgba(169, 199, 111, 0.3);
+  }
+  
+  .dark .post-content .important-note {
+    background-color: rgba(169, 199, 111, 0.1);
+    border-left-color: var(--primary-color-light, #a9c76f);
+  }
+  
+  .dark .post-content .important-note::before {
+    background-color: var(--primary-color-light, #a9c76f);
+    color: #1a202c;
+  }
+  
+  /* Improved spacing for different screen sizes */
+  @media (max-width: 768px) {
+    .post-content {
+      padding: 1.5rem;
     }
     
-    .content-grid {
-      display: grid;
-      grid-template-columns: 1fr minmax(0, 3fr) 1fr;
-      gap: 2rem;
+    .post-content h1 {
+      font-size: 1.8rem;
     }
+    
+    .post-content h2 {
+      font-size: 1.5rem;
+    }
+    
+    .post-content h3 {
+      font-size: 1.3rem;
+    }
+    
+    .post-content p,
+    .post-content li {
+      font-size: 1rem;
+    }
+  }
+  
+  /* Recipe Notes Sidebar Styling */
+  .recipe-notes-sidebar {
+    background-color: var(--notebook-paper-color, #fff);
+    border: 1px dashed rgba(81, 115, 63, 0.4);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    position: relative;
+    background-image: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 1px,
+        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 1px,
+        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 2px,
+        transparent 2px,
+        transparent 24px
+      );
+  }
+  
+  .side-notes-content,
+  .mobile-notes-content {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding-right: 5px;
+  }
+  
+  /* Stylized scrollbar for recipe notes */
+  .side-notes-content::-webkit-scrollbar,
+  .mobile-notes-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .side-notes-content::-webkit-scrollbar-track,
+  .mobile-notes-content::-webkit-scrollbar-track {
+    background: rgba(81, 115, 63, 0.1);
+    border-radius: 10px;
+  }
+  
+  .side-notes-content::-webkit-scrollbar-thumb,
+  .mobile-notes-content::-webkit-scrollbar-thumb {
+    background: rgba(81, 115, 63, 0.3);
+    border-radius: 10px;
+  }
+  
+  .side-notes-content::-webkit-scrollbar-thumb:hover,
+  .mobile-notes-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(81, 115, 63, 0.5);
+  }
+  
+  .side-note-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px dashed var(--primary-color, #51733F);
+    border-radius: 0.25rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    resize: vertical;
+    min-height: 60px;
+    font-family: var(--handwriting-font);
+  }
+  
+  .side-note-button {
+    background-color: var(--primary-color, #51733F);
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+    width: 100%;
+  }
+  
+  .side-note-button:hover {
+    background-color: var(--primary-color-dark, #3c5a2d);
+    transform: translateY(-1px);
+  }
+  
+  .note-item {
+    padding: 0.75rem;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 0.25rem;
+    margin-bottom: 0.75rem;
+    font-family: var(--handwriting-font);
+    font-size: 0.9rem;
+    border-left: 3px solid var(--primary-color, #51733F);
+    position: relative;
+  }
+  
+  .note-delete {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    color: #e53e3e;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    opacity: 0.7;
+  }
+  
+  .note-delete:hover {
+    opacity: 1;
+  }
+  
+  .empty-notes-message {
+    text-align: center;
+    color: var(--text-muted, #718096);
+    font-style: italic;
+    padding: 1rem 0;
+  }
+  
+  /* Code copy button styling */
+  .code-copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.7rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .code-copy-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  /* Dark mode styling for recipe notes */
+  .dark .recipe-notes-sidebar {
+    background-color: var(--notebook-paper-color-dark, #4a5568);
+    border-color: rgba(81, 115, 63, 0.2);
+  }
+  
+  .dark .side-notes-content::-webkit-scrollbar-track,
+  .dark .mobile-notes-content::-webkit-scrollbar-track {
+    background: rgba(169, 199, 111, 0.1);
+  }
+  
+  .dark .side-notes-content::-webkit-scrollbar-thumb,
+  .dark .mobile-notes-content::-webkit-scrollbar-thumb {
+    background: rgba(169, 199, 111, 0.3);
+  }
+  
+  .dark .side-notes-content::-webkit-scrollbar-thumb:hover,
+  .dark .mobile-notes-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(169, 199, 111, 0.5);
+  }
+  
+  .dark .note-item {
+    background-color: rgba(74, 85, 104, 0.5);
+    border-left-color: var(--primary-color-light, #a9c76f);
+  }
+  
+  .dark .side-note-input {
+    background-color: rgba(74, 85, 104, 0.7);
+    color: var(--text-color-dark, #e2e8f0);
+    border-color: var(--primary-color-light, #a9c76f);
+  }
+  
+  .dark .recipe-note::before,
+  .dark .post-content::before,
+  .dark .recipe-notes-sidebar::before,
+  .dark .post-content::after {
+    background: radial-gradient(
+      ellipse at center,
+      rgba(139, 69, 19, 0.12) 0%,
+      rgba(139, 69, 19, 0.06) 50%,
+      rgba(139, 69, 19, 0.01) 80%,
+      rgba(139, 69, 19, 0) 100%
+    );
+  }
+  
+  .dark .post-content blockquote {
+    background-color: rgba(246, 224, 94, 0.05);
+    border-left-color: rgba(246, 224, 94, 0.5);
   }
 </style>
 
-<Layout {title} {desc} metaImage={metaUrl} {keywords} {tags} pubDate={date}>
-  <div class="container-full blog-fullwidth">
-    <div class="content-grid">
-      <!-- Left sidebar with table of contents -->
-      <aside class="hidden lg:block sidebar-container">
-        <div class="recipe-note">
-          <h4 class="recipe-note-title">Contents</h4>
-          <TableOfContents {headings} asSidebar />
-        </div>
-      </aside>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const postSlug = window.location.pathname.split('/').pop();
+    const storageKey = `cookbook_notes_${postSlug}`;
+    
+    // Get all relevant DOM elements
+    const sideNotesContent = document.getElementById('side-notes-content');
+    const mobileNotesContent = document.getElementById('mobile-notes-content');
+    const sideNoteField = document.getElementById('side-new-note') as HTMLTextAreaElement | null;
+    const mobileNoteField = document.getElementById('mobile-new-note') as HTMLTextAreaElement | null;
+    const sideAddButton = document.getElementById('side-add-note-button');
+    const mobileAddButton = document.getElementById('mobile-add-note-button');
+    
+    // Load existing notes
+    function loadNotes() {
+      const notes = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      renderNotes(notes);
+    }
+    
+    // Render notes to both desktop and mobile containers
+    function renderNotes(notes: any[]) {
+      const sideContent = notes.length ? notes.map(createNoteElement).join('') : 
+        '<div class="empty-notes-message text-sm"><p>No notes yet. Add your first note!</p></div>';
       
-      <!-- Main content area -->
-      <main>
-        <article class="recipe-container">
-          <header>
-            <h1 class="recipe-title">{title}</h1>
-            
-            <div class="recipe-info">
-              <div class="recipe-info-item">
-                <Icon name="tabler:calendar" />
-                <span>{new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-              </div>
-              
-              <div class="recipe-info-item">
-                <Icon name="tabler:clock" />
-                <span>{minuteReadTime} min read</span>
-              </div>
-            </div>
-            
-            <div class="tags-container">
-              <Tags {tags} />
-            </div>
-          </header>
-          
-          <div class="recipe-content blog-content">
-            <Content components={{ h1: H1, h2: H2, h3: H3, pre: Code }} />
-            
-            <!-- Page Notes component - allows users to add their cookbook notes -->
-            <PageNotes postSlug={slug} />
-          </div>
-        </article>
-      </main>
+      if (sideNotesContent) sideNotesContent.innerHTML = sideContent;
+      if (mobileNotesContent) mobileNotesContent.innerHTML = sideContent;
       
-      <!-- Right sidebar with related info -->
-      <aside class="hidden lg:block sidebar-container">
-        <div class="recipe-note">
-          <h4 class="recipe-note-title">Recipe Info</h4>
-          <div class="space-y-3">
-            <div>
-              <div class="text-sm font-medium">Cooking Time:</div>
-              <div class="text-lg">{minuteReadTime} min read</div>
-            </div>
-            
-            <div>
-              <div class="text-sm font-medium">Published:</div>
-              <div>{new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-            </div>
-            
-            <div>
-              <div class="text-sm font-medium">Share Recipe:</div>
-              <div class="flex gap-3 mt-1">
-                <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(Astro.url)}&text=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer" class="text-twitter hover:text-twitter/80 dark:text-twitter/90 dark:hover:text-twitter">
-                  <Icon name="tabler:brand-twitter" />
-                </a>
-                <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(Astro.url)}`} target="_blank" rel="noopener noreferrer" class="text-linkedin hover:text-linkedin/80 dark:text-linkedin/90 dark:hover:text-linkedin">
-                  <Icon name="tabler:brand-linkedin" />
-                </a>
-              </div>
-            </div>
-          </div>
+      // Add event listeners to delete buttons
+      document.querySelectorAll('.note-delete').forEach(button => {
+        button.addEventListener('click', function(this: HTMLElement) {
+          const noteId = this.dataset.id;
+          if (noteId) deleteNote(parseInt(noteId, 10));
+        });
+      });
+    }
+    
+    // Create HTML for a note
+    function createNoteElement(note: any, index: number) {
+      return `
+        <div class="note-item" data-id="${index}">
+          <button class="note-delete" data-id="${index}">×</button>
+          ${note.content}
         </div>
-      </aside>
-    </div>
-  </div>
-</Layout>
+      `;
+    }
+    
+    // Add a new note
+    function addNote(content: string) {
+      if (!content.trim()) return;
+      
+      const notes = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      notes.push({
+        content,
+        date: new Date().toISOString()
+      });
+      
+      localStorage.setItem(storageKey, JSON.stringify(notes));
+      renderNotes(notes);
+    }
+    
+    // Delete a note
+    function deleteNote(id: number) {
+      const notes = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      notes.splice(id, 1);
+      localStorage.setItem(storageKey, JSON.stringify(notes));
+      renderNotes(notes);
+    }
+    
+    // Setup event listeners
+    if (sideAddButton && sideNoteField) {
+      sideAddButton.addEventListener('click', function() {
+        addNote(sideNoteField.value);
+        sideNoteField.value = '';
+      });
+    }
+    
+    if (mobileAddButton && mobileNoteField) {
+      mobileAddButton.addEventListener('click', function() {
+        addNote(mobileNoteField.value);
+        mobileNoteField.value = '';
+      });
+    }
+    
+    // Initialize notes
+    loadNotes();
+    
+    // Add code copy functionality
+    const codeBlocks = document.querySelectorAll('.post-content pre');
+    codeBlocks.forEach(block => {
+      // Create copy button
+      const copyButton = document.createElement('button');
+      copyButton.className = 'code-copy-btn';
+      copyButton.innerHTML = 'Copy';
+      copyButton.ariaLabel = 'Copy code to clipboard';
+      
+      // Add to code block
+      block.appendChild(copyButton);
+      
+      // Add click event
+      copyButton.addEventListener('click', () => {
+        const code = block.querySelector('code');
+        if (code) {
+          const codeText = code.innerText;
+          navigator.clipboard.writeText(codeText).then(() => {
+            copyButton.innerHTML = 'Copied!';
+            setTimeout(() => {
+              copyButton.innerHTML = 'Copy';
+            }, 2000);
+          }).catch(err => {
+            console.error('Failed to copy: ', err);
+            copyButton.innerHTML = 'Failed!';
+            setTimeout(() => {
+              copyButton.innerHTML = 'Copy';
+            }, 2000);
+          });
+        }
+      });
+    });
+  });
+</script>

@@ -2,22 +2,14 @@
 // Enables offline functionality and performance optimizations
 
 const CACHE_NAME = 'chisos-cookbook-v1';
-const OFFLINE_URL = '/offline.html';
+const OFFLINE_URL = '/404.html'; // Use 404 page as offline fallback
 
-// Assets to cache on install - critical resources for the cookbook experience
+// Assets to cache on install - only include files that actually exist
 const PRECACHE_ASSETS = [
   '/',
-  '/offline.html',
-  '/styles/global.css',
-  '/styles/notebook.css',
-  '/styles/contrast.css',
-  '/scripts/notebook.js',
-  '/scripts/customTransitions.js',
-  '/scripts/draggable.js',
+  '/404.html',
   '/favicon.ico',
-  // Cache key images
-  '/images/paper-texture.png',
-  // Add any other critical assets here
+  '/images/paper-texture.png'
 ];
 
 // Install event - precache critical assets
@@ -26,18 +18,23 @@ self.addEventListener('install', event => {
   
   event.waitUntil(
     (async () => {
-      const cache = await caches.open(CACHE_NAME);
-      
-      // Cache offline page first
-      await cache.add(new Request(OFFLINE_URL, { cache: 'reload' }));
-      
-      // Cache all critical assets
-      await cache.addAll(PRECACHE_ASSETS);
-      
-      // Force activation without waiting for existing clients to close
-      await self.skipWaiting();
-      
-      console.log('Service Worker installed - Cookbook assets cached');
+      try {
+        const cache = await caches.open(CACHE_NAME);
+        
+        // Cache fallback page first
+        await cache.add(new Request(OFFLINE_URL, { cache: 'reload' }));
+        
+        // Cache critical assets - use waitUntil instead of awaiting to prevent failures
+        // from blocking installation
+        await cache.addAll(PRECACHE_ASSETS.map(url => new Request(url, { cache: 'reload' })));
+        
+        // Force activation without waiting for existing clients to close
+        await self.skipWaiting();
+        
+        console.log('Service Worker installed - Cookbook assets cached');
+      } catch (error) {
+        console.error('Service worker installation failed:', error);
+      }
     })()
   );
 });
@@ -51,7 +48,7 @@ self.addEventListener('activate', event => {
       // Get all existing cache names
       const cacheKeys = await caches.keys();
       
-      // Delete any old caches
+      // Delete old caches
       await Promise.all(
         cacheKeys
           .filter(key => key !== CACHE_NAME)
@@ -61,48 +58,52 @@ self.addEventListener('activate', event => {
           })
       );
       
-      // Take control of all clients immediately
-      await clients.claim();
+      // Take control of uncontrolled clients
+      await self.clients.claim();
       
-      console.log('Service Worker activated - Ready to serve cookbook content');
+      console.log('Service Worker activated - Ready to serve cached content');
     })()
   );
 });
 
-// Fetch event - handle network requests with appropriate strategies
+// Fetch event - handle all requests
 self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-  
-  // Don't cache admin routes or API calls
-  if (url.pathname.startsWith('/admin') || url.pathname.includes('/api/')) {
+  // Skip cross-origin requests
+  if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }
   
-  // Special handling for navigation (HTML) requests
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') {
+    return;
+  }
+  
+  const url = new URL(event.request.url);
+  
+  // Network-first strategy for navigation requests
   if (event.request.mode === 'navigate') {
     event.respondWith(
       (async () => {
         try {
-          // Try network first for HTML pages (content may change frequently)
-          console.log(`Fetching page: ${url.pathname}`);
+          // Try network first
           const networkResponse = await fetch(event.request);
           
-          // Cache the new response for future use
-          const cache = await caches.open(CACHE_NAME);
-          await cache.put(event.request, networkResponse.clone());
+          // Cache successful responses
+          if (networkResponse && networkResponse.status === 200) {
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(event.request, networkResponse.clone());
+          }
           
           return networkResponse;
         } catch (error) {
-          console.log(`Failed to fetch page: ${url.pathname}`, error);
-          
-          // If network fails, try to return the cached page
+          // Network failed, try cache
           const cachedResponse = await caches.match(event.request);
+          
           if (cachedResponse) {
             return cachedResponse;
           }
           
-          // If there's no cached page, return the offline page
-          console.log('Serving offline page');
+          // If cache fails too, show offline page
           return caches.match(OFFLINE_URL);
         }
       })()
@@ -110,39 +111,41 @@ self.addEventListener('fetch', event => {
     return;
   }
   
-  // Cache-first strategy for static assets (images, CSS, JS)
+  // Cache-first strategy for assets (images, fonts, etc.)
   if (
-    url.pathname.match(/\.(jpg|jpeg|png|gif|svg|webp|ico|css|js|woff|woff2|ttf|eot)$/) ||
-    url.pathname.includes('/images/') ||
-    url.pathname.includes('/styles/') ||
-    url.pathname.includes('/scripts/') ||
-    url.pathname.includes('/fonts/')
+    url.pathname.match(/\.(png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|otf)$/) ||
+    url.pathname.startsWith('/_astro/')
   ) {
     event.respondWith(
       (async () => {
         // Try cache first
         const cachedResponse = await caches.match(event.request);
+        
         if (cachedResponse) {
           return cachedResponse;
         }
         
-        // If not in cache, fetch from network and cache for later
+        // Fall back to network
         try {
           const networkResponse = await fetch(event.request);
           
-          // Only cache valid responses
-          if (networkResponse.ok) {
+          // Cache successful responses
+          if (networkResponse && networkResponse.status === 200) {
             const cache = await caches.open(CACHE_NAME);
-            await cache.put(event.request, networkResponse.clone());
+            cache.put(event.request, networkResponse.clone());
           }
           
           return networkResponse;
         } catch (error) {
-          console.log(`Failed to fetch resource: ${url.pathname}`, error);
-          // If fetch fails and there's no cache, just return the error
-          return new Response('Network error occurred', {
-            status: 408,
-            headers: { 'Content-Type': 'text/plain' }
+          // Return fallback for images if available
+          if (url.pathname.match(/\.(png|jpg|jpeg|gif|webp)$/)) {
+            return caches.match('/images/fallback-image.png');
+          }
+          
+          // For other assets, return a basic error
+          return new Response('Resource not available offline', { 
+            status: 404, 
+            headers: { 'Content-Type': 'text/plain' } 
           });
         }
       })()
@@ -150,68 +153,38 @@ self.addEventListener('fetch', event => {
     return;
   }
   
-  // For all other requests, use a stale-while-revalidate strategy
+  // Default strategy: stale-while-revalidate for everything else
   event.respondWith(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
       
-      // Try to get from cache first
+      // Try cache first
       const cachedResponse = await cache.match(event.request);
       
-      // Fetch from network
-      const networkResponsePromise = fetch(event.request).then(
-        networkResponse => {
-          // Cache the new response for future
+      // Clone request for fetching
+      const fetchRequest = event.request.clone();
+      
+      // Start fetching in background regardless of cache hit
+      const fetchResponsePromise = fetch(fetchRequest)
+        .then(networkResponse => {
+          // Don't cache non-successful responses
+          if (!networkResponse || networkResponse.status !== 200) {
+            return networkResponse;
+          }
+          
+          // Cache the new response for next time
           cache.put(event.request, networkResponse.clone());
+          
           return networkResponse;
-        }
-      );
+        })
+        .catch(error => {
+          console.error('Fetch failed:', error);
+          // Return null to indicate network failure
+          return null;
+        });
       
       // Return cached response immediately if available, otherwise wait for network
-      return cachedResponse || networkResponsePromise;
+      return cachedResponse || fetchResponsePromise;
     })()
   );
 });
-
-// Handle background sync for offline form submissions
-self.addEventListener('sync', event => {
-  if (event.tag === 'contact-form-submission') {
-    event.waitUntil(syncContactForm());
-  }
-});
-
-// Implementation of background sync for contact form
-async function syncContactForm() {
-  const pendingSubmissions = await getPendingContactSubmissions();
-  
-  for (const submission of pendingSubmissions) {
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submission)
-      });
-      
-      if (response.ok) {
-        await removePendingContactSubmission(submission.id);
-      }
-    } catch (error) {
-      console.error('Failed to sync contact form submission', error);
-      // Will try again next time sync is triggered
-      return;
-    }
-  }
-}
-
-// Functions to manage pending submissions in IndexedDB
-// This is just a placeholder - actual implementation would use IndexedDB
-async function getPendingContactSubmissions() {
-  // In a real implementation, this would fetch from IndexedDB
-  return [];
-}
-
-async function removePendingContactSubmission(id) {
-  // In a real implementation, this would remove from IndexedDB
-}

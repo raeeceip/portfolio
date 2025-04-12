@@ -3,6 +3,111 @@
  * This contains all styling for the handwritten notepad theme with improved contrast
  */
 
+/* 
+ * Contrast Definitions for Chiso's Cookbook
+ * Light/Dark theme variables and accessibility contrast improvements
+ */
+
+:root {
+  /* Base colors - cookbook themed */
+  --color-primary-100: #e6edd8;
+  --color-primary-200: #d4e1b5;
+  --color-primary-300: #bfd492;
+  --color-primary-400: #a9c76f;
+  --color-primary-500: #8eb84c;
+  --color-primary-600: #51733F;  /* Cookbook green */
+  --color-primary-700: #3F5C31;
+  --color-primary-800: #2c4123;
+  --color-primary-900: #1a2715;
+
+  /* Default variables (Light Theme) */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f7f7f7;
+  --color-bg-accent: #e6edd8;
+  
+  --color-text-primary: #2d3748;
+  --color-text-secondary: #4a5568;
+  --color-text-accent: #51733F;
+  --color-text-muted: #718096;
+  
+  --color-border-primary: #e2e8f0;
+  --color-border-secondary: #cbd5e0;
+  --color-border-accent: #a9c76f;
+  
+  /* Cookbook theme specific */
+  --paper-texture: url('/images/paper-texture.png');
+  --ruled-line-color: rgba(0, 0, 0, 0.1);
+  --ink-color: #2d3748;
+  --highlight-color: rgba(189, 212, 146, 0.3);
+}
+
+/* Dark theme overrides */
+html.dark {
+  --color-bg-primary: #2d3748;
+  --color-bg-secondary: #4a5568;  /* Lighter slate gray as user prefers */
+  --color-bg-accent: #51733F;
+  
+  --color-text-primary: #f7fafc;
+  --color-text-secondary: #e2e8f0;
+  --color-text-accent: #a9c76f;
+  --color-text-muted: #a0aec0;
+  
+  --color-border-primary: #4a5568;
+  --color-border-secondary: #2d3748;
+  --color-border-accent: #a9c76f;
+  
+  /* Cookbook theme specific - dark mode */
+  --paper-texture: url('/images/paper-texture-dark.png');
+  --ruled-line-color: rgba(255, 255, 255, 0.1);
+  --ink-color: #f7fafc;
+  --highlight-color: rgba(81, 115, 63, 0.3);
+}
+
+/* High contrast mode for accessibility */
+@media (prefers-contrast: high) {
+  :root {
+    --color-text-primary: #000000;
+    --color-text-secondary: #2d3748;
+    --color-text-accent: #2d3748;
+    --color-bg-primary: #ffffff;
+    --color-border-primary: #000000;
+  }
+  
+  html.dark {
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #f7fafc;
+    --color-text-accent: #f7fafc;
+    --color-bg-primary: #000000;
+    --color-border-primary: #ffffff;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Fix theme toggle specifically for the cookbook theme */
+.theme-toggle svg,
+.theme-toggle [astro-icon] {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  color: white !important;
+}
+
+html.light .theme-toggle {
+  background-color: #51733F !important;
+}
+
+html.dark .theme-toggle {
+  background-color: #4a5568 !important; /* User prefers this lighter slate gray */
+}
+
 /* ===== FONT & BASE STYLES ===== */
 body, p, h1, h2, h3, h4, h5, h6, a, span:not(.token), li, button, input, textarea, label, div {
   font-family: var(--handwriting-font) !important;
