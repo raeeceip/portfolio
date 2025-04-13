@@ -273,6 +273,10 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
     color: var(--primary-color);
   }
   
+  .special-banner a {
+    color: white !important; /* Force white text for the contact button in light mode */
+  }
+  
   .fork-knife {
     position: absolute;
     right: 2rem;
@@ -280,6 +284,53 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
     font-size: 3rem;
     opacity: 0.2;
     transform: rotate(15deg);
+  }
+  
+  /* Animated underline for name */
+  @keyframes underline-wave {
+    0% { text-decoration-color: theme("colors.primary.400"); text-underline-offset: 4px; }
+    50% { text-decoration-color: theme("colors.primary.600"); text-underline-offset: 8px; }
+    100% { text-decoration-color: theme("colors.primary.400"); text-underline-offset: 4px; }
+  }
+  
+  .animate-name {
+    animation: underline-wave 3s ease-in-out infinite;
+    position: relative;
+    display: inline-block;
+    text-decoration-thickness: 3px;
+  }
+  
+  /* Force text sizing */
+  h2.font-header {
+    font-size: 1.25rem !important; /* text-xl */
+  }
+  
+  @media (min-width: 768px) {
+    h2.font-header {
+      font-size: 1.5rem !important; /* text-2xl */
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    h2.font-header {
+      font-size: 1.875rem !important; /* text-3xl */
+    }
+  }
+  
+  h2.font-header .emphasis {
+    font-size: 1.5rem !important; /* text-4xl */
+  }
+  
+  @media (min-width: 768px) {
+    h2.font-header .emphasis {
+      font-size: 2rem !important; /* text-5xl */
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    h2.font-header .emphasis {
+      font-size: 2.5rem !important; /* text-6xl */
+    }
   }
 </style>
 
@@ -294,10 +345,10 @@ const projects = (await getCollection("projects"))?.[0]?.data?.slice(0, MAX_LATE
           <div class="relative">
             <div class="absolute -top-10 -left-3 w-8 h-32 border-r-2 border-b-2 border-t-2 border-primary-600 rounded-tr-md rounded-br-md"></div>
             
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6 md:mb-8 font-header">
+            <h2 class="text-xl md:text-2xl lg:text-3xl font-bold leading-tight mb-6 md:mb-8 font-header">
               <span class="block text-center mb-2">Hi,</span>
               
-              I'm <span class="text-primary-600 dark:text-primary-400 text-4xl md:text-5xl lg:text-6xl">Chiso,</span> a <span class="text-primary-600 dark:text-primary-400 text-4xl md:text-5xl lg:text-6xl">software engineer</span> specializing in <span class="text-primary-600 dark:text-primary-400">Golang, TypeScript, and Ruby.</span>
+              I'm <span class="text-primary-600 dark:text-primary-400 emphasis underline decoration-wavy decoration-2 animate-name">Chiso,</span> a <span class="text-primary-600 dark:text-primary-400">software engineer</span> specializing in <span class="text-primary-600 dark:text-primary-400 emphasis">TypeScript, Ruby, and Golang.</span>
             </h2>
           
             <p class="text-lg text-secondary-600 dark:text-secondary-300 leading-relaxed mb-6 md:mb-8 ml-4 border-l-4 border-secondary-200 dark:border-secondary-700 pl-4">

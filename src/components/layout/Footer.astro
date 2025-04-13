@@ -191,6 +191,60 @@ import { Icon } from "astro-icon/components";
         transparent 8px
       );
   }
+  
+  .contact-heading {
+    font-family: var(--cursive-font);
+    font-size: 1.8rem; /* Slightly larger heading */
+    color: theme("colors.primary.800"); /* Darker color in light mode */
+    margin-bottom: 1rem;
+    font-weight: 600; /* Bolder */
+  }
+
+  .dark .contact-heading {
+    color: theme("colors.primary.400"); /* Keep dark mode color */
+  }
+
+  .contact-text {
+    font-family: var(--handwriting-font);
+    color: theme("colors.secondary.700"); /* Slightly darker text */
+    line-height: 1.6;
+  }
+
+  .dark .contact-text {
+     color: theme("colors.secondary.300"); /* Keep dark mode color */
+  }
+
+  /* Email Link styling */
+  .email-link {
+    font-family: var(--handwriting-font);
+    font-size: 1.3rem;
+    color: theme("colors.primary.800"); /* Ensure good contrast in light mode */
+    text-decoration: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: theme("colors.primary.400"); /* Adjust decoration color if needed */
+    transition: color 0.2s, text-decoration-color 0.2s;
+    display: inline-block; /* Allows transform */
+    transform: rotate(-1deg); /* Slight tilt */
+    padding: 0.2rem 0.4rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+
+  .email-link:hover {
+    color: theme("colors.primary.700");
+    text-decoration-color: theme("colors.primary.400");
+  }
+
+  .dark .email-link {
+    color: theme("colors.primary.200"); /* Brighter color in dark mode for better contrast */
+    text-decoration-color: theme("colors.primary.500");
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .dark .email-link:hover {
+    color: theme("colors.primary.100"); /* Adjust hover color */
+    text-decoration-color: theme("colors.primary.400");
+  }
 </style>
 
 <div class="notebook-footer relative pt-8 pb-20 border-t border-t-primary-200 dark:border-t-primary-800 mt-16">
@@ -267,6 +321,15 @@ import { Icon } from "astro-icon/components";
       <p class="text-xs text-primary-600 dark:text-primary-400 mt-4" style="font-family: var(--handwriting-font);">
         Source code available on <a href="https://github.com/raeeceip/chiso.dev" target="_blank" class="underline hover:text-primary-800 dark:hover:text-primary-300 transition-colors">GitHub</a>
       </p>
+    </div>
+    
+    <!-- Contact Section -->
+    <div class="contact-section text-center mb-12">
+      <h3 class="contact-heading">Get in Touch!</h3>
+      <p class="contact-text max-w-md mx-auto">
+        Have a project idea or just want to chat about recipes (or code)? <br/> Feel free to reach out!
+      </p>
+      <!-- Maybe add a contact link/button here later -->
     </div>
     
     <!-- Dog-eared corner at the bottom of the page -->

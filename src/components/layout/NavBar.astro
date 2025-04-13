@@ -139,7 +139,7 @@ import { Icon } from "astro-icon/components";
     color: var(--primary-color-light, #a9c76f);
   }
   
-  .theme-toggle-logo {
+  .theme-toggle-button {
     position: relative;
     display: flex;
     align-items: center;
@@ -151,15 +151,21 @@ import { Icon } from "astro-icon/components";
     cursor: pointer;
     padding: 0.5rem;
     transition: all 0.3s ease;
+    border-radius: 50%; /* Make it circular */
+    background-color: rgba(81, 115, 63, 0.1);
+    width: 40px; /* Explicit size */
+    height: 40px;
+    animation: bounce 2.5s infinite ease-in-out 0.5s; /* Add bounce animation */
   }
   
-  .theme-toggle-logo:hover {
-    transform: translateY(-2px) rotate(-5deg);
+  .theme-toggle-button:hover {
+    transform: translateY(-2px) rotate(-10deg) scale(1.1);
+    background-color: rgba(81, 115, 63, 0.2);
   }
   
   .logo-tooltip {
     position: absolute;
-    bottom: -20px;
+    bottom: -25px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.7rem;
@@ -171,24 +177,58 @@ import { Icon } from "astro-icon/components";
     pointer-events: none;
   }
   
-  .theme-toggle-logo:hover .logo-tooltip {
+  .theme-toggle-button:hover .logo-tooltip {
     opacity: 0.8;
   }
   
-  .dark .theme-toggle-logo {
+  .dark .theme-toggle-button {
     color: var(--primary-color-light, #a9c76f);
+    background-color: rgba(169, 199, 111, 0.2);
   }
   
-  .logo-icon {
+  .dark .theme-toggle-button:hover {
+    transform: translateY(-2px) rotate(-10deg) scale(1.1);
+    background-color: rgba(169, 199, 111, 0.3);
+  }
+  
+  .theme-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: var(--primary-color, #51733F);
+    transition: color 0.3s ease;
+  }
+
+  /* Light/dark theme toggle */
+  .sun-icon, .moon-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Correctly hide icons based on theme */
+  html.dark .theme-icon.sun-icon {
+    display: none;
+  }
+  html:not(.dark) .theme-icon.moon-icon {
+    display: none;
+  }
+
+  .dark .theme-icon {
+    color: var(--primary-color-light, #a9c76f);
   }
   
-  .dark .logo-icon {
-    color: var(--primary-color-light, #a9c76f);
+  /* Bounce animation */
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-8px); /* Adjusted bounce height */
+    }
+    60% {
+      transform: translateY(-4px); /* Adjusted bounce height */
+    }
   }
   
   /* Mobile menu button */
@@ -205,110 +245,62 @@ import { Icon } from "astro-icon/components";
     transform: rotate(-1deg);
   }
   
-  /* Mobile navigation */
-  .mobile-nav {
-    position: fixed;
-    top: 60px;
-    left: 1rem;
-    right: 1rem;
-    background-color: var(--notebook-paper-color);
-    border: 1px dashed rgba(81, 115, 63, 0.4);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    z-index: 999;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-    transform-origin: top center;
-    transform: scale(0.95);
-    opacity: 0;
-    transition: all 0.2s ease-in-out;
-    display: none;
+  .dark .mobile-menu-button {
+    color: var(--primary-color-light);
+    border-color: var(--primary-color-light);
+  }
+
+  /* Mobile menu - start completely hidden */
+  #mobile-menu {
+    position: absolute;
+    width: 100%;
+    top: 100%;
+    left: 0;
+    z-index: 100;
+    padding: 0.75rem 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: var(--notebook-paper-color, #fff);
+    border-bottom: 1px dashed rgba(81, 115, 63, 0.4);
     
-    /* Notebook paper lines */
+    /* Notepad styling to match theme */
     background-image: 
       repeating-linear-gradient(
-        transparent,
-        transparent 1px,
-        var(--notebook-line-color) 1px,
-        var(--notebook-line-color) 2px,
-        transparent 2px,
-        transparent 24px
+        transparent, 
+        transparent 22px, 
+        rgba(81, 115, 63, 0.1) 22px, 
+        rgba(81, 115, 63, 0.1) 23px
       );
-    background-size: 100% 24px;
+    background-size: 100% 23px;
   }
   
-  .mobile-nav.open {
-    display: flex;
-    flex-direction: column;
-    transform: scale(1);
-    opacity: 1;
+  /* Dark mode styling */
+  .dark #mobile-menu {
+    background-color: var(--notebook-paper-color-dark, #4a5568);
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+    background-image: 
+      repeating-linear-gradient(
+        transparent, 
+        transparent 22px, 
+        rgba(255, 255, 255, 0.07) 22px, 
+        rgba(255, 255, 255, 0.07) 23px
+      );
   }
   
-  .mobile-nav .nav-link {
-    display: flex;
-    width: 100%;
-    padding: 0.75rem 0.5rem;
-    border-bottom: 1px dashed rgba(81, 115, 63, 0.2);
+  /* Menu items styling */
+  #mobile-menu a {
+    display: block;
+    padding: 0.625rem 1.25rem;
+    border-bottom: 1px dashed rgba(81, 115, 63, 0.15);
   }
   
-  .mobile-nav .nav-link:last-child {
+  .dark #mobile-menu a {
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  }
+  
+  #mobile-menu a:last-child {
     border-bottom: none;
   }
-  
-  /* Theme toggle button */
-  .theme-toggle {
-    background-color: transparent;
-    border: 1px dashed var(--primary-color, #51733F);
-    color: var(--primary-color, #51733F);
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    transition: all 0.3s ease;
-    transform: rotate(-1deg);
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .theme-toggle:hover {
-    transform: rotate(1deg);
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
-  }
-  
-  .theme-toggle svg {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-  
-  /* Mobile theme toggle styling */
-  .mobile-theme-toggle {
-    margin-top: 1rem;
-    align-self: center;
-    width: 3rem;
-    height: 3rem;
-  }
-  
-  html.light .light-icon {
-    display: none;
-  }
-  
-  html.light .dark-icon {
-    display: block;
-  }
-  
-  html.dark .light-icon {
-    display: block;
-  }
-  
-  html.dark .dark-icon {
-    display: none;
-  }
-  
-  html.dark .theme-toggle {
-    border-color: #a9c76f;
-    color: #a9c76f;
-  }
-  
+
   /* Media queries for responsive design */
   @media (max-width: 768px) {
     .mobile-menu-button {
@@ -319,192 +311,222 @@ import { Icon } from "astro-icon/components";
       display: none;
     }
     
-    .mobile-nav.open {
-      display: block;
-    }
-    
     .site-title {
       margin-left: 1rem; /* Less margin on mobile */
     }
+    
+    .dark .nav-container {
+      /* Slightly lighter background for better contrast on mobile dark */
+      background-color: #525f74; 
+    }
+  }
+  
+  /* Align desktop nav items and hide theme toggle in mobile menu */
+  .desktop-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Ensure the main content has space for the potentially fixed/sticky navbar */
+  body {
+    /* Add padding-top equal to the navbar height if it's fixed/sticky */
+    /* Example: padding-top: 5rem; Adjust value based on actual navbar height */
   }
 </style>
 
 <nav class="nav-container w-full py-3">
   <div class="container mx-auto flex items-center justify-between px-3 md:px-6">
     <!-- Chef hat logo now toggles theme -->
-    <div class="flex items-center gap-4">
-      <a href="/" class="site-title text-xl">
-        <span>chiso</span>
-      </a>
-      
-      <!-- Separate chef hat for theme toggle -->
-      <button id="logo-theme-toggle" class="theme-toggle-logo" aria-label="Toggle dark mode">
-        <span class="logo-icon"><Icon name="tabler:chef-hat" /></span>
-        <span class="logo-tooltip">Change theme</span>
-      </button>
+    <a href="/" class="site-title">
+      Chiso's Cookbook
+    </a>
+
+    <div class="flex items-center gap-4 md:gap-6">
+      <!-- Main Navigation -->
+      <ul class="hidden md:flex items-center gap-4 md:gap-6"> 
+        <li>
+          <a href="/" class="nav-link {Astro.url.pathname === '/' ? 'active' : ''}">
+            <Icon name="tabler:home" class="nav-icon" />
+            <span>Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="/blog" class="nav-link {Astro.url.pathname.startsWith('/blog') ? 'active' : ''}">
+            <Icon name="tabler:book" class="nav-icon" />
+            <span>Recipe Journal</span>
+          </a>
+        </li>
+        <li>
+          <a href="/notes" class="nav-link {Astro.url.pathname.startsWith('/notes') ? 'active' : ''}">
+            <Icon name="tabler:note" class="nav-icon" />
+            <span>Quick Notes</span>
+          </a>
+        </li>
+        <li>
+          <a href="/projects" class="nav-link {Astro.url.pathname.startsWith('/projects') ? 'active' : ''}">
+            <Icon name="tabler:books" class="nav-icon" />
+            <span>Recipe Collection</span>
+          </a>
+        </li>
+        <li>
+          <a href="/tools" class="nav-link {Astro.url.pathname.startsWith('/tools') ? 'active' : ''}">
+            <Icon name="tabler:tools" class="nav-icon" />
+            <span>Kitchen Tools</span>
+          </a>
+        </li>
+      </ul>
     </div>
-    
-    <!-- Mobile menu button -->
-    <button 
-      id="mobile-menu-toggle"
-      class="mobile-menu-button" 
-      aria-label="Toggle mobile menu"
-    >
-      <Icon name="tabler:menu-2" />
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle-button" aria-label="Toggle Theme" class="theme-toggle-button">
+      <Icon name="tabler:sun" class="theme-icon sun-icon h-6 w-6 text-yellow-500" />
+      <Icon name="tabler:moon" class="theme-icon moon-icon h-6 w-6 text-indigo-400" />
+      <span class="logo-tooltip">Toggle Theme</span>
     </button>
-    
-    <!-- Desktop navigation -->
-    <div class="desktop-nav flex items-center md:text-base gap-4 md:gap-6 pl-4">
-      <a href="/" class="nav-link">
-        <Icon name="tabler:home" class="nav-icon" />
-        <span>Home</span>
-      </a>
-      <a href="/blog" class="nav-link">
-        <Icon name="tabler:book" class="nav-icon" />
-        <span>Recipe Journal</span>
-      </a>
-      <a href="/notes" class="nav-link">
-        <Icon name="tabler:note" class="nav-icon" />
-        <span>Quick Notes</span>
-      </a>
-      <a href="/projects" class="nav-link">
-        <Icon name="tabler:books" class="nav-icon" />
-        <span>Recipe Collection</span>
-      </a>
-      <a href="/tools" class="nav-link">
-        <Icon name="tabler:tools" class="nav-icon" />
-        <span>Kitchen Tools</span>
-      </a>
-    </div>
 
-    <!-- Mobile navigation menu -->
-    <div id="mobile-nav" class="mobile-nav">
-      <a href="/" class="nav-link">
-        <Icon name="tabler:home" class="nav-icon" />
-        <span>Home</span>
-      </a>
-      <a href="/blog" class="nav-link">
-        <Icon name="tabler:book" class="nav-icon" />
-        <span>Recipe Journal</span>
-      </a>
-      <a href="/notes" class="nav-link">
-        <Icon name="tabler:note" class="nav-icon" />
-        <span>Quick Notes</span>
-      </a>
-      <a href="/projects" class="nav-link">
-        <Icon name="tabler:books" class="nav-icon" />
-        <span>Recipe Collection</span>
-      </a>
-      <a href="/tools" class="nav-link">
-        <Icon name="tabler:tools" class="nav-icon" />
-        <span>Kitchen Tools</span>
-      </a>
-      
-      <!-- Theme toggle button in mobile menu -->
-      <button id="mobile-theme-toggle" class="theme-toggle mobile-theme-toggle">
-        <Icon name="tabler:moon" class="dark-icon" />
-        <Icon name="tabler:sun" class="light-icon" />
-      </button>
-    </div>
-
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-primary-700 dark:text-primary-300 hover:text-white hover:bg-primary-500 dark:hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+      <span class="sr-only">Open main menu</span>
+      <!-- Icon when menu is closed. -->
+      <Icon name="tabler:menu-2" class="block h-6 w-6 menu-icon-open" aria-hidden="true" /> 
+      <!-- Icon when menu is open. -->
+      <Icon name="tabler:x" class="hidden h-6 w-6 menu-icon-close" aria-hidden="true" /> 
+    </button>
   </div>
+
+  <!-- Mobile menu - conditionally shown/hidden via JavaScript -->
+  <div id="mobile-menu" style="display: none;">
+    <div class="px-2 pt-1 pb-3 space-y-1 mobile-nav">
+      <a href="/" class="nav-link block"> 
+        <Icon name="tabler:home" class="nav-icon" />
+        <span>Home</span>
+      </a>
+      <a href="/blog" class="nav-link block">
+        <Icon name="tabler:book" class="nav-icon" />
+        <span>Recipe Journal</span>
+      </a>
+      <a href="/notes" class="nav-link block">
+        <Icon name="tabler:note" class="nav-icon" />
+        <span>Quick Notes</span>
+      </a>
+      <a href="/projects" class="nav-link block">
+        <Icon name="tabler:books" class="nav-icon" />
+        <span>Recipe Collection</span>
+      </a>
+      <a href="/tools" class="nav-link block">
+        <Icon name="tabler:tools" class="nav-icon" />
+        <span>Kitchen Tools</span>
+      </a>
+    </div>
+  </div>
+
 </nav>
 
 <div class="h-16"></div> <!-- Spacer to account for fixed navbar -->
 
 <script>
-  // Simple mobile menu functionality without Alpine.js
+  // Direct DOM manipulation for mobile menu toggle with TypeScript-safe approach
   document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuButton = document.getElementById('mobile-menu-toggle');
-    const mobileNav = document.getElementById('mobile-nav');
+    // Get elements with proper HTML element casting
+    const button = document.getElementById('mobile-menu-button') as HTMLElement | null;
+    const menu = document.getElementById('mobile-menu') as HTMLElement | null;
+    const openIcon = document.querySelector('.menu-icon-open') as HTMLElement | null;
+    const closeIcon = document.querySelector('.menu-icon-close') as HTMLElement | null;
     
-    if (mobileMenuButton && mobileNav) {
-      mobileMenuButton.addEventListener('click', function() {
-        if (mobileNav.classList.contains('open')) {
-          mobileNav.classList.remove('open');
-        } else {
-          mobileNav.classList.add('open');
-        }
-      });
-      
-      // Close mobile menu when clicking on links
-      const mobileLinks = mobileNav.querySelectorAll('a');
-      mobileLinks.forEach(link => {
-        link.addEventListener('click', function() {
-          mobileNav.classList.remove('open');
-        });
-      });
+    // Make sure all elements exist
+    if (!button || !menu || !openIcon || !closeIcon) {
+      console.error('Mobile menu elements not found');
+      return;
     }
-  });
-</script>
-
-<script is:inline>
-  // Theme handling
-  function handleThemeChange(isDarkMode) {
-    document.documentElement.classList.toggle("dark", isDarkMode);
-    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
     
-    // Toggle aria-pressed state on the logo
-    const logoToggle = document.getElementById('logo-theme-toggle');
-    if (logoToggle) {
-      logoToggle.setAttribute('aria-pressed', isDarkMode ? 'true' : 'false');
+    // Ensure menu starts hidden with inline style
+    menu.style.display = 'none';
+    openIcon.style.display = 'block';
+    closeIcon.style.display = 'none';
+    
+    // Add click listener to toggle menu
+    button.addEventListener('click', function(e) {
+      e.preventDefault(); // Prevent any default behavior
+      e.stopPropagation(); // Prevent click from bubbling to document
+      
+      // Check if menu is currently hidden
+      const isHidden = menu.style.display === 'none';
+      
+      // Toggle menu visibility
+      menu.style.display = isHidden ? 'block' : 'none';
+      
+      // Toggle icons
+      openIcon.style.display = isHidden ? 'none' : 'block';
+      closeIcon.style.display = isHidden ? 'block' : 'none';
+      
+      // Set aria attributes
+      button.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+      
+      console.log('Menu toggled, now', isHidden ? 'visible' : 'hidden');
+    });
+    
+    // Close menu when clicking elsewhere on page
+    document.addEventListener('click', function(e) {
+      // Skip if menu is already closed or click was on menu button
+      if (menu.style.display === 'none' || button.contains(e.target as Node)) {
+        return;
+      }
+      
+      // Close menu if click was outside menu
+      if (!menu.contains(e.target as Node)) {
+        menu.style.display = 'none';
+        openIcon.style.display = 'block';
+        closeIcon.style.display = 'none';
+        button.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+
+  // Theme handling with TypeScript types
+  const themeToggleButton = document.getElementById('theme-toggle-button') as HTMLElement | null;
+  const sunIcon = document.querySelector('.sun-icon') as HTMLElement | null;
+  const moonIcon = document.querySelector('.moon-icon') as HTMLElement | null;
+  const htmlElement = document.documentElement;
+
+  function applyTheme(isDark: boolean): void {
+    htmlElement.classList.toggle('dark', isDark);
+    htmlElement.classList.toggle('light', !isDark);
+    
+    if (sunIcon) sunIcon.style.display = isDark ? 'none' : 'inline-flex';
+    if (moonIcon) moonIcon.style.display = isDark ? 'inline-flex' : 'none';
+    
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    
+    // Update theme-color meta tag
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]') as HTMLMetaElement | null;
+    if (themeColorMeta) {
+      themeColorMeta.setAttribute('content', isDark ? '#4a5568' : '#51733F');
     }
   }
 
-  // Initialize theme on page load
+  // Initial theme setup
+  const savedTheme = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const initialDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+  
+  // Apply initial theme when DOM is loaded
   document.addEventListener('DOMContentLoaded', function() {
-    // Check for saved theme or prefer-color-scheme
-    const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDarkMode = savedTheme === "dark" || (!savedTheme && prefersDark);
-    
-    // Set initial state
-    handleThemeChange(isDarkMode);
-    
-    // Add event listener to logo for theme toggle
-    const logoToggle = document.getElementById('logo-theme-toggle');
-    if (logoToggle) {
-      logoToggle.setAttribute('role', 'button');
-      logoToggle.setAttribute('aria-pressed', isDarkMode ? 'true' : 'false');
-      logoToggle.setAttribute('tabindex', '0');
-      logoToggle.setAttribute('aria-label', 'Toggle dark mode');
-      
-      logoToggle.addEventListener('click', function() {
-        const currentMode = document.documentElement.classList.contains('dark');
-        handleThemeChange(!currentMode);
-      });
-      
-      // Also allow keyboard activation with Enter key
-      logoToggle.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          const currentMode = document.documentElement.classList.contains('dark');
-          handleThemeChange(!currentMode);
-        }
-      });
-    }
-    
-    // Handle mobile theme toggle
-    const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-    if (mobileThemeToggle) {
-      mobileThemeToggle.addEventListener('click', function() {
-        const currentMode = document.documentElement.classList.contains('dark');
-        handleThemeChange(!currentMode);
-      });
-    }
-    
-    // Mobile menu toggle
-    const mobileMenuButton = document.getElementById('mobile-menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    
-    if (mobileMenuButton && mobileMenu) {
-      mobileMenuButton.addEventListener('click', function() {
-        mobileMenu.classList.toggle('open');
-        mobileMenuButton.setAttribute(
-          'aria-expanded',
-          mobileMenu.classList.contains('open').toString()
-        );
-      });
+    applyTheme(initialDark);
+  });
+
+  // Toggle button listener
+  if (themeToggleButton) {
+    themeToggleButton.addEventListener('click', () => {
+      const isCurrentlyDark = htmlElement.classList.contains('dark');
+      applyTheme(!isCurrentlyDark);
+    });
+  }
+
+  // Listen for system theme changes if no preference is saved
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      applyTheme(e.matches);
     }
   });
 </script>

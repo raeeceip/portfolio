@@ -8,6 +8,12 @@ pages_build_output_dir = "dist"
 build_output_directory = "dist"
 compatibility_date = "2023-12-01"
 
+# KV Namespace for blog comments
+kv_namespaces = [
+  { binding = "KV_COMMENTS", id = "b45ba16ccf9c4fb7b8439f6ca4976b02" },
+  { binding = "KV_RECIPE_NOTES", preview_id = "recipe_notes_preview", id = "recipe_notes_production" }
+]
+
 # Environment-specific configurations
 [env.production]
 name = "portfolio" 

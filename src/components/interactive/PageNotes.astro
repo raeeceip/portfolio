@@ -12,8 +12,16 @@ const storageKey = `cookbook_notes_${postSlug}`;
 
 <div class="cookbook-notes-container">
   <div class="cookbook-notes-header">
-    <h3 class="notes-title">Your Recipe Notes</h3>
-    <p class="notes-subtitle">Add your own thoughts to this recipe</p>
+    <h3 class="notes-title">Recipe Notes</h3>
+    <p class="notes-subtitle">Add your thoughts to this recipe</p>
+    <div class="connection-status">
+      <span id="connection-indicator" class="disconnected">●</span>
+      <span id="connection-text">Offline</span>
+    </div>
+  </div>
+  
+  <div id="notes-debug-info" class="notes-debug hidden">
+    <p>Debugging information will appear here</p>
   </div>
   
   <div class="notes-content" id="notes-content">
@@ -32,30 +40,31 @@ const storageKey = `cookbook_notes_${postSlug}`;
       rows="3"
     ></textarea>
     
-    <div class="notes-buttons">
-      <button id="add-note-button" class="add-note-button">
-        <span>Add Note</span>
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-          <path d="M8 9h8"></path>
-          <path d="M8 13h6"></path>
-          <path d="M13 18l-5 0a2 2 0 0 1 -2 -2l0 -11a2 2 0 0 1 2 -2l6 0a2 2 0 0 1 2 2l0 8"></path>
-          <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
-          <path d="M17 14v6"></path>
-          <path d="M14 17h6"></path>
-        </svg>
-      </button>
+    <div class="notes-form-footer">
+      <div class="notes-author">
+        <input 
+          type="text" 
+          id="note-author" 
+          class="author-input" 
+          placeholder="Your name (optional)"
+          aria-label="Your name (optional)"
+        >
+      </div>
       
-      <button id="clear-notes-button" class="clear-notes-button">
-        <span>Clear All</span>
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-          <path d="M4 7h16"></path>
-          <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-          <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-          <path d="M10 12l4 4m0 -4l-4 4"></path>
-        </svg>
-      </button>
+      <div class="notes-buttons">
+        <button id="add-note-button" class="add-note-button">
+          <span>Add Note</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M8 9h8"></path>
+            <path d="M8 13h6"></path>
+            <path d="M13 18l-5 0a2 2 0 0 1 -2 -2l0 -11a2 2 0 0 1 2 -2l6 0a2 2 0 0 1 2 2l0 8"></path>
+            <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+            <path d="M17 14v6"></path>
+            <path d="M14 17h6"></path>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -73,29 +82,14 @@ const storageKey = `cookbook_notes_${postSlug}`;
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
+    background-image: url('/images/paper-texture.png');
+    background-repeat: repeat;
   }
   
   .dark .cookbook-notes-container {
     background-color: rgba(74, 85, 104, 0.2);
     border-left-color: #a0d468;
-  }
-  
-  .cookbook-notes-header {
-    margin-bottom: 1rem;
-    border-bottom: 1px dashed rgba(81, 115, 63, 0.3);
-    padding-bottom: 0.75rem;
-  }
-  
-  .notes-title {
-    font-family: var(--header-font-family);
-    font-size: 1.25rem;
-    margin: 0;
-    color: #51733F;
-    word-break: break-word;
-  }
-  
-  .dark .notes-title {
-    color: #a0d468;
+    background-image: url('/images/paper-texture-dark.png');
   }
   
   .notes-subtitle {
@@ -105,18 +99,44 @@ const storageKey = `cookbook_notes_${postSlug}`;
     opacity: 0.8;
   }
   
-  .notes-content {
-    min-height: 100px;
-    margin-bottom: 1rem;
-    width: 100%;
+  .connection-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
   }
   
-  .empty-notes-message {
-    font-family: var(--handwriting-font);
-    font-style: italic;
-    opacity: 0.7;
-    text-align: center;
-    padding: 1rem;
+  #connection-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  
+  #connection-indicator.connected {
+    color: #4CAF50;
+  }
+  
+  #connection-indicator.connecting {
+    color: #FF9800;
+    animation: pulse 1.5s infinite;
+  }
+  
+  #connection-indicator.disconnected {
+    color: #F44336;
+  }
+  
+  @keyframes pulse {
+    0% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.5;
+    }
   }
   
   .note-item {
@@ -129,34 +149,23 @@ const storageKey = `cookbook_notes_${postSlug}`;
     line-height: 1.4;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     word-break: break-word;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(81, 115, 63, 0.1);
   }
   
-  .dark .note-item {
-    background-color: rgba(74, 85, 104, 0.3);
+  .note-item:hover {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
   }
   
-  .note-date {
-    font-size: 0.8rem;
-    opacity: 0.7;
-    text-align: right;
-    margin-top: 0.5rem;
-    font-style: italic;
+  .note-author {
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    color: #51733F;
   }
   
-  .delete-note {
-    position: absolute;
-    top: 0.25rem;
-    right: 0.25rem;
-    background: none;
-    border: none;
-    padding: 0.25rem;
-    cursor: pointer;
-    opacity: 0.4;
-    transition: opacity 0.2s;
-  }
-  
-  .delete-note:hover {
-    opacity: 1;
+  .dark .note-author {
+    color: #a0d468;
   }
   
   .notes-form {
@@ -164,146 +173,292 @@ const storageKey = `cookbook_notes_${postSlug}`;
     width: 100%;
   }
   
-  .notes-textarea {
+  .notes-form-footer {
+    display: flex;
+    margin-top: 0.75rem;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .notes-author {
+    flex: 1;
+    margin-right: 1rem;
+  }
+  
+  .author-input {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.5rem;
     border-radius: 3px;
     border: 1px solid rgba(81, 115, 63, 0.3);
     background-color: rgba(255, 255, 255, 0.8);
-    resize: vertical;
     font-family: var(--handwriting-font);
-    font-size: 1rem;
-    max-width: 100%;
+    font-size: 0.9rem;
   }
   
-  .dark .notes-textarea {
+  .dark .author-input {
     background-color: rgba(74, 85, 104, 0.2);
     border-color: rgba(160, 212, 104, 0.3);
     color: #f3f4f6;
   }
   
-  .notes-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 0.75rem;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  
-  .add-note-button, .clear-notes-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 3px;
+  .like-button {
+    background: none;
     border: none;
     cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    opacity: 0.7;
+    transition: opacity 0.2s, transform 0.2s;
+    border-radius: 3px;
+  }
+  
+  .like-button:hover {
+    opacity: 1;
+    background-color: rgba(255, 0, 0, 0.05);
+  }
+  
+  .like-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+  }
+  
+  .like-count {
+    font-size: 0.85rem;
+  }
+  
+  .liked {
+    color: #e74c3c;
+    opacity: 1;
+  }
+
+  .notes-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
     font-family: var(--handwriting-font);
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  
-  /* Mobile adjustments */
-  @media (max-width: 480px) {
-    .cookbook-notes-container {
-      padding: 1rem;
-      margin: 1.5rem 0;
-    }
-    
-    .notes-buttons {
-      flex-direction: column;
-      width: 100%;
-    }
-    
-    .add-note-button, .clear-notes-button {
-      width: 100%;
-      justify-content: center;
-    }
-    
-    .note-item {
-      padding-right: 2rem; /* Make space for the delete button */
-    }
-  }
-  
-  .add-note-button {
-    background-color: #51733F;
-    color: white;
-  }
-  
-  .add-note-button:hover {
-    background-color: #3F5C31;
-  }
-  
-  .clear-notes-button {
-    background-color: #f8f8f8;
+    font-style: italic;
     color: #666;
   }
   
-  .clear-notes-button:hover {
-    background-color: #f0f0f0;
+  .notes-error {
+    padding: 0.75rem;
+    background-color: rgba(244, 67, 54, 0.1);
+    border-left: 2px solid #F44336;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    border-radius: 2px;
   }
   
-  .dark .add-note-button {
-    background-color: #a0d468;
-    color: #2d3748;
-  }
-  
-  .dark .add-note-button:hover {
-    background-color: #8cc152;
-  }
-  
-  .dark .clear-notes-button {
-    background-color: #4a5568;
-    color: #f3f4f6;
-  }
-  
-  .dark .clear-notes-button:hover {
-    background-color: #2d3748;
-  }
-  
-  .icon {
-    width: 1rem;
-    height: 1rem;
-    flex-shrink: 0;
+  .note-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
   }
 </style>
 
-<script define:vars={{ storageKey }}>
+<script define:vars={{ storageKey, postSlug }}>
 document.addEventListener('DOMContentLoaded', function() {
   const notesContainer = document.getElementById('notes-content');
   const newNoteField = document.getElementById('new-note');
+  const authorField = document.getElementById('note-author');
   const addNoteButton = document.getElementById('add-note-button');
-  const clearNotesButton = document.getElementById('clear-notes-button');
   const emptyMessage = document.querySelector('.empty-notes-message');
+  const debugInfo = document.getElementById('notes-debug-info');
+  const connectionIndicator = document.getElementById('connection-indicator');
+  const connectionText = document.getElementById('connection-text');
   
-  // Load existing notes
-  function loadNotes() {
-    const savedNotes = localStorage.getItem(storageKey);
-    if (savedNotes) {
-      const notes = JSON.parse(savedNotes);
+  // Store a reference to liked notes in localStorage to prevent multiple likes
+  let likedNotes = new Set(JSON.parse(localStorage.getItem('liked_notes') || '[]'));
+  
+  // API endpoint for Cloudflare Worker (now using relative URL to avoid CORS issues)
+  const NOTES_API = '/api/notes';
+  
+  // WebSocket support
+  let websocket = null;
+  let wsConnected = false;
+  let wsReconnectAttempts = 0;
+  const MAX_RECONNECT_ATTEMPTS = 5;
+  
+  // Try to get a saved username from localStorage
+  if (localStorage.getItem('recipe_note_author')) {
+    authorField.value = localStorage.getItem('recipe_note_author');
+  }
+  
+  // Initialize WebSocket connection
+  function initWebSocket() {
+    try {
+      updateConnectionStatus('connecting');
       
-      if (notes.length > 0) {
-        emptyMessage.style.display = 'none';
+      // Determine if we need to use wss:// or ws:// based on the current protocol
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/api/notes/ws?post=${encodeURIComponent(postSlug)}`;
+      
+      console.log('Connecting to WebSocket:', wsUrl);
+      websocket = new WebSocket(wsUrl);
+      
+      websocket.onopen = function() {
+        console.log('WebSocket connected');
+        wsConnected = true;
+        wsReconnectAttempts = 0;
+        updateConnectionStatus('connected');
+      };
+      
+      websocket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        handleWebSocketMessage(data);
+      };
+      
+      websocket.onerror = function(error) {
+        console.error('WebSocket error:', error);
+        wsConnected = false;
+        updateConnectionStatus('disconnected');
+      };
+      
+      websocket.onclose = function(event) {
+        console.log('WebSocket closed:', event.code, event.reason);
+        wsConnected = false;
+        updateConnectionStatus('disconnected');
         
-        // Clear existing notes display
-        const existingNotes = notesContainer.querySelectorAll('.note-item');
-        existingNotes.forEach(note => note.remove());
+        // Try to reconnect after delay if we haven't reached max attempts
+        if (wsReconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+          wsReconnectAttempts++;
+          const delay = Math.min(1000 * wsReconnectAttempts, 5000); // Exponential backoff, max 5 seconds
+          
+          setTimeout(() => {
+            console.log(`Attempting WebSocket reconnect (${wsReconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
+            initWebSocket();
+          }, delay);
+        } else {
+          console.log('Max WebSocket reconnect attempts reached. Falling back to API polling.');
+        }
+      };
+    } catch (error) {
+      console.error('Failed to initialize WebSocket:', error);
+      updateConnectionStatus('disconnected');
+    }
+  }
+  
+  // Handle incoming WebSocket messages
+  function handleWebSocketMessage(data) {
+    console.log('WebSocket message received:', data);
+    
+    if (data.type === 'note_added') {
+      // A new note was added by another user
+      const note = data.note;
+      // Only add to display if we don't already have this note
+      if (!document.querySelector(`.note-item[data-id="${note.id}"]`)) {
+        addNoteToDisplay(note.content, note.createdAt, note.id, note.author, note.likes || 0);
+      }
+    } 
+    else if (data.type === 'note_deleted') {
+      // A note was deleted by another user
+      const noteElement = document.querySelector(`.note-item[data-id="${data.id}"]`);
+      if (noteElement) {
+        noteElement.remove();
         
-        // Add each note to the display
-        notes.forEach((note, index) => {
-          addNoteToDisplay(note.text, note.date, index);
-        });
-      } else {
-        emptyMessage.style.display = 'block';
+        // Show empty message if no notes left
+        if (notesContainer.querySelectorAll('.note-item').length === 0) {
+          notesContainer.appendChild(emptyMessage);
+          emptyMessage.style.display = 'block';
+        }
+      }
+    }
+    else if (data.type === 'note_liked') {
+      // A note was liked by another user
+      const noteElement = document.querySelector(`.note-item[data-id="${data.id}"]`);
+      if (noteElement) {
+        const likeCountElement = noteElement.querySelector('.like-count');
+        if (likeCountElement) {
+          likeCountElement.textContent = data.likes || 0;
+        }
       }
     }
   }
   
-  // Add a note to the display
-  function addNoteToDisplay(text, date, index) {
+  // Update the connection status indicator
+  function updateConnectionStatus(status) {
+    if (connectionIndicator && connectionText) {
+      connectionIndicator.className = status;
+      
+      switch (status) {
+        case 'connected':
+          connectionText.textContent = 'Live: Notes shared with all readers';
+          break;
+        case 'connecting':
+          connectionText.textContent = 'Connecting...';
+          break;
+        case 'disconnected':
+          connectionText.textContent = 'Offline: Using local API';
+          break;
+      }
+    }
+  }
+  
+  // Load existing notes from API
+  async function loadNotes() {
+    try {
+      emptyMessage.style.display = 'none';
+      
+      // Show loading state with cookbook styling
+      notesContainer.innerHTML = '<div class="notes-loading">Flipping through the recipe notes...</div>';
+      
+      // Fetch notes from API
+      console.log('Fetching recipe notes for:', postSlug);
+      const response = await fetch(`${NOTES_API}?post=${encodeURIComponent(postSlug)}`);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Failed to load notes: ${response.status} ${response.statusText}`);
+      }
+      
+      const notes = await response.json();
+      console.log('Loaded notes:', notes);
+      
+      // Clear loading message
+      notesContainer.innerHTML = '';
+      
+      if (notes.length > 0) {
+        // Add each note to the display with handwritten style
+        notes.forEach((note) => {
+          addNoteToDisplay(note.content, note.createdAt, note.id, note.author, note.likes || 0);
+        });
+      } else {
+        // Show empty message if no notes
+        notesContainer.appendChild(emptyMessage);
+        emptyMessage.style.display = 'block';
+      }
+      
+      // After loading notes from API, try to establish WebSocket connection
+      initWebSocket();
+      
+    } catch (error) {
+      console.error('Error loading notes:', error);
+      notesContainer.innerHTML = '<div class="notes-error">Failed to load recipe notes. Please try again later.</div>';
+      updateConnectionStatus('disconnected');
+    }
+  }
+  
+  // Add a note to the display with cookbook styling
+  function addNoteToDisplay(text, date, id, author, likes = 0) {
     const noteElement = document.createElement('div');
     noteElement.className = 'note-item';
-    noteElement.dataset.index = index;
+    noteElement.dataset.id = id;
+    
+    // Apply a slightly random rotation for handwritten effect
+    const rotation = (Math.random() * 2 - 1); // Between -1 and 1 degrees
+    noteElement.style.transform = `rotate(${rotation}deg)`;
+    
+    // Add author if present
+    if (author) {
+      const noteAuthor = document.createElement('div');
+      noteAuthor.className = 'note-author';
+      noteAuthor.textContent = author;
+      noteElement.appendChild(noteAuthor);
+    }
     
     const noteText = document.createElement('div');
     noteText.className = 'note-text';
@@ -312,88 +467,200 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const noteDate = document.createElement('div');
     noteDate.className = 'note-date';
-    noteDate.textContent = new Date(date).toLocaleDateString();
+    noteDate.textContent = new Date(date).toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
     noteElement.appendChild(noteDate);
     
+    const noteActions = document.createElement('div');
+    noteActions.className = 'note-actions';
+    
+    // Like button
+    const likeButton = document.createElement('button');
+    likeButton.className = likeButton.className = 'like-button' + (likedNotes.has(id) ? ' liked' : '');
+    likeButton.innerHTML = `<span class="like-icon">❤️</span><span class="like-count">${likes}</span>`;
+    likeButton.setAttribute('aria-label', 'Like this note');
+    likeButton.addEventListener('click', function() {
+      likeNote(id, likeButton);
+    });
+    
+    // Delete button
     const deleteButton = document.createElement('button');
-    deleteButton.className = 'delete-note';
-    deleteButton.innerHTML = '×';
+    deleteButton.className = 'delete-note-button';
+    deleteButton.innerHTML = '<span class="delete-icon">×</span>';
     deleteButton.setAttribute('aria-label', 'Delete note');
-    deleteButton.onclick = function() {
-      deleteNote(index);
-    };
-    noteElement.appendChild(deleteButton);
+    deleteButton.addEventListener('click', function() {
+      deleteNote(id);
+    });
+    
+    noteActions.appendChild(likeButton);
+    noteActions.appendChild(deleteButton);
+    noteElement.appendChild(noteActions);
     
     notesContainer.appendChild(noteElement);
+    
+    // Hide empty message if it was displayed
+    emptyMessage.style.display = 'none';
   }
   
-  // Add a new note
-  function addNote() {
-    const noteText = newNoteField.value.trim();
-    if (noteText === '') return;
-    
-    // Get existing notes or create empty array
-    const savedNotes = localStorage.getItem(storageKey);
-    const notes = savedNotes ? JSON.parse(savedNotes) : [];
-    
-    // Add new note
-    const newNote = {
-      text: noteText,
-      date: new Date().toISOString()
-    };
-    notes.push(newNote);
-    
-    // Save to localStorage
-    localStorage.setItem(storageKey, JSON.stringify(notes));
-    
-    // Update display
-    if (notes.length === 1) {
-      emptyMessage.style.display = 'none';
+  // Like a note
+  async function likeNote(id, buttonElement) {
+    // Prevent multiple likes from same user
+    if (likedNotes.has(id)) {
+      return;
     }
     
-    addNoteToDisplay(newNote.text, newNote.date, notes.length - 1);
-    
-    // Clear input field
-    newNoteField.value = '';
+    try {
+      // Disable button while processing
+      buttonElement.disabled = true;
+      
+      // Call the like API
+      const response = await fetch(`${NOTES_API}/${id}/like`, {
+        method: 'PUT'
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Failed to like note: ${response.status} ${response.statusText}`);
+      }
+      
+      // Get updated note data
+      const updatedNote = await response.json();
+      
+      // Update like count in the UI
+      const likeCountElement = buttonElement.querySelector('.like-count');
+      if (likeCountElement) {
+        likeCountElement.textContent = updatedNote.likes || 0;
+      }
+      
+      // Mark this note as liked by the current user
+      likedNotes.add(id);
+      localStorage.setItem('liked_notes', JSON.stringify([...likedNotes]));
+      
+      // Add a small animation and style changes
+      buttonElement.classList.add('liked');
+      buttonElement.style.transform = 'scale(1.2)';
+      setTimeout(() => {
+        buttonElement.style.transform = 'scale(1)';
+      }, 200);
+      
+    } catch (error) {
+      console.error('Error liking note:', error);
+      alert('Failed to like the recipe note. Please try again.');
+    } finally {
+      // Re-enable button
+      buttonElement.disabled = false;
+    }
   }
   
-  // Delete a note
-  function deleteNote(index) {
-    // Get existing notes
-    const savedNotes = localStorage.getItem(storageKey);
-    if (!savedNotes) return;
+  // Add a new note to API
+  async function addNote() {
+    if (!newNoteField.value.trim()) {
+      alert('Please enter a note before saving.');
+      return;
+    }
     
-    const notes = JSON.parse(savedNotes);
+    // Disable button during submission
+    if (addNoteButton) addNoteButton.disabled = true;
     
-    // Remove the note at the specified index
-    notes.splice(index, 1);
-    
-    // Save updated notes
-    localStorage.setItem(storageKey, JSON.stringify(notes));
-    
-    // Reload notes display
-    loadNotes();
+    try {
+      const author = authorField.value.trim() || 'Recipe Chef';
+      
+      // Save the author name for future use
+      localStorage.setItem('recipe_note_author', author);
+      
+      // Create the note object
+      const newNote = {
+        post: postSlug,
+        content: newNoteField.value.trim(),
+        author: author
+      };
+      
+      // Send to API
+      const response = await fetch(NOTES_API, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newNote)
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Failed to add note: ${response.status} ${response.statusText}`);
+      }
+      
+      // Get the saved note with its server-generated ID
+      const savedNote = await response.json();
+      
+      // Add to display
+      addNoteToDisplay(savedNote.content, savedNote.createdAt, savedNote.id, savedNote.author, savedNote.likes || 0);
+      
+      // Clear input field
+      newNoteField.value = '';
+      
+    } catch (error) {
+      console.error('Error adding note:', error);
+      alert('Failed to save your recipe note. Please try again.');
+    } finally {
+      // Re-enable button
+      if (addNoteButton) addNoteButton.disabled = false;
+    }
   }
   
-  // Clear all notes
-  function clearAllNotes() {
-    if (confirm('Are you sure you want to clear all your notes for this recipe?')) {
-      localStorage.removeItem(storageKey);
-      loadNotes();
+  // Delete a note from API
+  async function deleteNote(id) {
+    if (!confirm('Are you sure you want to remove this recipe note?')) return;
+    
+    try {
+      // Send delete request to API
+      const response = await fetch(`${NOTES_API}/${id}?post=${encodeURIComponent(postSlug)}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Failed to delete note: ${response.status} ${response.statusText}`);
+      }
+      
+      // Remove from display
+      const noteElement = notesContainer.querySelector(`.note-item[data-id="${id}"]`);
+      if (noteElement) {
+        noteElement.remove();
+      }
+      
+      // Show empty message if no notes left
+      if (notesContainer.querySelectorAll('.note-item').length === 0) {
+        notesContainer.appendChild(emptyMessage);
+        emptyMessage.style.display = 'block';
+      }
+      
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      alert('Failed to delete the recipe note. Please try again.');
     }
   }
   
   // Event listeners
-  addNoteButton.addEventListener('click', addNote);
+  if (addNoteButton) {
+    addNoteButton.addEventListener('click', addNote);
+  }
   
-  newNoteField.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      addNote();
-    }
-  });
-  
-  clearNotesButton.addEventListener('click', clearAllNotes);
+  if (newNoteField) {
+    newNoteField.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        addNote();
+      }
+    });
+  }
   
   // Load notes on page load
   loadNotes();
