@@ -262,7 +262,7 @@ const siteName = typeof window !== 'undefined'
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   </head>
-  <body class="overflow-x-hidden w-full">
+  <body class="notebook-paper overflow-x-hidden w-full">
     <!-- Cover Page Component - will be controlled by JS -->
     <CoverPage />
     
@@ -276,7 +276,7 @@ const siteName = typeof window !== 'undefined'
     </div>
     
     <PrivacyBanner />
-    <Footer />
+    <!-- Removed duplicate Footer component here -->
     
     <!-- Cover page animation - for first time visitors -->
     <script>
@@ -468,6 +468,166 @@ const siteName = typeof window !== 'undefined'
     </script>
 
     <style is:global>
+      :root {
+        --font-sans: 'Source Sans 3', system-ui, -apple-system, sans-serif;
+        --font-serif: 'Crimson Pro', Georgia, serif;
+        --font-mono: 'JetBrains Mono', Consolas, monospace;
+        --handwriting-font: 'Caveat', cursive;
+        
+        /* Base colors */
+        --notebook-paper-color: #f5f5eb;
+        --notebook-paper-dark: #2d3748;
+        --primary-color: #51733F;
+        --secondary-color: #66845A;
+        --accent-color: #a9c76f;
+        --text-color: #333333;
+        --text-color-light: #666666;
+        --border-color: #d1d1d1;
+        
+        /* Line heights */
+        --body-line-height: 1.6;
+        --heading-line-height: 1.2;
+        
+        /* Other variables */
+        --max-width: 1800px; /* Increased from 1200px */
+        --header-height: 60px;
+        --footer-height: 80px;
+        --border-radius: 8px;
+        --transition-speed: 0.3s;
+      }
+
+      /* We need to ensure html has both background color and image */
+      html {
+        font-family: var(--font-sans);
+        scroll-behavior: smooth;
+        background-color: var(--notebook-paper-color);
+      }
+
+      /* Notebook paper background with ruled lines and margin */
+      body {
+        background-color: var(--notebook-paper-color);
+        background-image: 
+          /* Red margin line */
+          linear-gradient(90deg, transparent, transparent 30px, rgba(255, 0, 0, 0.1) 30px, rgba(255, 0, 0, 0.1) 31px, transparent 31px),
+          /* Horizontal ruled lines */
+          linear-gradient(var(--notebook-paper-color) 0px, var(--notebook-paper-color) 25px, rgba(0, 0, 128, 0.05) 25px, rgba(0, 0, 128, 0.05) 26px);
+        background-size: 100% 26px;
+        background-attachment: fixed;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        line-height: var(--body-line-height);
+        overflow-x: hidden;
+        position: relative;
+        color: var(--text-color);
+        /* Paper-like subtle texture */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      }
+      
+      /* Paper texture overlay */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-image: url('data:image/png;base64,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');
+        opacity: 0.03;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      /* Dark mode styles */
+      .dark {
+        background-color: var(--notebook-paper-dark);
+      }
+      
+      .dark body {
+        background-color: var(--notebook-paper-dark);
+        background-image: 
+          /* Red margin line (darker for dark mode) */
+          linear-gradient(90deg, transparent, transparent 30px, rgba(255, 0, 0, 0.07) 30px, rgba(255, 0, 0, 0.07) 31px, transparent 31px),
+          /* Horizontal ruled lines (darker for dark mode) */
+          linear-gradient(var(--notebook-paper-dark) 0px, var(--notebook-paper-dark) 25px, rgba(140, 150, 230, 0.07) 25px, rgba(140, 150, 230, 0.07) 26px);
+        color: #e2e8f0;
+      }
+      
+      /* Dark mode paper texture */
+      .dark body::before {
+        opacity: 0.05;
+      }
+      
+      /* Handwritten font styles for headers */
+      h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-serif);
+        line-height: var(--heading-line-height);
+        color: var(--primary-color);
+      }
+      
+      /* Add handwritten font styling to specific elements */
+      .handwritten, 
+      .note-title, 
+      .post-title,
+      .recipe-note-title,
+      button {
+        font-family: var(--handwriting-font);
+      }
+      
+      .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+        color: var(--accent-color);
+      }
+
+      a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+      
+      a:hover {
+        text-decoration: underline;
+      }
+      
+      .dark a {
+        color: var(--accent-color);
+      }
+      
+      .dark a:hover {
+        color: white;
+      }
+      
+      /* Ensure all paper-styled containers maintain the notebook look */
+      .paper-style {
+        background-color: var(--notebook-paper-color);
+        border-radius: 0.25rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .dark .paper-style {
+        background-color: var(--notebook-paper-dark);
+      }
+      
+      /* Helper class for paper elements that need lines */
+      .paper-lined::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: linear-gradient(#e5e5da 1px, transparent 1px);
+        background-size: 100% 2rem;
+        background-position: 0 1rem;
+        pointer-events: none;
+        z-index: 0;
+      }
+      
+      .dark .paper-lined::before {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+      }
+      
       /* Optimization for image loading */
       img.lazy {
         opacity: 0;
@@ -512,6 +672,149 @@ const siteName = typeof window !== 'undefined'
         [class*="rotate-"] {
           transform: none !important;
         }
+      }
+      
+      /* Notebook paper styling for the entire page */
+      body.notebook-paper {
+        background-color: #f5f5eb;
+        color: #333;
+        font-family: 'Source Sans 3', sans-serif;
+        line-height: 1.6;
+        position: relative;
+        overflow-x: hidden;
+      }
+      
+      /* Add notebook paper ruled lines */
+      body.notebook-paper::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+          linear-gradient(#e5e5da 1px, transparent 1px);
+        background-size: 100% 2rem;
+        background-position: 0 1rem;
+        pointer-events: none;
+        z-index: -1;
+      }
+      
+      /* Add left margin line like a notebook */
+      body.notebook-paper::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 4rem;
+        bottom: 0;
+        width: 1px;
+        background-color: rgba(255, 0, 0, 0.2);
+        pointer-events: none;
+        z-index: -1;
+      }
+      
+      /* Dark mode notebook styling */
+      .dark body.notebook-paper {
+        background-color: #2d3748;
+        color: #e2e8f0;
+      }
+      
+      .dark body.notebook-paper::before {
+        background-image: 
+          linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+      }
+      
+      .dark body.notebook-paper::after {
+        background-color: rgba(255, 100, 100, 0.15);
+      }
+      
+      html {
+        font-family: 'Source Sans 3', sans-serif;
+        scroll-behavior: smooth;
+      }
+      
+      body {
+        transition: background-color 0.3s ease;
+      }
+      
+      .dark {
+        color-scheme: dark;
+      }
+      
+      .wrapper {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+      
+      main {
+        min-height: calc(100vh - 180px);
+        width: 100%;
+        padding: 2rem 0;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-serif);
+        line-height: var(--heading-line-height);
+        color: var(--primary-color);
+      }
+      
+      .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+        color: var(--accent-color);
+      }
+      
+      p {
+        margin-bottom: 1.5rem;
+      }
+      
+      a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+      
+      a:hover {
+        color: #3A5431;
+      }
+      
+      .dark a {
+        color: var(--accent-color);
+      }
+      
+      .dark a:hover {
+        color: #7d9c6c;
+      }
+      
+      /* Helper class for handwritten text */
+      .handwritten {
+        font-family: var(--handwriting-font);
+      }
+      
+      /* Hide class utility */
+      .hidden {
+        display: none !important;
+      }
+      
+      /* Responsive images */
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+      
+      button {
+        cursor: pointer;
+        font-family: inherit;
+      }
+      
+      /* Add focus styles for accessibility */
+      :focus-visible {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+      }
+      
+      .dark :focus-visible {
+        outline-color: var(--accent-color);
       }
     </style>
   </body>

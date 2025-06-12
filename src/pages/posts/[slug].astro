@@ -4,7 +4,7 @@ import { getCollection } from "astro:content";
 import { getMetaUrl } from "../../lib/utils";
 import Tags from "../../components/misc/Tags.astro";
 import PageNotes from "../../components/interactive/PageNotes.astro";
-import { Icon } from "astro-icon/components";
+import CollapsibleBlogContent from "../../components/blog/CollapsibleBlogContent.astro";
 
 import Code from "../../components/mdx/Code.astro";
 import H1 from "../../components/mdx/H1.astro";
@@ -58,72 +58,86 @@ const metaUrl = image ? image : getMetaUrl(title, date);
 const minuteReadTime = Math.ceil(post.body.length / 1500);
 
 // Convert tags for meta keywords if needed
-const keywordsArray = keywords ? 
-  (typeof keywords === 'string' ? keywords.split(',').map(k => k.trim()) : keywords) : 
-  tags;
+const keywordsString = keywords ? 
+  (typeof keywords === 'string' ? keywords : (Array.isArray(keywords) ? keywords : []).join(', ')) : 
+  (tags && Array.isArray(tags) ? tags.join(', ') : '');
+
+// Type-safe handling of dates
+const publishDate = date instanceof Date ? date : new Date(date);
 
 ---
 
 <Layout 
   title={title}
   description={desc}
-  keywords={keywordsArray}
+  keywords={keywordsString}
   ogImage={metaUrl}
-  articleDate={date}
-  articleModifiedDate={date}
+  articleDate={publishDate}
+  articleModifiedDate={publishDate}
   type="article"
   twitterCard="summary_large_image"
 >
-  <div class="post-header">
-    <div class="post-meta">
-      <time datetime={date.toISOString()}>
-        {formatDate(date)}
-      </time>
-      <span class="meta-separator">•</span>
-      <span>{minuteReadTime} min read</span>
-    </div>
-    <h1 class="post-title handwritten-title">{title}</h1>
-    
-    {tags && tags.length > 0 && (
-      <div class="post-tags">
+  <!-- Use the same container approach as notes page -->
+  <main class="container mx-auto px-2 md:px-4">
+    <article class="notebook-page mt-6 relative">
+      <!-- Post Header -->
+      <header class="post-header">
+        <h1 class="post-title">{title}</h1>
+        <div class="post-meta">
+          <time class="post-date" datetime={publishDate.toString()}>
+            <!-- Calendar icon SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            {formatDate(publishDate)}
+          </time>
+          {minuteReadTime > 0 && (
+            <span class="post-read-time">
+              <!-- Clock icon SVG -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              {minuteReadTime} min read
+            </span>
+          )}
+        </div>
         <Tags tags={tags} />
-      </div>
-    )}
-  </div>
-  
-  <div class="post-grid-container">
-    <!-- Sidebar with Table of Contents -->
-    <aside class="hidden lg:block sidebar-container">
-      <div class="recipe-note">
-        <h4 class="recipe-note-title">Contents</h4>
-        {tableOfContents && tableOfContents.map && tableOfContents.map((item, i) => (
-          <div class="toc-item" style={`margin-left: ${(item.depth - 1) * 1}rem;`}>
-            <a href={`#${item.slug}`} class="text-lg font-medium text-primary-600 dark:text-primary-300">{item.text}</a>
-          </div>
-        ))}
-      </div>
-      
-      <!-- Recipe Notes - Side version -->
-      <div class="recipe-notes-sidebar">
+        <div class="recipe-tab">Blog Post</div>
+      </header>
+
+      <!-- Notes Button -->
+      <button id="notes-btn" class="notes-btn">
+        <!-- Notes icon SVG -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+          <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9.06 9.06 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.437 10.437 0 0 1-.524 2.318l-.003.011a10.722 10.722 0 0 1-.244.637c-.079.186.074.394.273.362a21.673 21.673 0 0 0 .693-.125zm.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6c0 3.193-3.004 6-7 6a8.06 8.06 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a10.97 10.97 0 0 0 .398-2z"/>
+        </svg>
+        Recipe Notes
+      </button>
+
+      <!-- Page Notes Component (initially hidden) -->
+      <div id="page-notes" class="hidden recipe-notes-container">
         <h4 class="recipe-note-title">Recipe Notes</h4>
         <p class="text-sm italic mb-2">Add your thoughts to this recipe!</p>
-        <div id="side-notes-content" class="side-notes-content">
+        <div id="notes-content" class="notes-content">
           <!-- Notes will be dynamically inserted here -->
           <div class="empty-notes-message text-sm">
             <p>No notes yet. Add your first note!</p>
           </div>
         </div>
-        <textarea id="side-new-note" class="side-note-input" placeholder="Add a note..."></textarea>
-        <button id="side-add-note-button" class="side-note-button">Add Note</button>
+        <textarea id="new-note" class="note-input" placeholder="Add a note..."></textarea>
+        <button id="add-note-button" class="note-button">Add Note</button>
+        <PageNotes postSlug={post.slug} />
       </div>
-    </aside>
-    
-    <!-- Main content area -->
-    <main class="post-content-container">
-      <!-- Blog post proper content -->
-      <article class="post-content-wrapper">
-        <!-- Mobile table of contents -->
-        <div class="block lg:hidden mb-8">
+
+      <!-- Post grid with TOC and content - direct children of article -->
+      <div class="post-grid-container">
+        <!-- Sidebar -->
+        <aside class="hidden lg:block sidebar-container">
           <div class="recipe-note">
             <h4 class="recipe-note-title">Contents</h4>
             {tableOfContents && tableOfContents.map && tableOfContents.map((item, i) => (
@@ -133,944 +147,501 @@ const keywordsArray = keywords ?
             ))}
           </div>
           
-          <!-- Mobile notes section (smaller version) -->
-          <div class="recipe-note mt-4">
-            <h4 class="recipe-note-title">Recipe Notes</h4>
-            <div id="mobile-notes-content" class="mobile-notes-content">
-              <div class="empty-notes-message text-sm">
-                <p>No notes yet. Add your first note!</p>
-              </div>
+          <!-- Recipe Card -->
+          <div class="recipe-card">
+            <h4 class="recipe-note-title">Recipe Card</h4>
+            <div class="recipe-meta">
+              <div class="recipe-author">By: Chisom</div>
+              <div class="recipe-difficulty">Complexity: Medium</div>
+              <div class="recipe-time">Reading time: {minuteReadTime} min</div>
             </div>
-            <textarea id="mobile-new-note" class="side-note-input" placeholder="Add a note..."></textarea>
-            <button id="mobile-add-note-button" class="side-note-button">Add Note</button>
           </div>
-        </div>
-      
-        <!-- The actual post content -->
+        </aside>
+        
+        <!-- Direct content - no extra wrappers -->
         <div class="post-content">
-          <Content components={{ 
-            pre: Code,
-            h1: H1,
-            h2: H2,
-            h3: H3
-          }} />
+          <!-- Mobile TOC -->
+          <div class="block lg:hidden mb-8">
+            <div class="recipe-note">
+              <h4 class="recipe-note-title">Contents</h4>
+              <div class="collapsible-toc collapsed" id="collapsible-toc">
+                {tableOfContents && tableOfContents.map && tableOfContents.map((item, i) => (
+                  <div class="toc-item" style={`margin-left: ${(item.depth - 1) * 1}rem;`}>
+                    <a href={`#${item.slug}`} class="text-lg font-medium text-primary-600 dark:text-primary-300">{item.text}</a>
+                  </div>
+                ))}
+              </div>
+              <button type="button" id="toggle-toc-btn" class="toggle-content-btn">
+                Show Contents
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        
+          <!-- Content with no extra wrappers -->
+          <CollapsibleBlogContent>
+            <Content components={{
+              pre: Code,
+              h1: H1,
+              h2: H2,
+              h3: H3
+            }} />
+          </CollapsibleBlogContent>
         </div>
-      </article>
-    </main>
-  </div>
+      </div>
+    </article>
+  </main>
 </Layout>
 
 <style>
-  /* Post layout */
-  .post-grid-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    margin-top: 2rem;
+  /* Notebook page styling for the entire post */
+  .notebook-page {
+    position: relative;
+    padding: 2rem 1rem 3rem;
+    border-radius: 0.5rem;
+    background-color: var(--notebook-paper-color, #f5f5eb);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    width: 100%;
   }
   
-  @media (min-width: 1024px) {
-    .post-grid-container {
-      grid-template-columns: 250px 1fr;
+  @media (min-width: 768px) {
+    .notebook-page {
+      padding: 3rem 2rem;
     }
   }
   
-  /* Post header */
-  .post-header {
-    text-align: center;
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    position: relative;
+  .dark .notebook-page {
+    background-color: var(--notebook-paper-color-dark, #4a5568);
+    border-color: rgba(0, 0, 0, 0.2);
   }
   
-  .post-header::after {
-    content: "";
+  /* Recipe tab styling */
+  .recipe-tab {
     position: absolute;
-    bottom: 0;
-    left: 25%;
-    right: 25%;
-    height: 2px;
-    background-image: 
-      linear-gradient(
-        to right,
-        transparent,
-        var(--primary-color, #51733F),
-        transparent
-      );
+    top: -2rem;
+    right: 3rem;
+    padding: 0.5rem 1.5rem;
+    background-color: var(--primary-color, #51733F);
+    color: white;
+    border-radius: 0.5rem 0.5rem 0 0;
+    font-family: var(--handwriting-font);
+    font-weight: 600;
+    transform: rotate(2deg);
+    box-shadow: 2px -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 5;
+  }
+  
+  .dark .recipe-tab {
+    background-color: var(--accent-color, #a9c76f);
+    color: #2d3748;
+  }
+  
+  /* Post Header Styling with notebook aesthetics */
+  .post-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+    position: relative;
+    border-bottom: 2px dashed var(--primary-color, #51733F);
+    padding-bottom: 1rem;
+    width: 100%;
   }
   
   .post-title {
+    font-family: var(--font-serif);
     font-size: 2.5rem;
-    font-weight: 700;
-    margin: 1rem 0;
-    transform: rotate(-1deg);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color, #51733F);
+  }
+  
+  .dark .post-title {
+    color: var(--accent-color);
   }
   
   .post-meta {
-    color: var(--text-muted, #718096);
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .meta-separator {
-    margin: 0 0.5rem;
-  }
-  
-  .post-tags {
-    margin: 1rem 0;
-  }
-  
-  /* Sidebar */
-  .sidebar-container {
-    position: sticky;
-    top: 5rem;
-    align-self: start;
-  }
-  
-  /* Content container */
-  .post-content-container {
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-  
-  /* Recipe note (Table of Contents) */
-  .recipe-note {
-    background-color: var(--notebook-paper-color, #fff);
-    border: 1px dashed rgba(81, 115, 63, 0.4);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    position: relative;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    background-image: 
-      repeating-linear-gradient(
-        transparent,
-        transparent 1px,
-        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 1px,
-        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 2px,
-        transparent 2px,
-        transparent 24px
-      );
-  }
-  
-  .recipe-note::before,
-  .post-content::before,
-  .recipe-notes-sidebar::before {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(139, 69, 19, 0.15) 0%,
-      rgba(139, 69, 19, 0.08) 50%,
-      rgba(139, 69, 19, 0.01) 80%,
-      rgba(139, 69, 19, 0) 100%
-    );
-    pointer-events: none;
-    z-index: 1;
-  }
-  
-  .recipe-note::before {
-    top: -15px;
-    right: -10px;
-    width: 80px;
-    height: 70px;
-    transform: rotate(20deg);
-  }
-  
-  .post-content::before {
-    bottom: 40px;
-    left: -20px;
-    width: 120px;
-    height: 100px;
-    transform: rotate(-15deg);
-    opacity: 0.3;
-  }
-  
-  .recipe-notes-sidebar::before {
-    bottom: -15px;
-    right: 10px;
-    width: 70px;
-    height: 60px;
-    transform: rotate(40deg);
-  }
-  
-  /* Add a second coffee stain for more authenticity */
-  .post-content::after {
-    content: "";
-    position: absolute;
-    top: 30%;
-    right: -15px;
-    width: 60px;
-    height: 50px;
-    border-radius: 50%;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(139, 69, 19, 0.1) 0%,
-      rgba(139, 69, 19, 0.05) 60%,
-      rgba(139, 69, 19, 0) 100%
-    );
-    transform: rotate(15deg) scale(1, 0.8);
-    pointer-events: none;
-    z-index: 1;
-  }
-  
-  .recipe-note-title {
-    font-size: 1.25rem;
-    color: var(--primary-color, #51733F);
-    margin-bottom: 0.75rem;
-    border-bottom: 1px dashed var(--primary-color, #51733F);
-    padding-bottom: 0.5rem;
-    font-weight: 600;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
     font-family: var(--handwriting-font);
-    transform: rotate(-1deg);
   }
   
-  .toc-item {
-    margin: 0.5rem 0;
-    transform: rotate(-0.5deg);
-  }
-  
-  .toc-item a {
-    text-decoration: none;
-    transition: all 0.2s;
-    font-size: 1rem;
-    color: var(--text-color, #2d3748);
-  }
-  
-  .toc-item a:hover {
-    color: var(--primary-color, #51733F);
-    text-decoration: underline;
-    text-decoration-style: dashed;
-  }
-  
-  .dark .toc-item a {
-    color: var(--text-color-dark, #e2e8f0);
-  }
-  
-  .dark .toc-item a:hover {
-    color: var(--primary-color-light, #a9c76f);
-  }
-  
-  /* Add notebook paper styling to blog post content */
-  .post-content {
-    padding: 2rem;
-    background-color: var(--notebook-paper-color, #fff);
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    position: relative;
-    
-    /* Notebook paper styling */
-    background-image: 
-      repeating-linear-gradient(
-        transparent,
-        transparent 1px,
-        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 1px,
-        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 2px,
-        transparent 2px,
-        transparent 24px
-      );
-    background-size: 100% 24px;
-    
-    border: 1px dashed rgba(81, 115, 63, 0.4);
-  }
-  
-  /* Improved blog post content styling for better readability */
-  .post-content {
-    font-family: var(--alt-font-family, 'Source Sans 3', sans-serif);
-    line-height: 1.7;
-  }
-  
-  /* Better line spacing for paragraphs and lists */
-  .post-content p {
-    margin-bottom: 1.8rem;
-    font-size: 1.05rem;
-    color: var(--text-color, #2d3748);
-    max-width: 68ch;
-  }
-  
-  /* Proper paragraph spacing for better readability */
-  .post-content p + p {
-    margin-top: -0.5rem; /* Reduce gap between consecutive paragraphs */
-  }
-  
-  /* Add more space before headings for better content separation */
-  .post-content p + h2,
-  .post-content p + h3,
-  .post-content ul + h2,
-  .post-content ul + h3,
-  .post-content ol + h2,
-  .post-content ol + h3 {
-    margin-top: 3.5rem;
-  }
-  
-  .post-content h1, 
-  .post-content h2, 
-  .post-content h3,
-  .post-content h4 {
-    font-family: var(--header-font-family, 'Crimson Pro', serif);
-    color: var(--primary-color, #51733F);
-    margin-top: 2.5rem;
-    margin-bottom: 1.2rem;
-    line-height: 1.3;
-    font-weight: 600;
-    position: relative;
-    max-width: 100%;
-    overflow-wrap: break-word;
-  }
-  
-  /* Semantic decoration for headings */
-  .post-content h2::after {
-    content: "";
-    display: block;
-    width: 100%;
-    max-width: 100px;
-    height: 3px;
-    background: linear-gradient(to right, var(--primary-color, #51733F), transparent);
-    margin-top: 0.5rem;
-    border-radius: 3px;
-  }
-  
-  .post-content h1 {
-    font-size: 2.25rem;
-    border-bottom: 2px dashed rgba(81, 115, 63, 0.3);
-    padding-bottom: 0.5rem;
-  }
-  
-  .post-content h2 {
-    font-size: 1.8rem;
-  }
-  
-  .post-content h3 {
-    font-size: 1.5rem;
-  }
-  
-  .post-content h4 {
-    font-size: 1.25rem;
-  }
-  
-  /* Strong emphasis for important content */
-  .post-content strong {
-    color: var(--primary-color-dark, #3c5a2d);
-    font-weight: 700;
-    position: relative;
-    padding-bottom: 1px;
-    border-bottom: 2px dotted var(--primary-color, #51733F);
-  }
-  
-  /* Semantic emphasis for important terms */
-  .post-content em {
-    font-style: italic;
-    color: var(--primary-color-dark, #3c5a2d);
-  }
-  
-  .post-content ul,
-  .post-content ol {
-    margin: 1.5rem 0 2rem 1.5rem;
-    padding-left: 1rem;
-  }
-  
-  .post-content li {
-    margin-bottom: 0.75rem;
-    position: relative;
-    max-width: 65ch;
-  }
-  
-  /* Better bullet styling */
-  .post-content ul li::before {
-    content: "•";
-    color: var(--primary-color, #51733F);
-    display: inline-block;
-    width: 1em;
-    margin-left: -1em;
-    font-weight: bold;
-  }
-  
-  /* Numbered lists styling */
-  .post-content ol {
-    counter-reset: item;
-    list-style-type: none;
-  }
-  
-  .post-content ol li {
-    counter-increment: item;
-  }
-  
-  .post-content ol li::before {
-    content: counter(item) ".";
-    color: var(--primary-color, #51733F);
-    font-weight: bold;
-    display: inline-block;
-    width: 1.5em;
-    margin-left: -1.5em;
-  }
-  
-  /* Improved link styling with semantic underlines */
-  .post-content a {
-    color: var(--primary-color, #51733F);
-    text-decoration: none;
-    background-image: linear-gradient(transparent calc(100% - 2px), var(--primary-color, #51733F) 2px);
-    background-size: 0% 100%;
-    background-repeat: no-repeat;
-    transition: background-size 0.3s ease;
-    padding-bottom: 2px;
-    font-weight: 500;
-  }
-  
-  .post-content a:hover {
-    color: var(--primary-color-dark, #3c5a2d);
-    background-size: 100% 100%;
-  }
-  
-  .post-content img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 0.5rem;
-    margin: 2rem auto;
-    border: 1px dashed rgba(81, 115, 63, 0.4);
-    padding: 0.5rem;
-    background-color: #fff;
-    display: block; /* Center images */
-  }
-  
-  /* Caption for images */
-  .post-content img + em {
-    display: block;
-    text-align: center;
-    font-size: 0.9rem;
-    margin-top: -1rem;
-    margin-bottom: 2rem;
-    color: var(--text-muted, #718096);
-  }
-  
-  /* Improved code styling with better readability */
-  .post-content code:not(pre code) {
-    font-family: var(--code-font-family, 'JetBrains Mono', monospace);
-    background-color: rgba(81, 115, 63, 0.1);
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.25rem;
-    font-size: 0.9em;
-    color: var(--primary-color-dark, #3c5a2d);
-    border: 1px dashed rgba(81, 115, 63, 0.3);
-    white-space: nowrap;
-  }
-  
-  /* Fix code block overflow with horizontal scrolling */
-  .post-content pre {
-    margin: 1.8rem 0;
-    padding: 1.2rem;
-    border-radius: 0.5rem;
-    background-color: #2d2d2d;
-    overflow-x: auto;
-    border: 1px dashed rgba(81, 115, 63, 0.4);
-    max-width: 100%;
-    position: relative;
-  }
-  
-  /* Add "Copy" button to code blocks */
-  .post-content pre::after {
-    content: "Copy";
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    font-size: 0.7rem;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
-    padding: 0.2rem 0.5rem;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-  
-  .post-content pre:hover::after {
-    opacity: 1;
-  }
-  
-  .post-content pre code {
-    font-family: var(--code-font-family, 'JetBrains Mono', monospace);
-    font-size: 0.9rem;
-    line-height: 1.6;
-    display: block;
-    white-space: pre;
-    word-wrap: normal;
-    padding-bottom: 0.5rem; /* Add bottom padding for scrollbar */
-  }
-  
-  /* Add line numbers to code blocks */
-  .post-content pre code {
-    counter-reset: line;
-  }
-  
-  .post-content pre code > .line::before {
-    counter-increment: line;
-    content: counter(line);
-    display: inline-block;
-    width: 1.5rem;
-    margin-right: 1rem;
-    text-align: right;
-    color: rgba(255, 255, 255, 0.3);
-  }
-  
-  /* Horizontal rule styling */
-  .post-content hr {
-    border: none;
-    height: 2px;
-    background-image: linear-gradient(to right, transparent, var(--primary-color, #51733F), transparent);
-    margin: 3rem auto;
-    width: 80%;
-    opacity: 0.5;
-  }
-  
-  /* Blockquote styling for chef tips */
-  .post-content blockquote {
-    margin: 2.5rem 0;
-    padding: 1.8rem 1.5rem 1.2rem;
-    border-left: 4px solid #f6e05e;
-    background-color: rgba(246, 224, 94, 0.1);
-    position: relative;
-    border-radius: 0.25rem;
-    font-family: var(--handwriting-font);
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
-    max-width: 95%;
-  }
-  
-  .post-content blockquote::before {
-    content: "Chef's Tip";
-    position: absolute;
-    top: -12px;
-    left: 1rem;
-    background-color: #f6e05e;
+  .post-date {
+    background-color: #51733F;
+    color: white;
     padding: 0.25rem 0.75rem;
     border-radius: 0.25rem;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
     font-weight: bold;
-    color: #744210;
-    font-family: var(--handwriting-font);
-    transform: rotate(-2deg);
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
   }
   
-  .post-content blockquote p {
-    margin: 0.5rem 0;
-    font-style: italic;
+  .dark .post-date {
+    background-color: #66845A;
   }
   
-  /* Highlight important sections with a note box */
-  .post-content .important-note {
-    background-color: rgba(81, 115, 63, 0.1);
-    border-left: 4px solid var(--primary-color, #51733F);
-    padding: 1.5rem;
-    margin: 2rem 0;
+  .post-tag {
+    background-color: rgba(81, 115, 63, 0.15);
+    color: var(--primary-color, #51733F); 
+    padding: 0.25rem 0.75rem;
     border-radius: 0.25rem;
-    position: relative;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
   }
   
-  .post-content .important-note::before {
-    content: "Important";
-    position: absolute;
-    top: -10px;
-    left: 1rem;
-    background-color: var(--primary-color, #51733F);
-    color: white;
-    padding: 0.2rem 0.75rem;
-    border-radius: 0.25rem;
-    font-size: 0.8rem;
-    font-weight: bold;
+  .dark .post-tag {
+    background-color: rgba(102, 132, 90, 0.3);
+    color: #a9c76f;
   }
   
-  /* Dark mode styles for content */
-  .dark .post-content p,
-  .dark .post-content li {
-    color: var(--text-color-dark, #e2e8f0);
+  .post-read-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    color: #555;
   }
   
-  .dark .post-content h1,
-  .dark .post-content h2,
-  .dark .post-content h3,
-  .dark .post-content h4 {
-    color: var(--primary-color-light, #a9c76f);
+  .dark .post-read-time {
+    color: #e2e8f0;
   }
   
-  .dark .post-content h2::after {
-    background: linear-gradient(to right, var(--primary-color-light, #a9c76f), transparent);
-  }
-  
-  .dark .post-content a {
-    color: var(--primary-color-light, #a9c76f);
-    background-image: linear-gradient(transparent calc(100% - 2px), var(--primary-color-light, #a9c76f) 2px);
-  }
-  
-  .dark .post-content a:hover {
-    color: #c0e075;
-  }
-  
-  .dark .post-content strong {
-    color: var(--primary-color-light, #a9c76f);
-    border-bottom-color: var(--primary-color-light, #a9c76f);
-  }
-  
-  .dark .post-content em {
-    color: var(--primary-color-light, #a9c76f);
-  }
-  
-  .dark .post-content code:not(pre code) {
-    background-color: rgba(169, 199, 111, 0.1);
-    color: var(--primary-color-light, #a9c76f);
-    border-color: rgba(169, 199, 111, 0.3);
-  }
-  
-  .dark .post-content pre {
-    background-color: #1a1a1a;
-  }
-  
-  .dark .post-content hr {
-    background-image: linear-gradient(to right, transparent, var(--primary-color-light, #a9c76f), transparent);
-  }
-  
-  .dark .post-content img {
-    background-color: #2d3748;
-    border-color: rgba(169, 199, 111, 0.3);
-  }
-  
-  .dark .post-content .important-note {
-    background-color: rgba(169, 199, 111, 0.1);
-    border-left-color: var(--primary-color-light, #a9c76f);
-  }
-  
-  .dark .post-content .important-note::before {
-    background-color: var(--primary-color-light, #a9c76f);
-    color: #1a202c;
-  }
-  
-  /* Improved spacing for different screen sizes */
-  @media (max-width: 768px) {
-    .post-content {
-      padding: 1.5rem;
+  /* Mobile optimizations for header */
+  @media (max-width: 767px) {
+    .post-header {
+      margin-bottom: 1.5rem;
+      padding: 0 1rem 1rem 1rem;
     }
     
-    .post-content h1 {
+    .post-title {
       font-size: 1.8rem;
     }
     
-    .post-content h2 {
-      font-size: 1.5rem;
-    }
-    
-    .post-content h3 {
-      font-size: 1.3rem;
-    }
-    
-    .post-content p,
-    .post-content li {
-      font-size: 1rem;
+    .post-meta {
+      flex-direction: column;
+      gap: 0.25rem;
     }
   }
-  
-  /* Recipe Notes Sidebar Styling */
-  .recipe-notes-sidebar {
-    background-color: var(--notebook-paper-color, #fff);
-    border: 1px dashed rgba(81, 115, 63, 0.4);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin-top: 2rem;
-    font-size: 0.9rem;
-    position: relative;
-    background-image: 
-      repeating-linear-gradient(
-        transparent,
-        transparent 1px,
-        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 1px,
-        var(--notebook-line-color, rgba(0, 0, 0, 0.05)) 2px,
-        transparent 2px,
-        transparent 24px
-      );
-  }
-  
-  .side-notes-content,
-  .mobile-notes-content {
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 1rem;
-    padding-right: 5px;
-  }
-  
-  /* Stylized scrollbar for recipe notes */
-  .side-notes-content::-webkit-scrollbar,
-  .mobile-notes-content::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  .side-notes-content::-webkit-scrollbar-track,
-  .mobile-notes-content::-webkit-scrollbar-track {
-    background: rgba(81, 115, 63, 0.1);
-    border-radius: 10px;
-  }
-  
-  .side-notes-content::-webkit-scrollbar-thumb,
-  .mobile-notes-content::-webkit-scrollbar-thumb {
-    background: rgba(81, 115, 63, 0.3);
-    border-radius: 10px;
-  }
-  
-  .side-notes-content::-webkit-scrollbar-thumb:hover,
-  .mobile-notes-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(81, 115, 63, 0.5);
-  }
-  
-  .side-note-input {
+
+  /* Post content container */
+  .post-content {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px dashed var(--primary-color, #51733F);
-    border-radius: 0.25rem;
-    background-color: rgba(255, 255, 255, 0.5);
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    resize: vertical;
-    min-height: 60px;
-    font-family: var(--handwriting-font);
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
-  .side-note-button {
-    background-color: var(--primary-color, #51733F);
-    color: white;
-    border: none;
-    border-radius: 0.25rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 600;
+  /* Force content to use full available width */
+  .post-content :global(*),
+  .collapsible-content :global(*) {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Ensure code blocks are fully visible */
+  .post-content :global(pre),
+  .post-content :global(code) {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  
+  /* Left margin line like a notebook */
+  .post::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: calc(50% - 420px);
+    bottom: 0;
+    width: 1px;
+    background-color: rgba(255, 0, 0, 0.2);
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .dark .post::after {
+    background-color: rgba(255, 100, 100, 0.15);
+  }
+  
+  @media (max-width: 900px) {
+    .post::after {
+      left: 3rem;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .post {
+      padding: 1rem 0;
+    }
+    
+    .post::after {
+      left: 1.5rem;
+    }
+  }
+
+  /* Post grid layout - simplified */
+  .post-grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
     width: 100%;
   }
   
-  .side-note-button:hover {
-    background-color: var(--primary-color-dark, #3c5a2d);
-    transform: translateY(-1px);
+  /* Desktop layout with wider content area */
+  @media (min-width: 768px) {
+    .post-grid-container {
+      grid-template-columns: 250px 1fr;
+      gap: 2.5rem;
+    }
+    
+    /* Override container width constraints on desktop */
+    .container {
+      max-width: 1440px;
+      width: 95%;
+    }
+    
+    /* Ensure content takes full width on desktop */
+    .post-content {
+      width: 100%;
+      flex-grow: 1;
+      min-width: 0; /* Prevent min-width:auto from causing overflow */
+    }
+    
+    /* Force all content to be wide on desktop */
+    .post-content :global(p),
+    .post-content :global(h1),
+    .post-content :global(h2),
+    .post-content :global(h3),
+    .post-content :global(h4),
+    .post-content :global(h5),
+    .post-content :global(h6),
+    .post-content :global(blockquote),
+    .post-content :global(ul),
+    .post-content :global(ol),
+    .post-content :global(pre),
+    .post-content :global(figure),
+    .post-content :global(table) {
+      width: 100%; 
+      max-width: 100%;
+    }
   }
   
-  .note-item {
-    padding: 0.75rem;
-    background-color: rgba(255, 255, 255, 0.3);
+  /* Container for the main blog content */
+  .blog-content-container {
+    width: 100%;
+  }
+
+  /* Notes button styling to match read more button */
+  .notes-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+    padding: 0.5rem 1.5rem;
+    background-color: #f5f5f0;
+    border: 1px dashed #51733F;
     border-radius: 0.25rem;
-    margin-bottom: 0.75rem;
+    color: #51733F;
     font-family: var(--handwriting-font);
-    font-size: 0.9rem;
-    border-left: 3px solid var(--primary-color, #51733F);
-    position: relative;
-  }
-  
-  .note-delete {
-    position: absolute;
-    top: 0.25rem;
-    right: 0.25rem;
-    color: #e53e3e;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 0.8rem;
-    opacity: 0.7;
-  }
-  
-  .note-delete:hover {
-    opacity: 1;
-  }
-  
-  .empty-notes-message {
-    text-align: center;
-    color: var(--text-muted, #718096);
-    font-style: italic;
-    padding: 1rem 0;
-  }
-  
-  /* Code copy button styling */
-  .code-copy-btn {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    font-size: 0.7rem;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
-    padding: 0.2rem 0.5rem;
-    border-radius: 0.25rem;
-    border: none;
+    font-size: 1.1rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
   }
   
-  .code-copy-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.9);
+  .notes-btn:hover {
+    background-color: #51733F;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.1);
   }
   
-  /* Dark mode styling for recipe notes */
-  .dark .recipe-notes-sidebar {
-    background-color: var(--notebook-paper-color-dark, #4a5568);
-    border-color: rgba(81, 115, 63, 0.2);
+  .dark .notes-btn {
+    background-color: #2d3748;
+    border-color: #66845A;
+    color: #a9c76f;
   }
   
-  .dark .side-notes-content::-webkit-scrollbar-track,
-  .dark .mobile-notes-content::-webkit-scrollbar-track {
-    background: rgba(169, 199, 111, 0.1);
+  .dark .notes-btn:hover {
+    background-color: #66845A;
+    color: white;
+  }
+
+  /* Toggle button for TOC - match Read More button */
+  #toggle-toc-btn {
+    display: flex;
+    margin: 1rem auto;
+    padding: 0.5rem 1.5rem;
+    background-color: #f5f5f0;
+    border: 1px dashed #51733F;
+    border-radius: 0.25rem;
+    color: #51733F;
+    font-family: var(--handwriting-font);
+    font-size: 1.1rem;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    width: auto;
+    min-width: 120px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 5;
   }
   
-  .dark .side-notes-content::-webkit-scrollbar-thumb,
-  .dark .mobile-notes-content::-webkit-scrollbar-thumb {
-    background: rgba(169, 199, 111, 0.3);
+  #toggle-toc-btn:hover {
+    background-color: #51733F;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.1);
   }
   
-  .dark .side-notes-content::-webkit-scrollbar-thumb:hover,
-  .dark .mobile-notes-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(169, 199, 111, 0.5);
+  .dark #toggle-toc-btn {
+    background-color: #2d3748;
+    border-color: #66845A;
+    color: #a9c76f;
   }
   
-  .dark .note-item {
-    background-color: rgba(74, 85, 104, 0.5);
-    border-left-color: var(--primary-color-light, #a9c76f);
+  .dark #toggle-toc-btn:hover {
+    background-color: #66845A;
+    color: white;
   }
   
-  .dark .side-note-input {
-    background-color: rgba(74, 85, 104, 0.7);
-    color: var(--text-color-dark, #e2e8f0);
-    border-color: var(--primary-color-light, #a9c76f);
+  /* Collapsible TOC styling */
+  .collapsible-toc {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
   }
   
-  .dark .recipe-note::before,
-  .dark .post-content::before,
-  .dark .recipe-notes-sidebar::before,
-  .dark .post-content::after {
-    background: radial-gradient(
-      ellipse at center,
-      rgba(139, 69, 19, 0.12) 0%,
-      rgba(139, 69, 19, 0.06) 50%,
-      rgba(139, 69, 19, 0.01) 80%,
-      rgba(139, 69, 19, 0) 100%
-    );
+  .collapsible-toc:not(.collapsed) {
+    max-height: 500px;
   }
   
-  .dark .post-content blockquote {
-    background-color: rgba(246, 224, 94, 0.05);
-    border-left-color: rgba(246, 224, 94, 0.5);
+  /* Fix for the blog content overflow on mobile */
+  @media (max-width: 767px) {
+    .notebook-page {
+      padding: 2rem 0.5rem 3rem; /* Reduce side padding on mobile */
+      width: 100%;
+      overflow-x: hidden;
+    }
+    
+    .post-content {
+      overflow-x: hidden;
+      width: 100%;
+    }
+    
+    .post-content :global(pre),
+    .post-content :global(code),
+    .post-content :global(img),
+    .post-content :global(table) {
+      max-width: 100%;
+      overflow-x: auto;
+    }
   }
 </style>
 
 <script>
+  // Initialize everything when the page is ready
   document.addEventListener('DOMContentLoaded', function() {
-    const postSlug = window.location.pathname.split('/').pop();
-    const storageKey = `cookbook_notes_${postSlug}`;
+    // Notes button functionality
+    const notesBtn = document.getElementById('notes-btn') as HTMLButtonElement;
+    const pageNotes = document.getElementById('page-notes') as HTMLDivElement;
     
-    // Get all relevant DOM elements
-    const sideNotesContent = document.getElementById('side-notes-content');
-    const mobileNotesContent = document.getElementById('mobile-notes-content');
-    const sideNoteField = document.getElementById('side-new-note') as HTMLTextAreaElement | null;
-    const mobileNoteField = document.getElementById('mobile-new-note') as HTMLTextAreaElement | null;
-    const sideAddButton = document.getElementById('side-add-note-button');
-    const mobileAddButton = document.getElementById('mobile-add-note-button');
-    
-    // Load existing notes
-    function loadNotes() {
-      const notes = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      renderNotes(notes);
-    }
-    
-    // Render notes to both desktop and mobile containers
-    function renderNotes(notes: any[]) {
-      const sideContent = notes.length ? notes.map(createNoteElement).join('') : 
-        '<div class="empty-notes-message text-sm"><p>No notes yet. Add your first note!</p></div>';
-      
-      if (sideNotesContent) sideNotesContent.innerHTML = sideContent;
-      if (mobileNotesContent) mobileNotesContent.innerHTML = sideContent;
-      
-      // Add event listeners to delete buttons
-      document.querySelectorAll('.note-delete').forEach(button => {
-        button.addEventListener('click', function(this: HTMLElement) {
-          const noteId = this.dataset.id;
-          if (noteId) deleteNote(parseInt(noteId, 10));
-        });
-      });
-    }
-    
-    // Create HTML for a note
-    function createNoteElement(note: any, index: number) {
-      return `
-        <div class="note-item" data-id="${index}">
-          <button class="note-delete" data-id="${index}">×</button>
-          ${note.content}
-        </div>
-      `;
-    }
-    
-    // Add a new note
-    function addNote(content: string) {
-      if (!content.trim()) return;
-      
-      const notes = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      notes.push({
-        content,
-        date: new Date().toISOString()
-      });
-      
-      localStorage.setItem(storageKey, JSON.stringify(notes));
-      renderNotes(notes);
-    }
-    
-    // Delete a note
-    function deleteNote(id: number) {
-      const notes = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      notes.splice(id, 1);
-      localStorage.setItem(storageKey, JSON.stringify(notes));
-      renderNotes(notes);
-    }
-    
-    // Setup event listeners
-    if (sideAddButton && sideNoteField) {
-      sideAddButton.addEventListener('click', function() {
-        addNote(sideNoteField.value);
-        sideNoteField.value = '';
-      });
-    }
-    
-    if (mobileAddButton && mobileNoteField) {
-      mobileAddButton.addEventListener('click', function() {
-        addNote(mobileNoteField.value);
-        mobileNoteField.value = '';
-      });
-    }
-    
-    // Initialize notes
-    loadNotes();
-    
-    // Add code copy functionality
-    const codeBlocks = document.querySelectorAll('.post-content pre');
-    codeBlocks.forEach(block => {
-      // Create copy button
-      const copyButton = document.createElement('button');
-      copyButton.className = 'code-copy-btn';
-      copyButton.innerHTML = 'Copy';
-      copyButton.ariaLabel = 'Copy code to clipboard';
-      
-      // Add to code block
-      block.appendChild(copyButton);
-      
-      // Add click event
-      copyButton.addEventListener('click', () => {
-        const code = block.querySelector('code');
-        if (code) {
-          const codeText = code.innerText;
-          navigator.clipboard.writeText(codeText).then(() => {
-            copyButton.innerHTML = 'Copied!';
-            setTimeout(() => {
-              copyButton.innerHTML = 'Copy';
-            }, 2000);
-          }).catch(err => {
-            console.error('Failed to copy: ', err);
-            copyButton.innerHTML = 'Failed!';
-            setTimeout(() => {
-              copyButton.innerHTML = 'Copy';
-            }, 2000);
-          });
+    if (notesBtn && pageNotes) {
+      notesBtn.addEventListener('click', function() {
+        pageNotes.classList.toggle('hidden');
+        if (pageNotes.classList.contains('hidden')) {
+          notesBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+              <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9.06 9.06 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.437 10.437 0 0 1-.524 2.318l-.003.011a10.722 10.722 0 0 1-.244.637c-.079.186.074.394.273.362a21.673 21.673 0 0 0 .693-.125zm.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6c0 3.193-3.004 6-7 6a8.06 8.06 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a10.97 10.97 0 0 0 .398-2z"/>
+            </svg>
+            Recipe Notes
+          `;
+        } else {
+          notesBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+              <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9.06 9.06 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.437 10.437 0 0 1-.524 2.318l-.003.011a10.722 10.722 0 0 1-.244.637c-.079.186.074.394.273.362a21.673 21.673 0 0 0 .693-.125zm.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6c0 3.193-3.004 6-7 6a8.06 8.06 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a10.97 10.97 0 0 0 .398-2z"/>
+            </svg>
+            Hide Notes
+          `;
         }
       });
-    });
+    }
+    
+    // Add TOC toggle functionality
+    const tocButton = document.getElementById('toggle-toc-btn') as HTMLButtonElement;
+    const tocContent = document.getElementById('collapsible-toc') as HTMLDivElement;
+    
+    if (tocButton && tocContent) {
+      // Make sure the button is visible
+      tocButton.style.display = 'flex';
+      
+      // Set initial state
+      tocContent.style.maxHeight = '0';
+      tocContent.classList.add('collapsed');
+      
+      tocButton.addEventListener('click', function() {
+        const isCollapsed = tocContent.classList.contains('collapsed');
+        
+        if (isCollapsed) {
+          // Expand
+          tocContent.classList.remove('collapsed');
+          tocContent.style.maxHeight = tocContent.scrollHeight + 'px';
+          tocButton.innerHTML = `
+            Hide Contents
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+            </svg>
+          `;
+        } else {
+          // Collapse
+          tocContent.classList.add('collapsed');
+          tocContent.style.maxHeight = '0';
+          tocButton.innerHTML = `
+            Show Contents
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+            </svg>
+          `;
+        }
+      });
+    }
+
+    // Fix mobile overflow issues
+    const fixOverflow = () => {
+      const contentElements = document.querySelectorAll('pre, code, table, img');
+      contentElements.forEach(el => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.style.maxWidth = '100%';
+        if (el.tagName.toLowerCase() !== 'img') {
+          htmlEl.style.overflowX = 'auto';
+        }
+      });
+      
+      // Ensure main content containers don't overflow
+      const containers = document.querySelectorAll('.post-content, .notebook-page');
+      containers.forEach(container => {
+        const containerEl = container as HTMLElement;
+        containerEl.style.overflowX = 'hidden';
+        containerEl.style.width = '100%';
+      });
+    };
+    
+    // Run initially and after any resize
+    fixOverflow();
+    window.addEventListener('resize', fixOverflow);
   });
 </script>

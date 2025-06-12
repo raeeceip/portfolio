@@ -7,9 +7,9 @@ import { Icon } from "astro-icon/components";
     <div class="cover-icon">
       <Icon name="tabler:chef-hat" />
     </div>
-    <div class="cookbook-badge">Software Chef</div>
+    <div class="cookbook-badge">Software Engineer</div>
     <h1 class="notebook-title">Chiso's Cookbook</h1>
-    <p class="notebook-subtitle">Recipes for Software Development</p>
+    <p class="notebook-subtitle">Ramblings and Recipies of some guy named Chiso</p>
     
     <!-- Cookbook decorative patterns -->
     <div class="cookbook-corner top-left"></div>
@@ -34,7 +34,7 @@ import { Icon } from "astro-icon/components";
     width: 100%;
     height: 100%;
     background: linear-gradient(135deg, #51733F, #3F5C31);
-    z-index: 9999;
+    z-index: var(--z-cover);
     display: none; /* Hidden by default, shown via JS */
     flex-direction: column;
     justify-content: center;

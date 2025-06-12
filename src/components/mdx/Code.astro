@@ -1,12 +1,180 @@
 ---
 const html = await Astro.slots.render("default");
 
-const langauge = html?.match(/class="language-(.*?)"/)?.[1] || "unknown";
+// Extract language from class
+const language = html?.match(/class="language-(.*?)"/)?.[1] || "text";
+const formattedLanguage = language === "text" ? "plaintext" : language;
+
+// Set a more readable display name for common languages
+const languageDisplayNames = {
+  "js": "JavaScript",
+  "ts": "TypeScript",
+  "jsx": "React JSX",
+  "tsx": "React TSX",
+  "astro": "Astro",
+  "html": "HTML",
+  "css": "CSS",
+  "scss": "SCSS",
+  "bash": "Bash",
+  "sh": "Shell",
+  "py": "Python",
+  "rb": "Ruby",
+  "go": "Go",
+  "rust": "Rust",
+  "java": "Java",
+  "c": "C",
+  "cpp": "C++",
+  "csharp": "C#",
+  "php": "PHP",
+  "plaintext": "Plain Text",
+  "json": "JSON",
+  "yaml": "YAML",
+  "toml": "TOML",
+  "md": "Markdown",
+  "mdx": "MDX",
+  "sql": "SQL",
+  "graphql": "GraphQL",
+  "dockerfile": "Dockerfile",
+  "unknown": "Code"
+};
+
+const displayName = languageDisplayNames[formattedLanguage] || formattedLanguage;
 ---
 
-<div class="my-3">
-  <div class="sticky-section-label">{langauge}</div>
-  <div class="code-block">
-    <Fragment set:html={html} />
+<div class="code-container">
+  <div class="code-header">
+    <span class="code-language">{displayName}</span>
   </div>
+  <pre class="code-block"><Fragment set:html={html} /></pre>
 </div>
+
+<style>
+  .code-container {
+    position: relative;
+    margin: 1.5rem 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    font-family: var(--code-font-family, 'JetBrains Mono', monospace);
+    border: 1px dashed rgba(58, 77, 57, 0.3);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+    background-color: #f8f8f0;
+  }
+
+  .dark .code-container {
+    background-color: #2d3748;
+    border-color: rgba(169, 199, 111, 0.3);
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: rgba(58, 77, 57, 0.1);
+    border-bottom: 1px dashed rgba(58, 77, 57, 0.3);
+    font-size: 0.8rem;
+  }
+
+  .dark .code-header {
+    background-color: rgba(58, 77, 57, 0.3);
+    border-bottom-color: rgba(169, 199, 111, 0.3);
+  }
+
+  .code-language {
+    font-weight: 600;
+    color: #3a4d39;
+    font-size: 0.8rem;
+    font-family: var(--alt-font-family, 'Source Sans 3', sans-serif);
+  }
+
+  .dark .code-language {
+    color: #a9c76f;
+  }
+
+  .code-block {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 1.5rem 0;
+    border-radius: 0.375rem;
+    background-color: #282c34;
+    border: 1px dashed rgba(81, 115, 63, 0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Ensure code blocks are wide on desktop */
+  @media (min-width: 768px) {
+    .code-block {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  .dark .code-block {
+    background-color: #1e2734;
+    border-color: rgba(169, 199, 111, 0.3);
+  }
+
+  .code-block :global(pre) {
+    margin: 0 !important;
+    padding: 1rem !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow-x: auto !important;
+    white-space: pre !important;
+  }
+
+  .code-block :global(code) {
+    white-space: pre !important;
+    overflow-x: visible !important;
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
+    font-family: var(--code-font-family, 'JetBrains Mono', monospace) !important;
+    tab-size: 2 !important;
+  }
+
+  /* Custom scrollbar */
+  .code-block::-webkit-scrollbar {
+    height: 8px;
+    background-color: transparent;
+  }
+
+  .code-block::-webkit-scrollbar-thumb {
+    background-color: rgba(58, 77, 57, 0.2);
+    border-radius: 4px;
+  }
+
+  .dark .code-block::-webkit-scrollbar-thumb {
+    background-color: rgba(169, 199, 111, 0.3);
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 767px) {
+    .code-container {
+      border-radius: 0;
+      margin-left: -1rem;
+      margin-right: -1rem;
+      width: calc(100% + 2rem);
+      max-width: calc(100% + 2rem);
+      border-left: none;
+      border-right: none;
+    }
+    
+    .code-language {
+      font-size: 0.7rem;
+    }
+    
+    .code-block :global(code) {
+      font-size: 0.75rem !important;
+    }
+    
+    .code-block :global(pre) {
+      padding: 0.75rem !important;
+    }
+  }
+</style>

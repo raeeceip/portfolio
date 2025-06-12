@@ -16,6 +16,17 @@
   --color-text-light: #333333;
   --color-bg-dark: #1a202c; /* Darker background for dark mode */
   --color-text-dark: #f3f4f6;
+  
+  /* Z-index system */
+  --z-base: 1;
+  --z-dropdown: 10;
+  --z-sticky: 50;
+  --z-fixed: 100;
+  --z-modal-backdrop: 200;
+  --z-modal: 210;
+  --z-notification: 300;
+  --z-tooltip: 400;
+  --z-cover: 9999;
 
   /* Font variables */
   --body-font-family: "Open Sans", "Noto Sans", sans-serif;
@@ -135,11 +146,10 @@ html {
 }
 
 body {
-  padding-top: 5rem; /* Add padding to offset fixed navbar (adjust height as needed) */
-  min-height: 100vh; /* Ensure body takes at least full viewport height */
-  overflow-x: hidden; /* Prevent horizontal scroll on body */
-  position: relative;
+  padding-top: 4rem; /* Navbar offset */
   min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
   background-color: var(--color-bg-light);
   color: var(--color-text-light);
   font-family: var(--handwriting-font);
@@ -160,8 +170,6 @@ body {
     200px 200px;
   width: 100%;
   max-width: 100vw;
-  position: relative;
-  overflow-x: hidden;
 }
 
 .dark body {
@@ -323,33 +331,7 @@ body {
   }
 }
 
-/* Add a subtle paper texture */
-body {
-  position: relative;
-  min-height: 100vh;
-  background-color: var(--color-bg-light);
-  color: var(--color-text-light);
-  font-family: var(--handwriting-font);
-  line-height: 1.6;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-  /* Subtle paper texture background for notepad feel */
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.5) 1px,
-      transparent 1px
-    ),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px),
-    url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-  background-size:
-    26px 26px,
-    26px 26px,
-    200px 200px;
-  width: 100%;
-  max-width: 100vw;
-  position: relative;
-  overflow-x: hidden;
-}
+/* Removed duplicate body styles - see main body definition above */
 
 .dark body {
   background-color: var(--color-bg-dark);
@@ -375,7 +357,7 @@ body {
   padding: 2.5rem 1rem 2.5rem 3rem; /* Left padding for margin line */
   overflow: visible; /* Allow decorative elements to overflow container */
   margin-bottom: 3rem;
-  transform: rotate(0.2deg);
+  transform: none !important; /* Remove any tilting */
 
   /* Restore notebook paper styling */
   background-image: 
@@ -559,7 +541,7 @@ body {
   font-family: var(--handwriting-font);
   font-size: 1.1rem;
   color: theme("colors.primary.700");
-  transform: rotate(-1deg);
+  transform: none !important; /* Remove any tilting */
   display: inline-block;
   margin: 1rem 0;
   background-color: rgba(255, 255, 200, 0.15);
@@ -686,7 +668,7 @@ a {
   user-select: none;
   white-space: nowrap;
   font-family: var(--handwriting-font); /* Adding handwriting font */
-  transform: rotate(-0.5deg); /* Slight rotation for handwritten feel */
+  transform: none !important; /* Remove any tilting */
 
   @apply dark:bg-secondary-900 dark:text-primary-100;
 
@@ -695,37 +677,29 @@ a {
   }
 
   &:hover {
-    transform: rotate(0.5deg); /* Rotate on hover for interactivity */
+    transform: none !important; /* Remove any tilting */
   }
 }
 
 /* Section headings */
 .sticky-section-label {
   width: max-content;
-  color: var(--foreground-color);
-  background-color: var(--highlight-border-color);
   font-size: 0.875rem;
-  font-family: var(--handwriting-font); /* Add handwriting font */
-
-  padding-inline: theme("padding.4");
+  font-family: var(--handwriting-font);
+  padding: 0.3rem 1rem;
   margin-top: theme("margin[2.5]");
-  border-radius: theme("borderRadius.sm") theme("borderRadius.sm") 0 0;
+  margin-bottom: -1px;
+  border-radius: 0.5rem 0.5rem 0 0;
   user-select: none;
   position: sticky;
-  top: 0; /* Stick to the top of its container */
+  top: 4rem; /* Account for navbar */
   background-color: theme("colors.primary.100");
   color: theme("colors.primary.700");
-  padding: 0.2rem 0.8rem;
-  border-radius: 0.25rem 0.25rem 0 0; /* Rounded top corners */
-  font-size: 0.85rem;
-  display: inline-block; /* Fit content width */
-  margin-bottom: -1px; /* Overlap border slightly */
+  display: inline-block;
   border: 1px dashed theme("colors.primary.300");
-  border-bottom: none; /* No bottom border */
-  max-width: 100%; /* Prevent exceeding parent */
-  overflow-x: auto; /* Allow horizontal scroll if needed */
-  white-space: nowrap; /* Prevent wrapping */
-  z-index: 10; /* Ensure it's above the code block */
+  border-bottom: none;
+  z-index: var(--z-sticky);
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .dark .sticky-section-label {
@@ -816,7 +790,7 @@ article.blog-content {
     color: theme("colors.primary.700");
     position: relative;
     display: inline-block;
-    transform: rotate(-0.5deg);
+    transform: none !important; /* Remove any tilting */
 
     .dark & {
       background-color: rgba(81, 115, 63, 0.15);
@@ -861,7 +835,7 @@ article.blog-content {
       padding: 0.1rem 0.75rem;
       border-radius: 0.25rem;
       font-size: 0.8rem;
-      transform: rotate(-1deg);
+      transform: none !important; /* Remove any tilting */
       box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.05);
       z-index: 2;
     }
@@ -997,7 +971,7 @@ article.blog-content {
       2px 2px 5px rgba(0, 0, 0, 0.05),
       0 0 0 1px rgba(81, 115, 63, 0.1);
     border-radius: 0 0.5rem 0.5rem 0;
-    transform: rotate(0.3deg);
+    transform: none !important; /* Remove any tilting */
 
     /* Paper clip effect */
     &::before {
@@ -1025,7 +999,7 @@ article.blog-content {
       font-size: 0.8rem;
       font-family: var(--handwriting-font);
       color: theme("colors.primary.700");
-      transform: rotate(-2deg);
+      transform: none !important; /* Remove any tilting */
       background-color: rgba(255, 255, 200, 0.4);
       padding: 0.1rem 0.5rem;
       border-radius: 3px;
@@ -1081,6 +1055,77 @@ article.blog-content {
         top: -1.3rem;
       }
     }
+  }
+}
+
+/* Apply handwriting font to paragraphs and lists in blog posts */
+& p,
+& ul,
+& ol {
+  font-family: var(--handwriting-font);
+  line-height: 1.7; /* Adjust line height for handwriting */
+  margin-bottom: 1.25rem; /* Consistent paragraph spacing */
+}
+
+& li {
+  margin-bottom: 0.75rem; /* Spacing for list items */
+  margin-left: 1.5rem; /* Indent list items */
+}
+
+/* Ensure links within handwriting text look good */
+& p a,
+& li a {
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: rgba(81, 115, 63, 0.5);
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+& p a:hover,
+& li a:hover {
+  color: theme("colors.primary.700");
+  text-decoration-color: rgba(81, 115, 63, 0.8);
+}
+
+.dark & p a,
+.dark & li a {
+  color: theme("colors.primary.300");
+  text-decoration-color: rgba(169, 199, 111, 0.5);
+}
+
+.dark & p a:hover,
+.dark & li a:hover {
+  color: theme("colors.primary.200");
+  text-decoration-color: rgba(169, 199, 111, 0.8);
+}
+
+/* Blog content needs to be wide on desktop */
+@media (min-width: 768px) {
+  .post-content,
+  .collapsible-content,
+  .blog-content-wide {
+    width: 100%;
+    max-width: none;
+    transform: none !important; /* Remove any tilting */
+  }
+  
+  .collapsible-content p,
+  .collapsible-content h1,
+  .collapsible-content h2,
+  .collapsible-content h3,
+  .collapsible-content h4,
+  .collapsible-content h5,
+  .collapsible-content h6,
+  .collapsible-content ul,
+  .collapsible-content ol,
+  .collapsible-content blockquote,
+  .collapsible-content pre,
+  .collapsible-content figure,
+  .collapsible-content table {
+    width: 100%;
+    max-width: none;
+    transform: none !important; /* Remove any tilting */
   }
 }
 
@@ -1235,6 +1280,16 @@ article.blog-content {
   [data-section-hash] {
     opacity: 0.8;
   }
+}
+
+/* Interactive hover effects */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Animations */
@@ -1430,36 +1485,10 @@ code,
   font-family: var(--code-font-family) !important;
 }
 
-/* Dark mode improvements */
+/* Dark mode improvements - simplified */
 .dark {
-  --foreground-color: #ffffff !important;
-  color: #ffffff !important;
-}
-
-.dark p,
-.dark h1,
-.dark h2,
-.dark h3,
-.dark h4,
-.dark h5,
-.dark h6,
-.dark a,
-.dark span:not(.token),
-.dark li,
-.dark button {
-  color: #ffffff !important;
-}
-
-.dark .blog-content p,
-.dark .blog-content li,
-.dark .blog-content h1,
-.dark .blog-content h2,
-.dark .blog-content h3,
-.dark .blog-content h4,
-.dark .blog-content h5,
-.dark .blog-content h6,
-.dark .blog-content span:not(.token) {
-  color: #ffffff !important;
+  --foreground-color: #f5f5eb;
+  color: #f5f5eb;
 }
 
 /* ====== DARK MODE FIXES ====== */
@@ -1559,6 +1588,27 @@ main::after {
 main > * {
   position: relative;
   z-index: 1;
+}
+
+/* Better focus styles for accessibility */
+*:focus {
+  outline: 2px dashed var(--primary-color);
+  outline-offset: 2px;
+}
+
+button:focus,
+a:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.dark *:focus {
+  outline-color: var(--accent-color);
+}
+
+.dark button:focus,
+.dark a:focus {
+  outline-color: var(--accent-color);
 }
 
 /* Cover page styling - ultra simplified */
@@ -2113,6 +2163,35 @@ footer,
   content-visibility: auto;
 }
 
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 6px;
+  opacity: 0.7;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  opacity: 1;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+}
+
 /* Base styles */
 html {
   scroll-behavior: smooth;
@@ -2135,9 +2214,10 @@ body {
 /* Mobile sway prevention for code blocks and responsive elements */
 pre {
   max-width: 100%;
-  overflow-x: auto !important; /* Allow horizontal scrolling within code blocks */
-  white-space: pre-wrap;
-  word-break: break-word;
+  overflow-x: auto !important;
+  white-space: pre;
+  word-break: normal;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 /* Fix for project cards that might sway */
@@ -2165,30 +2245,27 @@ img {
 /* Fix container width on mobile */
 @media (max-width: 640px) {
   .container, 
-  .notebook-page,
-  .recipe-content,
-  .recipe-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    overflow-x: hidden !important;
+  #page-container,
+  .nav-container .container {
+    width: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   /* Eliminate any animations that cause sway */
   .animate-recipe-card {
-    animation: none !important;
+    animation: none;
   }
   
   /* Prevent horizontal overflow from recipe cards */
   .recipe-card {
-    transform: none !important;
+    transform: none;
   }
   
   /* Fix draggable elements on mobile */
   .recipe-card:hover {
-    transform: translateY(-3px) !important;
+    transform: translateY(-3px);
   }
 }
 
@@ -2274,7 +2351,7 @@ article.blog-content {
     color: theme("colors.primary.700");
     position: relative;
     display: inline-block;
-    transform: rotate(-0.5deg);
+    transform: none !important; /* Remove any tilting */
 
     .dark & {
       background-color: rgba(81, 115, 63, 0.15);
@@ -2319,7 +2396,7 @@ article.blog-content {
       padding: 0.1rem 0.75rem;
       border-radius: 0.25rem;
       font-size: 0.8rem;
-      transform: rotate(-1deg);
+      transform: none !important; /* Remove any tilting */
       box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.05);
       z-index: 2;
     }
@@ -2455,7 +2532,7 @@ article.blog-content {
       2px 2px 5px rgba(0, 0, 0, 0.05),
       0 0 0 1px rgba(81, 115, 63, 0.1);
     border-radius: 0 0.5rem 0.5rem 0;
-    transform: rotate(0.3deg);
+    transform: none !important; /* Remove any tilting */
 
     /* Paper clip effect */
     &::before {
@@ -2483,7 +2560,7 @@ article.blog-content {
       font-size: 0.8rem;
       font-family: var(--handwriting-font);
       color: theme("colors.primary.700");
-      transform: rotate(-2deg);
+      transform: none !important; /* Remove any tilting */
       background-color: rgba(255, 255, 200, 0.4);
       padding: 0.1rem 0.5rem;
       border-radius: 3px;
@@ -2542,44 +2619,50 @@ article.blog-content {
   }
 }
 
-/* Apply handwriting font to paragraphs and lists in blog posts */
-& p,
-& ul,
-& ol {
-  font-family: var(--handwriting-font);
-  line-height: 1.7; /* Adjust line height for handwriting */
-  margin-bottom: 1.25rem; /* Consistent paragraph spacing */
+/* Remove any CSS that causes blog content to tilt */
+.blog-post-paper,
+.notebook-page,
+.post-content,
+.blog-content {
+  transform: none !important; /* Remove any tilting */
 }
 
-& li {
-  margin-bottom: 0.75rem; /* Spacing for list items */
-  margin-left: 1.5rem; /* Indent list items */
+/* Ensure blog content fills container on desktop */
+@media (min-width: 768px) {
+  .post-content,
+  .collapsible-content,
+  .blog-content-wide {
+    width: 100%;
+    max-width: 100%;
+    transform: none !important; /* Remove any tilting */
+  }
 }
 
-/* Ensure links within handwriting text look good */
-& p a,
-& li a {
-  color: var(--primary-color);
-  text-decoration: underline;
-  text-decoration-style: wavy;
-  text-decoration-color: rgba(81, 115, 63, 0.5);
-  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+/* Ensure containers don't get over-constrained */
+.container, 
+#page-container,
+.nav-container .container {
+  width: 100%;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-sizing: border-box;
 }
 
-& p a:hover,
-& li a:hover {
-  color: theme("colors.primary.700");
-  text-decoration-color: rgba(81, 115, 63, 0.8);
+@media (min-width: 768px) {
+  .container,
+  #page-container,
+  .nav-container .container {
+    max-width: 90%;
+  }
 }
 
-.dark & p a,
-.dark & li a {
-  color: theme("colors.primary.300");
-  text-decoration-color: rgba(169, 199, 111, 0.5);
-}
-
-.dark & p a:hover,
-.dark & li a:hover {
-  color: theme("colors.primary.200");
-  text-decoration-color: rgba(169, 199, 111, 0.8);
+@media (min-width: 1024px) {
+  .container,
+  #page-container,
+  .nav-container .container {
+    max-width: 1200px;
+  }
 }

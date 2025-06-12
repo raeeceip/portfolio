@@ -3,12 +3,19 @@ import { Icon } from "astro-icon/components";
 ---
 
 <style>
+  /* Added debug for desktop navigation */
+  @media (min-width: 768px) {
+    .hidden.md\:flex {
+      display: flex !important;
+    }
+  }
+  
   .nav-container {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: var(--z-fixed);
     background-color: var(--notebook-paper-color);
     backdrop-filter: blur(8px);
     border-bottom: 1px dashed rgba(81, 115, 63, 0.4);
@@ -83,7 +90,7 @@ import { Icon } from "astro-icon/components";
     text-decoration: none;
     color: theme("colors.primary.700");
     transition: all 0.3s ease;
-    transform: rotate(-0.5deg);
+    transform: none;
   }
   
   .nav-icon {
@@ -114,7 +121,7 @@ import { Icon } from "astro-icon/components";
   
   .nav-link:hover {
     color: var(--primary-color);
-    transform: rotate(0.5deg) translateY(-1px);
+    transform: none;
   }
   
   .nav-link:hover::after {
@@ -132,7 +139,7 @@ import { Icon } from "astro-icon/components";
   }
   
   .site-title:hover {
-    transform: translateY(-2px);
+    transform: none;
   }
   
   .dark .site-title {
@@ -159,7 +166,7 @@ import { Icon } from "astro-icon/components";
   }
   
   .theme-toggle-button:hover {
-    transform: translateY(-2px) rotate(-10deg) scale(1.1);
+    transform: none;
     background-color: rgba(81, 115, 63, 0.2);
   }
   
@@ -187,7 +194,7 @@ import { Icon } from "astro-icon/components";
   }
   
   .dark .theme-toggle-button:hover {
-    transform: translateY(-2px) rotate(-10deg) scale(1.1);
+    transform: none;
     background-color: rgba(169, 199, 111, 0.3);
   }
   
@@ -242,7 +249,7 @@ import { Icon } from "astro-icon/components";
     border-radius: 0.25rem;
     padding: 0.3rem;
     margin-right: 0.5rem;
-    transform: rotate(-1deg);
+    transform: none;
   }
   
   .dark .mobile-menu-button {
@@ -299,6 +306,35 @@ import { Icon } from "astro-icon/components";
   
   #mobile-menu a:last-child {
     border-bottom: none;
+  }
+
+  /* Mobile nav specific styling */
+  .mobile-nav-link {
+    font-family: var(--handwriting-font);
+    font-weight: 500;
+    color: theme("colors.primary.700");
+    transition: all 0.2s ease;
+    border-bottom: 1px dashed rgba(81, 115, 63, 0.2);
+    padding: 0.75rem 0.5rem;
+    margin-bottom: 0.25rem;
+    border-radius: 0.25rem;
+  }
+  
+  .dark .mobile-nav-link {
+    color: theme("colors.primary.300");
+    border-bottom-color: rgba(169, 199, 111, 0.2);
+  }
+  
+  .mobile-nav-link:hover, 
+  .mobile-nav-link.active {
+    background-color: rgba(81, 115, 63, 0.1);
+    transform: none;
+    padding-left: 1rem;
+  }
+  
+  .dark .mobile-nav-link:hover,
+  .dark .mobile-nav-link.active {
+    background-color: rgba(169, 199, 111, 0.1);
   }
 
   /* Media queries for responsive design */
@@ -386,7 +422,13 @@ import { Icon } from "astro-icon/components";
     </button>
 
     <!-- Mobile Menu Button -->
-    <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-primary-700 dark:text-primary-300 hover:text-white hover:bg-primary-500 dark:hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+    <button
+      type="button"
+      id="mobile-menu-button"
+      class="inline-flex md:hidden items-center justify-center p-2 rounded-md text-primary-500 hover:text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+    >
       <span class="sr-only">Open main menu</span>
       <!-- Icon when menu is closed. -->
       <Icon name="tabler:menu-2" class="block h-6 w-6 menu-icon-open" aria-hidden="true" /> 
@@ -395,27 +437,27 @@ import { Icon } from "astro-icon/components";
     </button>
   </div>
 
-  <!-- Mobile menu - conditionally shown/hidden via JavaScript -->
-  <div id="mobile-menu" style="display: none;">
-    <div class="px-2 pt-1 pb-3 space-y-1 mobile-nav">
-      <a href="/" class="nav-link block"> 
-        <Icon name="tabler:home" class="nav-icon" />
+  <!-- Mobile menu - explicitly fixing z-index and position issues -->
+  <div id="mobile-menu" class="md:hidden w-full absolute left-0 bg-notebook-paper-color dark:bg-notebook-paper-color-dark border-b border-primary-200 dark:border-primary-700" style="display: none; top: 100%; z-index: var(--z-dropdown);">
+    <div class="px-4 py-3 space-y-2 shadow-md">
+      <a href="/" class="mobile-nav-link block py-2 {Astro.url.pathname === '/' ? 'active' : ''}"> 
+        <Icon name="tabler:home" class="nav-icon inline-block mr-2" />
         <span>Home</span>
       </a>
-      <a href="/blog" class="nav-link block">
-        <Icon name="tabler:book" class="nav-icon" />
+      <a href="/blog" class="mobile-nav-link block py-2 {Astro.url.pathname.startsWith('/blog') ? 'active' : ''}">
+        <Icon name="tabler:book" class="nav-icon inline-block mr-2" />
         <span>Recipe Journal</span>
       </a>
-      <a href="/notes" class="nav-link block">
-        <Icon name="tabler:note" class="nav-icon" />
+      <a href="/notes" class="mobile-nav-link block py-2 {Astro.url.pathname.startsWith('/notes') ? 'active' : ''}">
+        <Icon name="tabler:note" class="nav-icon inline-block mr-2" />
         <span>Quick Notes</span>
       </a>
-      <a href="/projects" class="nav-link block">
-        <Icon name="tabler:books" class="nav-icon" />
+      <a href="/projects" class="mobile-nav-link block py-2 {Astro.url.pathname.startsWith('/projects') ? 'active' : ''}">
+        <Icon name="tabler:books" class="nav-icon inline-block mr-2" />
         <span>Recipe Collection</span>
       </a>
-      <a href="/tools" class="nav-link block">
-        <Icon name="tabler:tools" class="nav-icon" />
+      <a href="/tools" class="mobile-nav-link block py-2 {Astro.url.pathname.startsWith('/tools') ? 'active' : ''}">
+        <Icon name="tabler:tools" class="nav-icon inline-block mr-2" />
         <span>Kitchen Tools</span>
       </a>
     </div>
@@ -440,30 +482,38 @@ import { Icon } from "astro-icon/components";
       return;
     }
     
-    // Ensure menu starts hidden with inline style
+    // Ensure menu starts hidden with both inline style and class
     menu.style.display = 'none';
-    openIcon.style.display = 'block';
-    closeIcon.style.display = 'none';
+    openIcon.classList.remove('hidden');
+    openIcon.classList.add('block');
+    closeIcon.classList.remove('block');
+    closeIcon.classList.add('hidden');
     
-    // Add click listener to toggle menu
+    // Add click listener to toggle menu with improved toggling
     button.addEventListener('click', function(e) {
-      e.preventDefault(); // Prevent any default behavior
-      e.stopPropagation(); // Prevent click from bubbling to document
+      e.preventDefault();
+      e.stopPropagation();
       
-      // Check if menu is currently hidden
       const isHidden = menu.style.display === 'none';
       
       // Toggle menu visibility
       menu.style.display = isHidden ? 'block' : 'none';
       
-      // Toggle icons
-      openIcon.style.display = isHidden ? 'none' : 'block';
-      closeIcon.style.display = isHidden ? 'block' : 'none';
+      // Toggle icons using both style and classes for maximum compatibility
+      if (isHidden) {
+        openIcon.classList.remove('block');
+        openIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+        closeIcon.classList.add('block');
+      } else {
+        openIcon.classList.remove('hidden');
+        openIcon.classList.add('block');
+        closeIcon.classList.remove('block');
+        closeIcon.classList.add('hidden');
+      }
       
       // Set aria attributes
       button.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
-      
-      console.log('Menu toggled, now', isHidden ? 'visible' : 'hidden');
     });
     
     // Close menu when clicking elsewhere on page
@@ -476,8 +526,10 @@ import { Icon } from "astro-icon/components";
       // Close menu if click was outside menu
       if (!menu.contains(e.target as Node)) {
         menu.style.display = 'none';
-        openIcon.style.display = 'block';
-        closeIcon.style.display = 'none';
+        openIcon.classList.remove('hidden');
+        openIcon.classList.add('block');
+        closeIcon.classList.remove('block');
+        closeIcon.classList.add('hidden');
         button.setAttribute('aria-expanded', 'false');
       }
     });

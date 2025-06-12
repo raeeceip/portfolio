@@ -259,8 +259,9 @@ const storageKey = `cookbook_notes_${postSlug}`;
   }
 </style>
 
-<script define:vars={{ storageKey, postSlug }}>
-document.addEventListener('DOMContentLoaded', function() {
+<script>
+// Use astro:page-load event instead of DOMContentLoaded for better compatibility with Astro
+document.addEventListener('astro:page-load', function() {
   const notesContainer = document.getElementById('notes-content');
   const newNoteField = document.getElementById('new-note');
   const authorField = document.getElementById('note-author');
@@ -270,9 +271,12 @@ document.addEventListener('DOMContentLoaded', function() {
   const connectionIndicator = document.getElementById('connection-indicator');
   const connectionText = document.getElementById('connection-text');
   
-  // Store a reference to liked notes in localStorage to prevent multiple likes
+  // Init with localStorage
+  const storageKey = `cookbook_notes_${document.body.dataset.postSlug || 'default'}`;
+  let notes = [];
   let likedNotes = new Set(JSON.parse(localStorage.getItem('liked_notes') || '[]'));
   
+  // Store a reference to liked notes in localStorage to prevent multiple likes
   // API endpoint for Cloudflare Worker (now using relative URL to avoid CORS issues)
   const NOTES_API = '/api/notes';
   

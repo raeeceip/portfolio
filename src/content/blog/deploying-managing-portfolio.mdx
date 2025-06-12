@@ -1,0 +1,470 @@
+---
+title: Deploying & Managing My Portfolio Site
+date: 2025-04-14
+description: A deep dive into how I deployed my portfolio site using Cloudflare, and the various states I had to manage for that notebook-style experience.
+keywords: cloudflare, deployment, portfolio, web development, astro, animations, state management
+tags: ["deployment", "cloudflare", "astro", "animations", "state management"]
+draft: false
+---
+
+When I set out to create my 2025 portfolio site, I had a clear vision: a nostalgic notebook-style design with interactive elements that would showcase my work in a unique way. But as any developer knows, the journey from concept to deployed site involves navigating a maze of technical decisions, performance considerations, and state management challenges.
+
+![Deploying My Portfolio](/images/notebook-deploy.png)
+
+> This article dives into the nitty-gritty details of how I deployed and managed my portfolio site, including the technical decisions, challenges, and solutions I encountered along the way.
+
+# The Evolution of My Portfolio
+
+My portfolio site has gone through several major iterations, each representing my growth as a developer and my pursuit of better performance and user experience.
+
+## From React to Astro: The Performance Journey
+
+Initially, this project was built with React. It featured fancy loaders, elaborate rendering techniques, and a preloader designed to showcase what I knew best at the time: web development. The site worked well, but as I delved deeper into other aspects of software development, I began to crave better performance.
+
+That's when I decided to try my hand at Astro for static site generation. The switch paid immediate dividends:
+
+- Blog posts rendered beautifully with minimal JavaScript
+- Static rendering dramatically improved initial load times
+- The distribution bundle remained small despite growing content
+- Components could still use React when needed for interactivity
+
+Astro's island architecture was the perfect middle ground - allowing me to maintain the interactive elements I loved while drastically reducing the JavaScript payload.
+
+## The Need for Global Scale
+
+As my site gained more visitors from around the world, even Astro's performance optimizations weren't enough. My initial containerized solution (which was already deployed to a cloud provider) began to show its limitations:
+
+- Response times varied wildly depending on visitor location
+- Image optimization was manual and cumbersome
+- I had no good way to implement global caching
+- Deployment was more complex than it needed to be
+
+That's when I turned to Cloudflare for a more comprehensive solution.
+
+# Choosing the Right Deployment Platform
+
+After experimenting with various deployment options, I settled on Cloudflare Pages for several compelling reasons:
+
+## The Cloudflare for Startups Advantage
+
+Being part of the Cloudflare for Startups program gave me access to their premium tier, which became a game-changer for my deployment strategy. The benefits were immediate and substantial:
+
+- **Global CDN**: My site assets are cached at edge locations worldwide, resulting in dramatically reduced load times regardless of visitor location
+- **Zero cold starts**: Unlike serverless functions on some platforms that sleep after inactivity, Cloudflare Workers stay warm
+- **Custom domain with automatic SSL**: Setting up my custom domain with HTTPS took literally minutes
+- **Analytics insights**: Detailed metrics on visitors, performance, and potential issues
+- **KV object storage**: For storing and retrieving cached data globally
+- **Durable Objects**: Which I experimented with for maintaining state across edge locations (though I later simplified my approach)
+
+The Cloudflare ecosystem gave me access to a suite of integrated tools that worked together seamlessly. After some experimentation, I found the right mix of services for my needs.
+
+## Setting Up the Build Pipeline
+
+My `.cloudflare/pages.toml` and `.cloudflare/build.json` files define the build process:
+
+```toml
+[build]
+command = "npm run build"
+output_directory = "dist"
+environment_variables = { NODE_VERSION = "22.9.0", NPM_VERSION = "10.8.3" }
+
+[build.environment]
+NODE_VERSION = "22.9.0"
+NPM_FLAGS = "--no-package-lock"
+USE_NPM = "true"
+```
+
+Cloudflare Pages automatically detects when I push changes to my repository, triggering a new build. The platform's build system handles all dependencies and optimization without requiring me to manage any infrastructure.
+
+# Leveraging Cloudflare's Ecosystem
+
+The real power of Cloudflare came from how I could combine different services to create a cohesive deployment strategy:
+
+## Cloudflare Pages
+
+The cornerstone of my deployment strategy, Pages handles the build process, hosting, and delivery of my static assets. The automatic preview deployments for each push have been invaluable for testing changes before they go live.
+
+## Cloudflare KV
+
+I use Cloudflare KV (Key-Value) storage for several purposes:
+
+```javascript
+// Example of how I use KV to cache API responses
+export async function onRequest({ request, env }) {
+  const url = new URL(request.url);
+  const cacheKey = `api:${url.pathname}${url.search}`;
+  
+  // Try to get from cache first
+  const cached = await env.MY_KV.get(cacheKey, { type: "json" });
+  if (cached) {
+    return new Response(JSON.stringify(cached), {
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+  
+  // If not in cache, fetch from origin
+  const response = await fetch("https://my-api.example.com" + url.pathname + url.search);
+  const data = await response.json();
+  
+  // Store in KV with expiration
+  await env.MY_KV.put(cacheKey, JSON.stringify(data), { expirationTtl: 3600 });
+  
+  return new Response(JSON.stringify(data), {
+    headers: { "Content-Type": "application/json" }
+  });
+}
+```
+
+This approach allows me to reduce the load on external APIs and drastically improve response times for repeat requests.
+
+## Image Optimization
+
+Cloudflare's automatic image optimization has been a revelation:
+
+```html
+<!-- Before: Manually optimized images in different formats and sizes -->
+<picture>
+  <source srcset="/images/project-sm.webp" media="(max-width: 640px)" type="image/webp">
+  <source srcset="/images/project-md.webp" media="(max-width: 1024px)" type="image/webp">
+  <source srcset="/images/project.webp" type="image/webp">
+  <img src="/images/project.jpg" alt="Project Screenshot">
+</picture>
+
+<!-- After: Let Cloudflare handle the optimization -->
+<img 
+  src="/images/project.jpg" 
+  alt="Project Screenshot" 
+  width="800" 
+  height="450"
+  loading="lazy"
+  style="max-width: 100%; height: auto;"
+/>
+```
+
+This simplification reduced my codebase while improving performance - a win-win.
+
+## Analytics and Monitoring
+
+Cloudflare's built-in analytics have become an essential tool for monitoring my site's performance:
+
+- **Real User Metrics**: Showing me exactly how fast my pages load for actual visitors
+- **Bot detection**: Filtering out non-human traffic for more accurate analytics
+- **Error tracking**: Identifying issues before users report them
+- **Geographic insights**: Understanding where my visitors come from
+
+The data has helped me make informed decisions about further optimizations and content focus.
+
+# Managing Different States
+
+The notebook-style design I envisioned required careful state management across different user experiences. Let's break down the key states I had to handle:
+
+## First Visit vs. Return Visit Animation States
+
+One of the most challenging aspects was creating different experiences for first-time and returning visitors:
+
+```javascript
+const isFirstVisit = () => {
+  if (typeof localStorage !== 'undefined') {
+    const visited = localStorage.getItem('visited');
+    if (!visited) {
+      localStorage.setItem('visited', 'true');
+      return true;
+    }
+  }
+  return false;
+};
+
+// In component:
+const firstVisit = isFirstVisit();
+
+// Conditionally apply animations
+return (
+  <CoverPage 
+    className={firstVisit ? 'dramatic-entrance' : 'quick-entrance'} 
+    animationDuration={firstVisit ? '2.5s' : '0.8s'}
+  >
+    <Ribbon>2025 Edition</Ribbon>
+    {/* Other cover elements */}
+  </CoverPage>
+);
+```
+
+For first-time visitors, I wanted that dramatic 2.5-second animation to create a memorable introduction. For returning visitors, a quicker animation prevents frustration.
+
+## Light and Dark Mode States
+
+The notebook theme required completely different styling approaches for light and dark modes:
+
+```css
+.feature-card {
+  position: relative;
+  border: 1px solid theme("colors.secondary.300");
+  border-radius: 0 0.5rem 0.5rem 0.5rem;
+  overflow: visible;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+  background-image: 
+    repeating-linear-gradient(
+      theme("colors.secondary.100") 0px,
+      theme("colors.secondary.100") 1px,
+      transparent 1px,
+      transparent 26px
+    );
+  background-size: 100% 26px;
+  padding-top: 26px;
+  color: #3A4D30;
+}
+  
+.dark .feature-card {
+  border-color: theme("colors.secondary.700");
+  background-color: #4a5568; /* Lighter slate gray instead of dark green */
+  background-image: 
+    repeating-linear-gradient(
+      rgba(255, 255, 255, 0.08) 0px,
+      rgba(255, 255, 255, 0.08) 1px,
+      transparent 1px,
+      transparent 26px
+    );
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Add responsive styles for mobile and tablet */
+@media (max-width: 768px) {
+  .feature-card {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .feature-card {
+    padding: 20px;
+  }
+}
+```
+
+The dark mode implementation required careful consideration of contrast and readability while maintaining the notebook aesthetic. I chose a lighter slate gray (#4a5568) background instead of a darker green to keep the content readable while preserving the notebook feel.
+
+## Interactive States for Draggable Cards
+
+Creating draggable feature cards with realistic physics required managing multiple interaction states:
+
+```javascript
+const FeatureCard = ({ children, alt = false }) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const cardRef = useRef(null);
+  
+  const handleDragStart = (e) => {
+    setIsDragging(true);
+    // Capture initial position
+  };
+  
+  const handleDrag = (e) => {
+    if (!isDragging) return;
+    // Update position with physics constraints
+    setPosition({
+      x: Math.min(Math.max(position.x + e.movementX, -20), 20),
+      y: Math.min(Math.max(position.y + e.movementY, -20), 20)
+    });
+  };
+  
+  const handleDragEnd = () => {
+    setIsDragging(true);
+    // Add spring-back animation
+    gsap.to(position, {
+      x: 0,
+      y: 0,
+      duration: 0.5,
+      ease: "elastic.out(1, 0.3)",
+      onComplete: () => setIsDragging(false)
+    });
+  };
+  
+  return (
+    <div 
+      ref={cardRef}
+      className={`feature-card ${alt ? 'alt' : ''} ${isDragging ? 'dragging' : ''}`}
+      style={{
+        transform: `translateX(${position.x}px) translateY(${position.y}px) rotate(${position.x * 0.05}deg)`
+      }}
+      onMouseDown={handleDragStart}
+      onMouseMove={handleDrag}
+      onMouseUp={handleDragEnd}
+      onMouseLeave={handleDragEnd}
+    >
+      {children}
+    </div>
+  );
+};
+```
+
+I implemented subtle physics-based animations to make the cards feel like real papers being moved around, with constraints to prevent them from being dragged too far and a satisfying elastic bounce when released.
+
+# Handling Page Transitions
+
+The "rip-through" animation between pages was one of the most complex states to manage, requiring coordination between exit and entrance animations:
+
+```javascript
+const PageTransition = ({ children }) => {
+  const [transitioning, setTransitioning] = useState(false);
+  const [nextPage, setNextPage] = useState(null);
+  
+  const handlePageTransition = (targetUrl) => {
+    setTransitioning(true);
+    setNextPage(targetUrl);
+    
+    // Play rip animation
+    const tl = gsap.timeline();
+    tl.to(".page-content", {
+      duration: 0.4,
+      y: "-100%", 
+      ease: "power4.in",
+      clipPath: "polygon(0% 0%, 100% 8%, 100% 100%, 0% 92%)"
+    });
+    
+    tl.add(() => {
+      window.location.href = targetUrl;
+    });
+  };
+  
+  useEffect(() => {
+    // Register navigation handler
+    document.querySelectorAll('a[data-internal]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        handlePageTransition(e.currentTarget.href);
+      });
+    });
+    
+    // Handle entrance animation
+    const entranceTl = gsap.timeline();
+    entranceTl.from(".page-content", {
+      duration: 0.5, 
+      y: "100%", 
+      ease: "power4.out",
+      clipPath: "polygon(0% 8%, 100% 0%, 100% 92%, 0% 100%)"
+    });
+  }, []);
+  
+  return (
+    <div className="page-wrapper">
+      <div className="page-content">
+        {children}
+      </div>
+      {transitioning && (
+        <div className="next-page-preview" aria-hidden="true">
+          <div className="loading-indicator">Loading {nextPage}...</div>
+        </div>
+      )}
+    </div>
+  );
+};
+```
+
+These transitions needed to work seamlessly in both light and dark modes, requiring different visual treatments for each.
+
+# Performance Optimization with Cloudflare
+
+Cloudflare's performance features helped me optimize the site in several key ways:
+
+## Image Optimization
+
+I leveraged Cloudflare's automatic image optimization to serve appropriately sized images without maintaining multiple versions:
+
+```html
+<img 
+  src="/images/project-screenshot.png" 
+  alt="Project Screenshot" 
+  width="800" 
+  height="450"
+  loading="lazy"
+  fetchpriority="high"
+  decoding="async"
+  style="max-width: 100%; height: auto;"
+/>
+```
+
+Cloudflare automatically converts images to modern formats like WebP and AVIF when browsers support them, optimizes compression, and delivers from the nearest edge location.
+
+## Caching Strategies
+
+Cloudflare's caching required careful consideration of which resources should be cached and for how long:
+
+```toml
+[cache]
+# Cache static assets for 1 year
+/assets/*
+  Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache page HTML for 1 hour
+/*.html
+  Cache-Control = "public, max-age=3600"
+```
+
+For dynamically updated content, I implemented cache purging through Cloudflare's API whenever I deploy new content.
+
+# Monitoring and Analytics
+
+Keeping track of site performance and potential issues is crucial:
+
+## Real User Monitoring
+
+I implemented Cloudflare's Web Analytics to capture real user metrics without affecting privacy:
+
+```html
+<!-- No additional scripts needed as Cloudflare injects this automatically -->
+```
+
+This provides insights into Core Web Vitals, page load times, and geographical distribution of visitors without requiring cookies or tracking scripts.
+
+## Error Tracking
+
+For error tracking, I set up a lightweight custom solution that reports to my own endpoint:
+
+```javascript
+window.addEventListener('error', (event) => {
+  if (import.meta.env.PROD) {
+    fetch('/api/error-log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: event.message,
+        source: event.filename,
+        line: event.lineno,
+        column: event.colno,
+        stack: event.error?.stack,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+      })
+    }).catch(() => {
+      // Fail silently if error reporting fails
+    });
+  }
+  
+  // Don't prevent the default error handling
+  return false;
+});
+```
+
+# Lessons Learned
+
+Building and deploying this portfolio site taught me several valuable lessons:
+
+1. **Start with deployment in mind**: Considering how the site would be deployed from the beginning helped avoid painful migrations later.
+
+2. **State management isn't just for complex apps**: Even a seemingly simple portfolio site required careful state management for transitions, animations, and user preferences.
+
+3. **Test across devices early and often**: What worked perfectly on my development machine sometimes behaved differently once deployed, especially animations and layout.
+
+4. **Performance optimization is ongoing**: There's always another millisecond to shave off load times or another animation to make smoother.
+
+5. **Document your decisions**: The choices I made about state management and deployment configuration would have been difficult to remember without documentation.
+
+# Conclusion
+
+Deploying my portfolio using Cloudflare and managing the various states needed for that notebook-style experience was a challenging but rewarding process. The combination of Astro's performance, Cloudflare's global infrastructure, and careful state management resulted in a site that not only looks the way I envisioned but also performs exceptionally well.
+
+If you're considering a similar approach for your own portfolio, I hope these insights into my deployment strategy and state management solutions prove helpful. And if you have questions about any aspect of how I built or deployed this site, feel free to reach out!
